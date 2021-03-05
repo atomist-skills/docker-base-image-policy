@@ -1,0 +1,93 @@
+{
+  "name": "@atomist/docker-vulnerability-policy",
+  "homepage": "https://github.com/atomist-skills/docker-vulnerability-policy#readme",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Atomist",
+    "email": "oss@atomist.com"
+  },
+  "main": "node_modules/@atomist/skill/lib/function.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atomist-skills/docker-vulnerability-policy.git"
+  },
+  "scripts": {
+    "atm:lint:eslint": "eslint --fix",
+    "atm:lint:prettier": "prettier --write",
+    "autotest": "supervisor --watch index.ts,lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
+    "build": "run-s clean compile test lint doc",
+    "clean": "run-p clean:compile clean:test clean:doc clean:run",
+    "clean:compile": "rimraf git-info.json \"*.{d.ts,js}{,.map}\" \"{lib,test}/**/*.{d.ts,js}{,.map}\" lib/typings/types.ts",
+    "clean:dist": "run-s clean clean:npm",
+    "clean:doc": "rimraf doc",
+    "clean:npm": "rimraf node_modules",
+    "clean:run": "rimraf *-v8.log profile.txt log",
+    "clean:test": "rimraf .nyc_output coverage",
+    "compile": "run-s gql:gen compile:ts",
+    "compile:ts": "tsc --project .",
+    "doc": "typedoc --mode modules --excludeExternals --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
+    "gql:gen": "atm-skill gql-generate",
+    "lint": "run-p lint:eslint lint:prettier",
+    "lint:eslint": "eslint --ext .ts .",
+    "lint:eslint:fix": "npm run lint:eslint -- --fix",
+    "lint:fix": "run-p lint:eslint:fix lint:prettier:fix",
+    "lint:prettier": "prettier --list-different \"**/*.{graphql,json,markdown,md,yaml,yml}\"",
+    "lint:prettier:fix": "prettier --write \"**/*.{graphql,json,markdown,md,yaml,yml}\"",
+    "skill": "run-s compile test skill:generate skill:package",
+    "skill:bundle": "atm-skill bundle",
+    "skill:clean": "atm-skill clean",
+    "skill:generate": "atm-skill generate",
+    "skill:package": "atm-skill package",
+    "skill:register": "atm-skill register",
+    "start": "functions-framework --target=entryPoint --signature-type=event",
+    "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
+    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\""
+  },
+  "dependencies": {
+    "@atomist/skill": "^0.8.2-main.67",
+    "fs-extra": "^9.1.0",
+    "word-wrap": "^1.2.3"
+  },
+  "devDependencies": {
+    "@google-cloud/functions-framework": "^1.7.1",
+    "@graphql-codegen/cli": "^1.20.1",
+    "@graphql-codegen/typescript": "^1.21.0",
+    "@graphql-codegen/typescript-operations": "^1.17.14",
+    "@types/fs-extra": "^9.0.7",
+    "@types/mocha": "^8.2.1",
+    "@types/power-assert": "^1.5.3",
+    "@types/semver": "^7.3.4",
+    "@types/word-wrap": "^1.2.1",
+    "@typescript-eslint/eslint-plugin": "^4.16.1",
+    "@typescript-eslint/parser": "^4.16.1",
+    "eslint": "^7.20.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "espower-typescript": "^9.0.2",
+    "graphql": "^15.4.0",
+    "husky": "^4.3.8",
+    "lint-staged": "^10.5.4",
+    "mocha": "^8.3.0",
+    "npm-run-all": "^4.1.5",
+    "power-assert": "^1.6.1",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "supervisor": "^0.12.0",
+    "ts-node": "^9.1.1",
+    "typedoc": "^0.20.28",
+    "typescript": "^4.2.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.@(graphql|json|markdown|yaml|yml|md)": "npm run atm:lint:prettier",
+    "**/*.ts": "npm run atm:lint:eslint"
+  }
+}

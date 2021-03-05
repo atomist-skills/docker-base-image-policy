@@ -1,0 +1,51 @@
+[:find
+ (pull
+  ?commit
+  [:schema/entity-type
+   {:git.commit/repo [:git.repo/name
+                      :git.repo/default-branch
+                      {:git.repo/org [:github.org/installation-token
+                                      :git.org/name
+                                      (:git.org/provider-base-url
+                                       :as
+                                       :base-url)
+                                      :git.provider/url]}]}
+   {:git.commit/author [:git.user/name
+                        :git.user/login
+                        {:git.user/emails [:email.email/address]}]}
+   :git.commit/sha
+   :git.commit/message])
+ (pull
+  ?base-image
+  [:schema/entity-type
+   :docker.image/image
+   :docker.image/sha
+   :docker.image/digest
+   :docker.image/tags
+   {:docker.image/repository [:docker.repository/host
+                                 (:docker.repository/repository
+                                  :as
+                                 :name)]}])
+ (pull ?docker-file [:schema/entity-type 
+                     :docker.file/path])
+ :in
+ $
+ $before-db
+ %
+ :where
+ (tx-entity-attr-value :docker.image/from ?image ?base-image)
+
+ ;; get the dockerfile path
+ [?image :docker.image/docker-file ?docker-file]
+
+ ;; only Dockerfiles that are missing the digest in the FROM clause
+ [?from-line :docker.file.line/file ?docker-file]
+ [?from-line :docker.file.line/instruction "FROM"]
+ [?from-line :docker.file.from/repository _]
+ [(missing? $ ?from-line :docker.file.from/digest)]
+
+ ;; images of tip of default branch
+ [?image :docker.image/sha ?sha]
+ [?commit :git.commit/sha ?sha]
+ [?ref :git.ref/commit ?commit]
+ (is-default-branch? ?ref)]

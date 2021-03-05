@@ -1,0 +1,54 @@
+[:find
+ (pull
+  ?commit
+  [:schema/entity-type
+   {:git.commit/repo [:git.repo/name
+                      :git.repo/default-branch
+                      {:git.repo/org [:github.org/installation-token
+                                      :git.org/name
+                                      (:git.org/provider-base-url
+                                       :as
+                                       :base-url)
+                                      :git.provider/url]}]}
+   {:git.commit/author [:git.user/name
+                        :git.user/login
+                        {:git.user/emails [:email.email/address]}]}
+   :git.commit/sha
+   :git.commit/message])
+ (pull
+  ?new-image
+  [:schema/entity-type
+   :docker.image/image
+   :docker.image/sha
+   :docker.image/digest
+   :docker.image/tags
+   {:docker.image/repository [:docker.repository/host
+                              (:docker.repository/repository
+                               :as
+                              :name)]}])
+ (pull ?docker-file [:schema/entity-type
+                     :docker.file/path])
+ :in
+ $
+ $before-db
+ %
+ :where
+ (tx-entity-attr-value :docker.image/digest ?new-image ?new-image-digest)
+
+ [?new-image :docker.image/tags ?new-image-tag]
+ [?new-image :docker.image/digest ?new-image-digest]
+
+ ;; base images with different digest
+ [?base-image :docker.image/tags ?new-image-tag]
+ (not [?base-image :docker.image/digest ?new-image-digest])
+
+ ;; get the dockerfile path
+ [?image :docker.image/docker-file ?docker-file]
+
+ ;; images at tip of default branch that use this base image
+ [?image :docker.image/from ?base-image]
+ [?image :docker.image/sha ?sha]
+ [?commit :git.commit/sha ?sha]
+ [?ref :git.ref/commit ?commit]
+ (is-default-branch? ?ref)
+]
