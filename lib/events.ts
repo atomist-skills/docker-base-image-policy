@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-import { EventHandler, github, repository, secret } from "@atomist/skill";
+import {
+	datalog,
+	EventHandler,
+	github,
+	repository,
+	secret,
+	status,
+} from "@atomist/skill";
 import * as fs from "fs-extra";
 
 import { Configuration } from "./configuration";
-import { OnDockerBaseImageUpdate } from "./types";
+import { OnDockerBaseImageUpdate, OnDockerfile } from "./types";
 import { replaceLastFrom } from "./util";
 
 const onDockerBaseImageUpdate: EventHandler<
@@ -100,3 +107,180 @@ FROM ${imageName}
 export const onPinnedDockerBaseImageUpdate = onDockerBaseImageUpdate;
 export const onUnpinnedDockerBaseImageUpdate = onDockerBaseImageUpdate;
 export const onNewTaggedImageInFrom = onDockerBaseImageUpdate;
+
+enum ResultEntityState {
+	Pending = ":policy.result.state/PENDING",
+	Success = ":policy.result.state/SUCCESS",
+	Failure = ":policy.result.state/FAILURE",
+	Neutral = ":policy.result.state/NEUTRAL",
+}
+
+type ResultEntity = {
+	sha: string;
+	name: string;
+	state: ResultEntityState;
+	managedBy?: string;
+	createdAt?: Date;
+	lastUpdated: Date;
+};
+
+type ResultOwnerEntity = {
+	name: string;
+	namespace: string;
+	version: string;
+};
+
+export const onDockerfile: EventHandler<
+	OnDockerfile,
+	Configuration
+> = async ctx => {
+	const cfg = ctx.configuration.parameters;
+
+	if (!(cfg.acceptRegistries?.length > 0 || cfg.acceptImages?.length > 0)) {
+		return status
+			.success(`Accepted base image policy not configured`)
+			.hidden();
+	}
+
+	const commit = ctx.data.commit;
+
+	const credential = await ctx.credential.resolve(
+		secret.gitHubAppToken({
+			owner: commit.repo.org.name,
+			repo: commit.repo.name,
+		}),
+	);
+
+	const id = repository.gitHub({
+		owner: commit.repo.org.name,
+		repo: commit.repo.name,
+		credential,
+	});
+
+	const check = await github.createCheck(ctx, id, {
+		sha: commit.sha,
+		name: ctx.skill.name,
+		title: "Accepted Docker base image",
+		body: `Checking Docker base image against configured accept list`,
+		reuse: true,
+	});
+
+	const ownerEntity = datalog.entity<ResultOwnerEntity>(
+		"policy.result/owner",
+		{
+			name: ctx.skill.name,
+			namespace: ctx.skill.namespace,
+			version: ctx.skill.version,
+		},
+	);
+	let resultEntity = datalog.entity<ResultEntity>("policy/result", {
+		sha: commit.sha,
+		name: ctx.skill.name,
+		state: ResultEntityState.Pending,
+		createdAt: new Date(),
+		lastUpdated: new Date(),
+		managedBy: datalog.entityRef(ownerEntity),
+	});
+	await ctx.datalog.transact([ownerEntity, resultEntity]);
+
+	const file = ctx.data.file;
+	const repositoryLabel = file.lines?.find(l => l.repository);
+	const tagLabel = file.lines?.find(
+		l => l.instruction === "LABEL" && l.argsMap["com.atomist.follow-tag"],
+	)?.argsMap["com.atomist.follow-tag"];
+	const imageName = `${repositoryLabel.repository.host}:${
+		repositoryLabel.tag
+			? repositoryLabel.tag
+			: tagLabel
+			? tagLabel
+			: "latest"
+	}`;
+
+	// Check registry
+	if (cfg.acceptRegistries?.length > 0 && repositoryLabel) {
+		if (!cfg.acceptRegistries.includes(repositoryLabel.repository.host)) {
+			// Set check
+			await check.update({
+				conclusion: "action_required",
+				body: `Used \`${repositoryLabel.repository.host}\` is not an accepted Docker registry`,
+				annotations: [
+					{
+						annotationLevel: "failure",
+						path: file.path,
+						startLine: repositoryLabel.number,
+						endLine: repositoryLabel.number,
+						message: `${repositoryLabel.repository.host} is not an accepted Docker registry`,
+						title: "Accepted Docker base image",
+					},
+				],
+			});
+			resultEntity = datalog.entity<ResultEntity>("policy/result", {
+				sha: commit.sha,
+				name: ctx.skill.name,
+				state: ResultEntityState.Failure,
+				lastUpdated: new Date(),
+			});
+			await ctx.datalog.transact([ownerEntity, resultEntity]);
+			return status.success(
+				`Detected unaccepted Docker registry \`${repositoryLabel.repository.host}\``,
+			);
+		}
+	}
+
+	// Check image and tag
+	if (cfg.acceptImages?.length > 0 && repositoryLabel) {
+		let allowed = false;
+		for (const acceptImage of cfg.acceptImages) {
+			const image = acceptImage.split(":")[0];
+			const tag = acceptImage.split(":")[1];
+			if (image === repositoryLabel.repository.name) {
+				if (!tag) {
+					allowed = true;
+					break;
+				} else if (repositoryLabel.tag === tag) {
+					allowed = true;
+				} else if (tagLabel === tag) {
+					allowed = true;
+				}
+			}
+		}
+
+		if (!allowed) {
+			await check.update({
+				conclusion: "action_required",
+				body: `Used image \`${imageName}\` is not an accepted Docker base image`,
+				annotations: [
+					{
+						annotationLevel: "failure",
+						path: file.path,
+						startLine: repositoryLabel.number,
+						endLine: repositoryLabel.number,
+						message: `${imageName} is not an accepted Docker base image`,
+						title: "Accepted Docker base image",
+					},
+				],
+			});
+			resultEntity = datalog.entity<ResultEntity>("policy/result", {
+				sha: commit.sha,
+				name: ctx.skill.name,
+				state: ResultEntityState.Failure,
+				lastUpdated: new Date(),
+			});
+			return status.success(
+				`${imageName} is not an accepted Docker base image`,
+			);
+		}
+	}
+
+	await check.update({
+		conclusion: "success",
+		body: `Used image \`${imageName}\` is an accepted Docker base image`,
+	});
+	resultEntity = datalog.entity<ResultEntity>("policy/result", {
+		sha: commit.sha,
+		name: ctx.skill.name,
+		state: ResultEntityState.Success,
+		lastUpdated: new Date(),
+	});
+	return status.success(`${imageName} is an accepted Docker base image`);
+};

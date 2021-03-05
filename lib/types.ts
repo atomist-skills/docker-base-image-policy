@@ -23,3 +23,24 @@ export interface OnDockerBaseImageUpdate {
 		path: string;
 	};
 }
+
+export interface OnDockerfile {
+	commit: subscription.datalog.Commit;
+	file: {
+		path: string;
+		sha: string;
+		lines: Array<{
+			number: number;
+			instruction: string;
+			argsMap: Record<string, string>;
+			argsArray: string[];
+			argsString: string;
+			repository: {
+				host: string;
+				name: string;
+			};
+			tag: string;
+			digest: string;
+		}>;
+	};
+}

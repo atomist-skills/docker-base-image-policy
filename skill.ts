@@ -54,6 +54,18 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 				"When raising pull requests to pin Docker base images, assign last committer as reviewer",
 			required: false,
 		},
+		acceptImages: {
+			type: ParameterType.StringArray,
+			displayName: "Accepted base images",
+			description: "Accepted Docker base images with or without tags",
+			required: false,
+		},
+		acceptRegistries: {
+			type: ParameterType.StringArray,
+			displayName: "Accepted Docker registries",
+			description: "Accepted Docker registry host names",
+			required: false,
+		},
 		repoFilter: parameter.repoFilter(),
 	},
 

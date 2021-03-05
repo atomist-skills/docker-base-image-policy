@@ -14,10 +14,16 @@
 
 parameter_groups:
   - name: pinning
-    display_name: Base image pinning
+    display_name: Base Image Pinning
+  - name: accept
+    display_name: Accepted Base Images
 
 parameters:
   - name: pinningLabels
     group: pinning
   - name: pinningAssignReviewers
     group: pinning
+  - name: acceptImages
+    group: accept
+  - name: acceptRegistries
+    group: accept
