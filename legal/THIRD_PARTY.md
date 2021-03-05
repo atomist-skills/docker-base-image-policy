@@ -1,8 +1,8 @@
-# `@atomist/docker-vulnerability-policy`
+# `@atomist/docker-base-image-policy`
 
-`@atomist/docker-vulnerability-policy` is licensed under Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0).
+`@atomist/docker-base-image-policy` is licensed under Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
-This page details all runtime dependencies of `@atomist/docker-vulnerability-policy`.
+This page details all runtime dependencies of `@atomist/docker-base-image-policy`.
 
 ## Licenses
 
