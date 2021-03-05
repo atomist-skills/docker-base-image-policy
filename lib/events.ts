@@ -217,7 +217,7 @@ export const onDockerfile: EventHandler<
 			});
 			await ctx.datalog.transact([ownerEntity, resultEntity]);
 			return status.success(
-				`Detected unaccepted Docker registry \`${repositoryLabel.repository.host}\``,
+				`\`${repositoryLabel.repository.host}\` is not an accepted Docker registry`,
 			);
 		}
 	}
@@ -262,7 +262,7 @@ export const onDockerfile: EventHandler<
 				lastUpdated: new Date(),
 			});
 			return status.success(
-				`${imageName} is not an accepted Docker base image`,
+				`\`${imageName}\` is not an accepted Docker base image`,
 			);
 		}
 	}
@@ -277,5 +277,5 @@ export const onDockerfile: EventHandler<
 		state: ResultEntityState.Success,
 		lastUpdated: new Date(),
 	});
-	return status.success(`${imageName} is an accepted Docker base image`);
+	return status.success(`\`${imageName}\` is an accepted Docker base image`);
 };
