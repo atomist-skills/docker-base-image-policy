@@ -36,5 +36,4 @@
  $before-db
  %
  :where
- (tx-entity-attr-value :docker.file/commits ?docker-file ?commit)
- [?docker-file :docker.file/commits ?commit]]
+ (tx-entity-attr-value :docker.file/commits ?docker-file ?commit)]
