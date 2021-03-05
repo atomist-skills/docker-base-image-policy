@@ -144,17 +144,10 @@ export const onDockerfile: EventHandler<
 
 	const commit = ctx.data.commit;
 
-	const credential = await ctx.credential.resolve(
-		secret.gitHubAppToken({
-			owner: commit.repo.org.name,
-			repo: commit.repo.name,
-		}),
-	);
-
 	const id = repository.gitHub({
 		owner: commit.repo.org.name,
 		repo: commit.repo.name,
-		credential,
+		credential: { token: commit.repo.org.installationToken, scopes: [] },
 	});
 
 	const check = await github.createCheck(ctx, id, {
@@ -186,9 +179,11 @@ export const onDockerfile: EventHandler<
 	const file = ctx.data.file;
 	const repositoryLabel = file.lines?.find(l => l.repository);
 	const tagLabel = file.lines?.find(
-		l => l.instruction === "LABEL" && l.argsMap["com.atomist.follow-tag"],
-	)?.argsMap["com.atomist.follow-tag"];
-	const imageName = `${repositoryLabel.repository.host}:${
+		l =>
+			l.instruction === "LABEL" &&
+			l.argsMap[0][0] === "com.atomist.follow-tag",
+	)?.argsMap[0][1];
+	const imageName = `${repositoryLabel.repository.name}:${
 		repositoryLabel.tag
 			? repositoryLabel.tag
 			: tagLabel
