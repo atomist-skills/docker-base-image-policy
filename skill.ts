@@ -27,7 +27,7 @@ import { Configuration } from "./lib/configuration";
 
 export const Skill = skill<Configuration & { repoFilter: any }>({
 	displayName: "Docker Base Image Policy",
-	description: "",
+	description: "Policy to manage Docker base images",
 	categories: [Category.DevOps],
 	iconUrl:
 		"https://raw.githubusercontent.com/atomist-skills/docker-base-image-policy/main/docs/images/icon.svg",
