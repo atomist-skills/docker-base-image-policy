@@ -16,9 +16,17 @@
 
 import { subscription } from "@atomist/skill";
 
+export interface DockerManifestList {
+	manifestList: Array<{
+		digest: string;
+		tags: string[];
+		repository: subscription.datalog.DockerImage["repository"];
+	}>;
+}
+
 export interface OnDockerBaseImageUpdate {
 	commit: subscription.datalog.Commit;
-	image: subscription.datalog.DockerImage;
+	image: subscription.datalog.DockerImage & DockerManifestList;
 	file: {
 		path: string;
 	};

@@ -52,11 +52,12 @@ const onDockerBaseImageUpdate: EventHandler<
 		}),
 	);
 
+	const digest = image.manifestList?.[0]?.digest || image.digest;
 	const imageName = `${
 		image.repository.host !== "hub.docker.com"
 			? `${image.repository.host}/${image.repository.name}`
 			: image.repository.name
-	}@${image.digest}`;
+	}@${digest}`;
 
 	const dockerfilePath = project.path(file.path);
 	const dockerfile = (await fs.readFile(dockerfilePath)).toString();

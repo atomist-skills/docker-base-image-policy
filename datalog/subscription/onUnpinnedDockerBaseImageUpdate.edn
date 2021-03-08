@@ -22,12 +22,19 @@
    :docker.image/sha
    :docker.image/digest
    :docker.image/tags
+   {(:docker.manifest-list/_images
+     as
+     :docker.manifest-list/manifest-list) [:docker.manifest-list/digest
+                                           :docker.manifest-list/tags
+                                           {:docker.manifest-list/repository [:docker.repository/host
+                                                                              (:docker.repository/repository
+                                                                               :as
+                                                                               :name)]}]}
    {:docker.image/repository [:docker.repository/host
-                                 (:docker.repository/repository
-                                  :as
-                                 :name)]}])
- (pull ?docker-file [:schema/entity-type 
-                     :docker.file/path])
+                              (:docker.repository/repository
+                               :as
+                               :name)]}])
+ (pull ?docker-file [:schema/entity-type :docker.file/path])
  :in
  $
  $before-db
