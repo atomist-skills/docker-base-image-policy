@@ -128,9 +128,9 @@ export const onDockerfileFrom: EventHandler<
 	return pinFromInstruction(
 		ctx,
 		ctx.data.commit,
-		ctx.data.from.repository,
-		ctx.data.from.manifestList?.digest || ctx.data.from.image?.digest,
-		ctx.data.from.tag,
+		ctx.data.line.repository,
+		ctx.data.line.manifestList?.digest || ctx.data.line.image?.digest,
+		ctx.data.line.tag,
 		ctx.data.file.path,
 	);
 };

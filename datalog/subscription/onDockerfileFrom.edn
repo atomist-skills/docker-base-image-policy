@@ -1,30 +1,30 @@
 [:find
  (pull
-  ?commit
-  [:schema/entity-type
-   {:git.commit/repo [:git.repo/name
-                      :git.repo/default-branch
-                      {:git.repo/org [:github.org/installation-token
-                                      :git.org/name
-                                      (:git.org/provider-base-url
-                                       :as
-                                       :base-url)
-                                      :git.provider/url]}]}
-   {:git.commit/author [:git.user/name
-                        :git.user/login
-                        {:git.user/emails [:email.email/address]}]}
-   :git.commit/sha
-   :git.commit/message])
+   ?commit
+   [:schema/entity-type
+    {:git.commit/repo [:git.repo/name
+                       :git.repo/default-branch
+                       {:git.repo/org [:github.org/installation-token
+                                       :git.org/name
+                                       (:git.org/provider-base-url
+                                         :as
+                                         :base-url)
+                                       :git.provider/url]}]}
+    {:git.commit/author [:git.user/name
+                         :git.user/login
+                         {:git.user/emails [:email.email/address]}]}
+    :git.commit/sha
+    :git.commit/message])
  (pull
-  ?from-line
-  [:schema/entity-type
-   :docker.file.from/tag
-   {:docker.file.from/image [:docker.image/digest]}
-   {:docker.file.from/manifest-list [:docker.manifest-list/digest]}
-   {:docker.file.from/repository [:docker.repository/host
-                              (:docker.repository/repository
-                               :as
-                               :name)]}])
+   ?from-line
+   [:schema/entity-type
+    :docker.file.from/tag
+    {:docker.file.from/image [:docker.image/digest]}
+    {:docker.file.from/manifest-list [:docker.manifest-list/digest]}
+    {:docker.file.from/repository [:docker.repository/host
+                                   (:docker.repository/repository
+                                     :as
+                                     :name)]}])
  (pull ?docker-file [:schema/entity-type :docker.file/path])
  :in
  $
@@ -32,12 +32,12 @@
  %
  :where
  (or-join [?from-line ?digest]
-  (and
-   (tx-entity-attr-value :docker.file.from/image ?from-line ?base-image)
-   [?base-image :docker.image/digest ?digest])
-  (and
-   (tx-entity-attr-value :docker.file.from/manifest-list ?from-line ?manifest-list)
-   [?manifest-list :docker.manifest-list/digest ?digest]))
+   (and
+     (tx-entity-attr-value :docker.file.from/image ?from-line ?base-image)
+     [?base-image :docker.image/digest ?digest])
+   (and
+     (tx-entity-attr-value :docker.file.from/manifest-list ?from-line ?manifest-list)
+     [?manifest-list :docker.manifest-list/digest ?digest]))
 
  ;; either the digest is not present in the dockerfile, or it's a different one
  (or-join [?from-line ?digest]
