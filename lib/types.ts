@@ -24,6 +24,23 @@ export interface DockerManifestList {
 	}>;
 }
 
+export interface OnDockerfileFrom {
+	commit: subscription.datalog.Commit;
+	from: {
+		tag: string;
+		image: {
+			digest: string;
+		};
+		manifestList: {
+			digest: string;
+		};
+		repository: subscription.datalog.DockerImage["repository"];
+	};
+	file: {
+		path: string;
+	};
+}
+
 export interface OnDockerBaseImageUpdate {
 	commit: subscription.datalog.Commit;
 	image: subscription.datalog.DockerImage & DockerManifestList;

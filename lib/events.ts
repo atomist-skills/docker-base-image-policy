@@ -16,26 +16,34 @@
 
 import {
 	datalog,
+	EventContext,
 	EventHandler,
 	github,
+	HandlerStatus,
 	repository,
 	secret,
 	status,
+	subscription,
 } from "@atomist/skill";
 import * as fs from "fs-extra";
 
 import { Configuration } from "./configuration";
-import { OnDockerBaseImageUpdate, OnDockerfile } from "./types";
+import {
+	OnDockerBaseImageUpdate,
+	OnDockerfile,
+	OnDockerfileFrom,
+} from "./types";
 import { replaceLastFrom } from "./util";
 
-const onDockerBaseImageUpdate: EventHandler<
-	OnDockerBaseImageUpdate,
-	Configuration
-> = async ctx => {
+async function pinFromInstruction(
+	ctx: EventContext<any, Configuration>,
+	commit: subscription.datalog.Commit,
+	repo: subscription.datalog.DockerImage["repository"],
+	digest: string,
+	tag: string,
+	path: string,
+): Promise<HandlerStatus> {
 	const cfg = ctx.configuration.parameters;
-	const commit = ctx.data.commit;
-	const image = ctx.data.image;
-	const file = ctx.data.file;
 
 	const credential = await ctx.credential.resolve(
 		secret.gitHubAppToken({
@@ -52,20 +60,13 @@ const onDockerBaseImageUpdate: EventHandler<
 		}),
 	);
 
-	const digest = image.manifestList?.[0]?.digest || image.digest;
 	const imageName = `${
-		image.repository.host !== "hub.docker.com"
-			? `${image.repository.host}/${image.repository.name}`
-			: image.repository.name
+		repo.host !== "hub.docker.com" ? `${repo.host}/${repo.name}` : repo.name
 	}@${digest}`;
 
-	const dockerfilePath = project.path(file.path);
+	const dockerfilePath = project.path(path);
 	const dockerfile = (await fs.readFile(dockerfilePath)).toString();
-	const replacedDockerfile = replaceLastFrom(
-		dockerfile,
-		imageName,
-		image.tags[0],
-	);
+	const replacedDockerfile = replaceLastFrom(dockerfile, imageName, tag);
 	await fs.writeFile(dockerfilePath, replacedDockerfile);
 
 	return await github.persistChanges(
@@ -91,9 +92,7 @@ const onDockerBaseImageUpdate: EventHandler<
 			title: `Pin Docker base image to current digest`,
 			body: `This pull request pins the Docker base image \`${
 				imageName.split("@")[0]
-			}\` in \`${file.path}\` to the current digest for tag \`${
-				image.tags[0]
-			}\`.
+			}\` in \`${path}\` to the current digest for tag \`${tag}\`.
 
 \`\`\`
 FROM ${imageName}
@@ -103,11 +102,38 @@ FROM ${imageName}
 			message: `Pin Docker base image to current digest`,
 		},
 	);
+}
+
+const onDockerBaseImageUpdate: EventHandler<
+	OnDockerBaseImageUpdate,
+	Configuration
+> = async ctx => {
+	return pinFromInstruction(
+		ctx,
+		ctx.data.commit,
+		ctx.data.image.repository,
+		ctx.data.image.manifestList?.[0]?.digest || ctx.data.image?.digest,
+		ctx.data.image.tags[0],
+		ctx.data.file.path,
+	);
 };
 
 export const onPinnedDockerBaseImageUpdate = onDockerBaseImageUpdate;
 export const onUnpinnedDockerBaseImageUpdate = onDockerBaseImageUpdate;
-export const onNewTaggedImageInFrom = onDockerBaseImageUpdate;
+
+export const onDockerfileFrom: EventHandler<
+	OnDockerfileFrom,
+	Configuration
+> = async ctx => {
+	return pinFromInstruction(
+		ctx,
+		ctx.data.commit,
+		ctx.data.from.repository,
+		ctx.data.from.manifestList?.digest || ctx.data.from.image?.digest,
+		ctx.data.from.tag,
+		ctx.data.file.path,
+	);
+};
 
 enum ResultEntityState {
 	Pending = ":policy.result.state/PENDING",
