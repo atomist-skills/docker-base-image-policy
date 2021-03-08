@@ -26,7 +26,7 @@ export interface DockerManifestList {
 
 export interface OnDockerfileFrom {
 	commit: subscription.datalog.Commit;
-	from: {
+	line: {
 		tag: string;
 		image: {
 			digest: string;
