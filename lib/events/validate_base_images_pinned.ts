@@ -80,7 +80,7 @@ ${unpinnedFromLines
 	.map(
 		l => `
 \`\`\`
-FROM ${l.argsString}
+${_.padStart(l.number.toString(), 3)}: FROM ${l.argsString}
 \`\`\``,
 	)
 	.join("\n\n")}`,

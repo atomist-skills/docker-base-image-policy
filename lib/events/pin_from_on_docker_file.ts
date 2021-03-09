@@ -51,7 +51,10 @@ export const handler: EventHandler<
 					? `${l.repository.host}/${l.repository.name}`
 					: l.repository.name
 			}@${digest}`;
-			return imageName;
+			return {
+				line: l.number,
+				imageName,
+			};
 		});
 
 	return await github.persistChanges(
@@ -81,7 +84,7 @@ export const handler: EventHandler<
 			body:
 				fromLines.length === 1
 					? `This pull request pins the Docker base image \`${
-							fromLines[0].split("@")[0]
+							fromLines[0].imageName.split("@")[0]
 					  }\` in \`${file.path}\` to the current digest.
 
 \`\`\`
@@ -92,7 +95,7 @@ FROM ${fromLines[0]}
 ${fromLines
 	.map(
 		l => `\`\`\`
-FROM ${l}
+${_.padStart(l.line.toString(), 3)}: FROM ${l.imageName}
 \`\`\``,
 	)
 	.join("\n\n")}`,
@@ -105,11 +108,11 @@ FROM ${l}
 				).toString();
 				const replacedDockerfile = replaceFroms(
 					dockerfile,
-					fromLines,
+					fromLines.map(l => l.imageName),
 					ix,
 				);
 				await fs.writeFile(dockerfilePath, replacedDockerfile);
-				return `Pin Docker base image ${l.split("@")[0]}`;
+				return `Pin Docker base image ${l.imageName.split("@")[0]}`;
 			}),
 		},
 	);
