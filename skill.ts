@@ -36,8 +36,10 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 		github: resourceProvider.gitHub({ minRequired: 1 }),
 	},
 
-	runtime: {
-		timeout: 540,
+	containers: {
+		docker: {
+			image: "gcr.io/atomist-container-skills/docker-base-image-policy",
+		},
 	},
 
 	parameters: {
