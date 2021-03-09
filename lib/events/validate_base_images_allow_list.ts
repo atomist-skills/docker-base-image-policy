@@ -80,7 +80,7 @@ export const handler: EventHandler<
 					startLine: fromLine.number,
 					endLine: fromLine.number,
 					message: `${fromLine.repository.host} is not an allowed Docker registry`,
-					title: "Allowed Docker base image",
+					title: "Allowed Docker registry",
 				});
 			}
 		}
