@@ -15,6 +15,7 @@
  */
 
 export interface Configuration {
+	pinningRequired: boolean;
 	pinningLabels: string[];
 	pinningAssignReviewers: boolean;
 

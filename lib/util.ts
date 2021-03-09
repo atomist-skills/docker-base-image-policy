@@ -50,6 +50,31 @@ export function replaceLastFrom(
 	}
 }
 
+export function replaceFroms(dockerfile: string, images: string[]): string {
+	const fromRegexp = /^(FROM\s*)([\S]*)(.*)$/gim;
+	const matches: RegExpExecArray[] = [];
+	let match: RegExpExecArray;
+	do {
+		match = fromRegexp.exec(dockerfile);
+		if (match) {
+			matches.push(match);
+		}
+	} while (match);
+	let replacedDockerfile = dockerfile;
+	for (let i = 0; i < matches.length; i++) {
+		const match = matches[i];
+		const image = images[i];
+		const ix = replacedDockerfile.indexOf(match[0]);
+		replacedDockerfile =
+			replacedDockerfile.slice(0, ix) +
+			match[1] +
+			image +
+			match[3] +
+			replacedDockerfile.slice(ix + match[0].length);
+	}
+	return replacedDockerfile;
+}
+
 function findLastFrom(dockerfile: string): RegExpExecArray {
 	const fromRegexp = /^FROM\s*([\S]*)(.*)$/gim;
 	let match: RegExpExecArray;

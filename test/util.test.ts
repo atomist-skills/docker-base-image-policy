@@ -16,9 +16,62 @@
 
 import * as assert from "assert";
 
-import { replaceLastFrom } from "../lib/util";
+import { replaceFroms, replaceLastFrom } from "../lib/util";
 
 describe("util", () => {
+	describe("replaceFroms", () => {
+		it("should replace all in simple dockerfile", () => {
+			const dockerfile = `FROM ubuntu:focal`;
+			const replacedDockerfile = replaceFroms(dockerfile, [
+				"ubuntu:rolling",
+			]);
+			assert.strictEqual(replacedDockerfile, "FROM ubuntu:rolling");
+		});
+		it("should replace all in complex dockerfile", () => {
+			const dockerfile = `FROM clojure:openjdk-11-lein-slim-buster AS builder
+
+ARG MVN_ARTIFACTORYMAVENREPOSITORY_USER
+ARG MVN_ARTIFACTORYMAVENREPOSITORY_PWD
+
+RUN mkdir /build
+
+WORKDIR /build
+
+COPY project.clj /build
+COPY src /build/src
+COPY resources /build/resources
+
+RUN lein metajar
+
+FROM gcr.io/atomist-container-registry/java-atomist:openjdk11@sha256:123456 \\
+ AS runtime
+
+MAINTAINER Jim Clark <jim@atomist.com>
+
+RUN mkdir -p /usr/src/app \\\\
+    && mkdir -p /usr/src/app/bin \\\\
+    && mkdir -p /usr/src/app/lib
+
+WORKDIR /usr/src/app
+
+COPY --from=builder /build/target/lib /usr/src/app/lib
+
+COPY --from=builder /build/target/view-service.jar /usr/src/app/
+
+CMD ["-Djava.net.preferIPv4Stack=true", "-jar", "/usr/src/app/view-service.jar"]
+
+ENV APP_NAME=view
+
+EXPOSE 8080
+`;
+			const replacedDockerfile = replaceFroms(dockerfile, [
+				"clojure@sha256:12345",
+				"gcr.io/atomist-container-registry/java-atomist@sha256:123456",
+			]);
+			assert.strictEqual(replacedDockerfile, "FROM ubuntu:rolling");
+		});
+	});
+
 	describe("replaceFrom", () => {
 		it("should replace single from", () => {
 			const dockerfile = `FROM ubuntu:focal`;

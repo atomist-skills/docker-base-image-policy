@@ -43,6 +43,14 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 	},
 
 	parameters: {
+		pinningRequired: {
+			type: ParameterType.Boolean,
+			displayName: "Require pinned base images",
+			description:
+				"Fail policy when there are no base images that aren't pinned",
+			required: false,
+			defaultValue: true,
+		},
 		pinningLabels: {
 			type: ParameterType.StringArray,
 			displayName: "Pull request labels",
@@ -58,14 +66,14 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 		},
 		acceptImages: {
 			type: ParameterType.StringArray,
-			displayName: "Accepted base images",
-			description: "Accepted Docker base images with or without tags",
+			displayName: "Allowed base images",
+			description: "Allowed Docker base images with or without tags",
 			required: false,
 		},
 		acceptRegistries: {
 			type: ParameterType.StringArray,
-			displayName: "Accepted Docker registries",
-			description: "Accepted Docker registry host names",
+			displayName: "Allowed Docker registries",
+			description: "Allowed Docker registry host names",
 			required: false,
 		},
 		repoFilter: parameter.repoFilter(),

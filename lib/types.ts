@@ -24,24 +24,9 @@ export interface DockerManifestList {
 	}>;
 }
 
-export interface OnDockerfileFrom {
-	commit: subscription.datalog.Commit;
-	line: {
-		tag: string;
-		image: {
-			digest: string;
-		};
-		manifestList: {
-			digest: string;
-		};
-		repository: subscription.datalog.DockerImage["repository"];
-	};
-	file: {
-		path: string;
-	};
-}
+export type PinFromOnDockerFile = ValidateBaseImages;
 
-export interface OnDockerBaseImageUpdate {
+export interface PinFromOnDockerBaseImageUpdate {
 	commit: subscription.datalog.Commit;
 	image: subscription.datalog.DockerImage & DockerManifestList;
 	file: {
@@ -49,7 +34,7 @@ export interface OnDockerBaseImageUpdate {
 	};
 }
 
-export interface OnDockerfile {
+export interface ValidateBaseImages {
 	commit: subscription.datalog.Commit;
 	file: {
 		path: string;
@@ -66,6 +51,12 @@ export interface OnDockerfile {
 			};
 			tag: string;
 			digest: string;
+			image: {
+				digest: string;
+			};
+			manifestList: {
+				digest: string;
+			};
 		}>;
 	};
 }
