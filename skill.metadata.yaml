@@ -19,6 +19,8 @@ parameter_groups:
     display_name: Accepted Base Images
 
 parameters:
+  - name: pinningRequired
+    group: pinning
   - name: pinningLabels
     group: pinning
   - name: pinningAssignReviewers
