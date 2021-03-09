@@ -24,7 +24,18 @@ export interface DockerManifestList {
 	}>;
 }
 
-export type PinFromOnDockerFile = ValidateBaseImages;
+export type PinFromOnDockerFile = ValidateBaseImages & {
+	file: {
+		lines: Array<{
+			image: {
+				digest: string;
+			};
+			manifestList: {
+				digest: string;
+			};
+		}>;
+	};
+};
 
 export interface PinFromOnDockerBaseImageUpdate {
 	commit: subscription.datalog.Commit;
@@ -51,12 +62,6 @@ export interface ValidateBaseImages {
 			};
 			tag: string;
 			digest: string;
-			image: {
-				digest: string;
-			};
-			manifestList: {
-				digest: string;
-			};
 		}>;
 	};
 }
