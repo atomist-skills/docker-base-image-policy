@@ -15,3 +15,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Pin to manifest-list digest if available. [#2](https://github.com/atomist-skills/docker-base-image-policy/issues/2)
+-   Turn into container skill. [#7](https://github.com/atomist-skills/docker-base-image-policy/issues/7)
