@@ -16,7 +16,7 @@ parameter_groups:
   - name: pinning
     display_name: Base Image Pinning
   - name: accept
-    display_name: Accepted Base Images
+    display_name: Base Images Allow-list
 
 parameters:
   - name: pinningRequired
