@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { EventHandler, github, repository } from "@atomist/skill";
+import { EventHandler, github, project, repository } from "@atomist/skill";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 
@@ -44,7 +44,8 @@ export const handler: EventHandler<
 	const fromLines = _.orderBy(file.lines, "number")
 		.filter(l => l.instruction === "FROM")
 		.map(l => {
-			const digest = l.manifestList?.digest || l.image?.digest;
+			const digest =
+				l.digest || l.manifestList?.digest || l.image?.digest;
 			const imageName = `${
 				l.repository.host !== "hub.docker.com"
 					? `${l.repository.host}/${l.repository.name}`
@@ -52,12 +53,6 @@ export const handler: EventHandler<
 			}@${digest}`;
 			return imageName;
 		});
-
-	const dockerfilePath = project.path(file.path);
-	const dockerfile = (await fs.readFile(dockerfilePath)).toString();
-	const replacedDockerfile = replaceFroms(dockerfile, fromLines);
-
-	await fs.writeFile(dockerfilePath, replacedDockerfile);
 
 	return await github.persistChanges(
 		ctx,
@@ -103,10 +98,19 @@ FROM ${l}
 	.join("\n\n")}`,
 		},
 		{
-			message:
-				fromLines.length === 1
-					? `Pin Docker base image to current digest`
-					: `Pin Docker base images to current digests`,
+			editors: fromLines.map((l, ix) => async (p: project.Project) => {
+				const dockerfilePath = p.path(file.path);
+				const dockerfile = (
+					await fs.readFile(dockerfilePath)
+				).toString();
+				const replacedDockerfile = replaceFroms(
+					dockerfile,
+					fromLines,
+					ix,
+				);
+				await fs.writeFile(dockerfilePath, replacedDockerfile);
+				return `Pin Docker base image ${l.split("@")[0]}`;
+			}),
 		},
 	);
 };
