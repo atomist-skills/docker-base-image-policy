@@ -21,6 +21,7 @@ import {
 	repository,
 	status,
 } from "@atomist/skill";
+import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages } from "../types";
@@ -49,7 +50,7 @@ export const handler: EventHandler<
 		sha: commit.sha,
 		name: `${ctx.skill.name}/allow-list`,
 		title: "Allowed Docker base image",
-		body: `Checking Docker base image against configured allow-list`,
+		body: `Checking Docker base images in \`${ctx.data.file.path}\` against configured allow-list`,
 		reuse: true,
 	});
 
@@ -59,89 +60,99 @@ export const handler: EventHandler<
 	});
 
 	const file = ctx.data.file;
-	const repositoryLabel = file.lines?.find(l => l.repository);
-	const tagLabel = file.lines?.find(
-		l =>
-			l.instruction === "LABEL" &&
-			l.argsMap[0][0] === "com.atomist.follow-tag",
-	)?.argsMap[0][1];
-	const imageName = `${repositoryLabel.repository.name}:${
-		repositoryLabel.tag
-			? repositoryLabel.tag
-			: tagLabel
-			? tagLabel
-			: "latest"
-	}`;
+	const fromLines = file.lines?.filter(l => l.repository);
 
-	// Check registry
-	if (cfg.acceptRegistries?.length > 0 && repositoryLabel) {
-		if (!cfg.acceptRegistries.includes(repositoryLabel.repository.host)) {
-			// Set check
-			await check.update({
-				conclusion: "action_required",
-				body: `Used \`${repositoryLabel.repository.host}\` is not an allowed Docker registry`,
-				annotations: [
-					{
-						annotationLevel: "failure",
-						path: file.path,
-						startLine: repositoryLabel.number,
-						endLine: repositoryLabel.number,
-						message: `${repositoryLabel.repository.host} is not an allowed Docker registry`,
-						title: "Allowed Docker base image",
-					},
-				],
-			});
-			await result.failed();
-			return status.success(
-				`\`${repositoryLabel.repository.host}\` is not an allowed Docker registry`,
-			);
-		}
-	}
+	const errors = [];
+	const annotations: Array<github.UpdateCheck["annotations"][0]> = [];
 
-	// Check image and tag
-	if (cfg.acceptImages?.length > 0 && repositoryLabel) {
-		let allowed = false;
-		for (const acceptImage of cfg.acceptImages) {
-			const image = acceptImage.split(":")[0];
-			const tag = acceptImage.split(":")[1];
-			if (image === repositoryLabel.repository.name) {
-				if (!tag) {
-					allowed = true;
-					break;
-				} else if (repositoryLabel.tag === tag) {
-					allowed = true;
-				} else if (tagLabel === tag) {
-					allowed = true;
-				}
+	for (const fromLine of fromLines) {
+		// Check registry
+		if (cfg.acceptRegistries?.length > 0) {
+			if (!cfg.acceptRegistries.includes(fromLine.repository.host)) {
+				errors.push(
+					`${_.padStart(fromLine.number.toString(), 3)}: FROM ${
+						fromLine.argsString
+					}`,
+				);
+				annotations.push({
+					annotationLevel: "failure",
+					path: file.path,
+					startLine: fromLine.number,
+					endLine: fromLine.number,
+					message: `${fromLine.repository.host} is not an allowed Docker registry`,
+					title: "Allowed Docker base image",
+				});
 			}
 		}
 
-		if (!allowed) {
-			await check.update({
-				conclusion: "action_required",
-				body: `Used image \`${imageName}\` is not an allowed Docker base image`,
-				annotations: [
-					{
-						annotationLevel: "failure",
-						path: file.path,
-						startLine: repositoryLabel.number,
-						endLine: repositoryLabel.number,
-						message: `${imageName} is not an allowed Docker base image`,
-						title: "Allowed Docker base image",
-					},
-				],
-			});
-			await result.failed();
-			return status.success(
-				`\`${imageName}\` is not an allowed Docker base image`,
-			);
+		const imageName = `${
+			fromLine.repository.host !== "hub.docker.com"
+				? `${fromLine.repository.host}/${fromLine.repository.name}`
+				: fromLine.repository.name
+		}${fromLine.tag ? `:${fromLine.tag}` : ""}`;
+
+		// Check image and tag
+		if (cfg.acceptImages?.length > 0) {
+			let allowed = false;
+			for (const acceptImage of cfg.acceptImages) {
+				const image = acceptImage.split(":")[0];
+				const tag = acceptImage.split(":")[1];
+				if (image === fromLine.repository.name) {
+					if (!tag) {
+						allowed = true;
+						break;
+					} else if (fromLine.tag === tag) {
+						allowed = true;
+					}
+				}
+			}
+
+			if (!allowed) {
+				errors.push(
+					`${_.padStart(fromLine.number.toString(), 3)}: FROM ${
+						fromLine.argsString
+					}`,
+				);
+				annotations.push({
+					annotationLevel: "failure",
+					path: file.path,
+					startLine: fromLine.number,
+					endLine: fromLine.number,
+					message: `${imageName} is not an allowed Docker base image`,
+					title: "Allowed Docker base image",
+				});
+			}
 		}
 	}
 
-	await check.update({
-		conclusion: "success",
-		body: `Used image \`${imageName}\` is an allowed Docker base image`,
-	});
-	await result.success();
-	return status.success(`\`${imageName}\` is an allowed Docker base image`);
+	if (errors.length === 0 && annotations.length === 0) {
+		await check.update({
+			conclusion: "success",
+			body: `All base images used in \`${ctx.data.file.path}\` are on configured allow-list`,
+		});
+		await result.success();
+		return status.success(
+			`All base images used in \`${ctx.data.file.path}\` are on allow-list`,
+		);
+	} else {
+		await check.update({
+			conclusion: "action_required",
+			body: `Following base images used in \`${
+				ctx.data.file.path
+			}\` violate configured allow-list
+
+${errors
+	.map(
+		e => `\`\`\`
+${e}
+\`\`\``,
+	)
+	.join("\n\n")}`,
+			annotations,
+		});
+		await result.failed();
+		return status.success(
+			`Detected not allowed base images used in \`${ctx.data.file.path}\``,
+		);
+	}
 };
