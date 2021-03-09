@@ -34,7 +34,7 @@ export const handler: EventHandler<
 
 	if (!(cfg.acceptRegistries?.length > 0 || cfg.acceptImages?.length > 0)) {
 		return status
-			.success(`Allow-list base image policy not configured`)
+			.success(`Allowlist base image policy not configured`)
 			.hidden();
 	}
 
@@ -48,15 +48,15 @@ export const handler: EventHandler<
 
 	const check = await github.createCheck(ctx, id, {
 		sha: commit.sha,
-		name: `${ctx.skill.name}/allow-list`,
+		name: `${ctx.skill.name}/allow`,
 		title: "Allowed Docker base image",
-		body: `Checking Docker base images in \`${ctx.data.file.path}\` against configured allow-list`,
+		body: `Checking Docker base images in \`${ctx.data.file.path}\` against configured allowlist`,
 		reuse: true,
 	});
 
 	const result = await policy.result.pending(ctx, {
 		sha: commit.sha,
-		name: `${ctx.skill.name}/allow-list`,
+		name: `${ctx.skill.name}/allow`,
 	});
 
 	const file = ctx.data.file;
@@ -128,18 +128,18 @@ export const handler: EventHandler<
 	if (errors.length === 0 && annotations.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: `All base images used in \`${ctx.data.file.path}\` are on configured allow-list`,
+			body: `All base images used in \`${ctx.data.file.path}\` are on configured allowlist`,
 		});
 		await result.success();
 		return status.success(
-			`All base images used in \`${ctx.data.file.path}\` are on allow-list`,
+			`All base images used in \`${ctx.data.file.path}\` are on allowlist`,
 		);
 	} else {
 		await check.update({
 			conclusion: "action_required",
 			body: `Following base images used in \`${
 				ctx.data.file.path
-			}\` violate configured allow-list
+			}\` violate configured allowlist
 
 ${errors
 	.map(
