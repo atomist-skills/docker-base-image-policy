@@ -43,11 +43,6 @@
      (tx-entity-attr-value :docker.file.from/manifest-list ?from-line ?manifest-list)
      [?manifest-list :docker.manifest-list/digest ?digest]))
 
- ;; either the digest is not present in the dockerfile, or it's a different one
- (or-join [?from-line ?digest]
-   [(missing? $ ?from-line :docker.file.from/digest)]
-   (not [?from-line :docker.file.from/digest ?digest]))
-
  ;; get docker.file and git.commit
  [?from-line :docker.file.line/file ?docker-file]
  [?docker-file :docker.file/commits ?commit]
@@ -69,6 +64,7 @@
              [?other-from-line :docker.file.line/instruction "FROM"]
              (or-join [?other-from-line]
                [?other-from-line :docker.file.from/image _]
+               [?other-from-line :docker.file.from/digest _]
                [?other-from-line :docker.file.from/manifest-list _]
                (and
                  [?other-from-line :docker.file.from/repository ?repository]
