@@ -24,8 +24,6 @@
                                                             :docker.file.line/args-string
                                                             :docker.file.from/tag
                                                             :docker.file.from/digest
-                                                            {:docker.file.from/image [:docker.image/digest]}
-                                                            {:docker.file.from/manifest-list [:docker.manifest-list/digest]}
                                                             {:docker.file.from/repository [:docker.repository/host
                                                                                            (:docker.repository/repository
                                                                                              :as
@@ -35,46 +33,7 @@
  $before-db
  %
  :where
- (or-join [?from-line ?digest]
-   (and
-     (tx-entity-attr-value :docker.file.from/image ?from-line ?base-image)
-     [?base-image :docker.image/digest ?digest])
-   (and
-     (tx-entity-attr-value :docker.file.from/manifest-list ?from-line ?manifest-list)
-     [?manifest-list :docker.manifest-list/digest ?digest]))
-
- ;; get docker.file and git.commit
- [?from-line :docker.file.line/file ?docker-file]
- [?docker-file :docker.file/commits ?commit]
-
- ;; check that all from lines have images or manifest-list
- [(q (quote [:find (count ?other-from-line)
-             :in $ ?docker-file
-             :where
-             [?other-from-line :docker.file.line/file ?docker-file]
-             [?other-from-line :docker.file.line/instruction "FROM"]
-             ])
-    $ ?docker-file)
-  [[?total-from-count]]]
-
- [(q (quote [:find (count ?other-from-line)
-             :in $ ?docker-file
-             :where
-             [?other-from-line :docker.file.line/file ?docker-file]
-             [?other-from-line :docker.file.line/instruction "FROM"]
-             (or-join [?other-from-line]
-               [?other-from-line :docker.file.from/image _]
-               [?other-from-line :docker.file.from/digest _]
-               [?other-from-line :docker.file.from/manifest-list _]
-               (and
-                 [?other-from-line :docker.file.from/repository ?repository]
-                 [?repository :docker.repository/repository "scratch"]
-                 [?repository :docker.repository/host "hub.docker.com"]))
-             ])
-    $ ?docker-file)
-  [[?from-count]]]
-
- [(= ?total-from-count ?from-count)]
+ (tx-entity-attr-value :docker.file/commits ?docker-file ?commit)
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
