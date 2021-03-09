@@ -18,3 +18,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Pin to manifest-list digest if available. [#2](https://github.com/atomist-skills/docker-base-image-policy/issues/2)
 -   Turn into container skill. [#7](https://github.com/atomist-skills/docker-base-image-policy/issues/7)
+-   Validate all used base images against allow-list. [#15](https://github.com/atomist-skills/docker-base-image-policy/issues/15)
