@@ -51,6 +51,13 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 			required: false,
 			defaultValue: true,
 		},
+		pinningPullRequests: {
+			type: ParameterType.Boolean,
+			displayName: "Raise pull requests",
+			description:
+				"Raise pull requests to pin Docker base images to digests",
+			required: false,
+		},
 		pinningLabels: {
 			type: ParameterType.StringArray,
 			displayName: "Pull request labels",

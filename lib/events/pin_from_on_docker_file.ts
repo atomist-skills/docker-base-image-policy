@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { EventHandler, github, project, repository } from "@atomist/skill";
+import {
+	EventHandler,
+	github,
+	project,
+	repository,
+	status,
+} from "@atomist/skill";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 
@@ -29,6 +35,10 @@ export const handler: EventHandler<
 	const cfg = ctx.configuration.parameters;
 	const commit = ctx.data.commit;
 	const file = ctx.data.file;
+
+	if (!cfg.pinningPullRequests) {
+		return status.success(`Pin base image policy not configured`).hidden();
+	}
 
 	const project = await ctx.project.clone(
 		repository.gitHub({
