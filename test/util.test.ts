@@ -68,7 +68,45 @@ EXPOSE 8080
 				"clojure@sha256:12345",
 				"gcr.io/atomist-container-registry/java-atomist@sha256:123456",
 			]);
-			assert.strictEqual(replacedDockerfile, "FROM ubuntu:rolling");
+			assert.strictEqual(
+				replacedDockerfile,
+				`FROM clojure@sha256:12345 AS builder
+
+ARG MVN_ARTIFACTORYMAVENREPOSITORY_USER
+ARG MVN_ARTIFACTORYMAVENREPOSITORY_PWD
+
+RUN mkdir /build
+
+WORKDIR /build
+
+COPY project.clj /build
+COPY src /build/src
+COPY resources /build/resources
+
+RUN lein metajar
+
+FROM gcr.io/atomist-container-registry/java-atomist@sha256:123456 \\
+ AS runtime
+
+MAINTAINER Jim Clark <jim@atomist.com>
+
+RUN mkdir -p /usr/src/app \\\\
+    && mkdir -p /usr/src/app/bin \\\\
+    && mkdir -p /usr/src/app/lib
+
+WORKDIR /usr/src/app
+
+COPY --from=builder /build/target/lib /usr/src/app/lib
+
+COPY --from=builder /build/target/view-service.jar /usr/src/app/
+
+CMD ["-Djava.net.preferIPv4Stack=true", "-jar", "/usr/src/app/view-service.jar"]
+
+ENV APP_NAME=view
+
+EXPOSE 8080
+`,
+			);
 		});
 	});
 
