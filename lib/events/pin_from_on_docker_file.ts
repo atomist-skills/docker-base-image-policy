@@ -57,11 +57,12 @@ export const handler: EventHandler<
 		.map(l => {
 			const digest =
 				l.digest || l.manifestList?.digest || l.image?.digest;
+			const tag = cfg.pinningIncludeTag ? `:${l.tag}` : "";
 			const imageName = `${
 				l.repository.host !== "hub.docker.com"
 					? `${l.repository.host}/${l.repository.name}`
 					: l.repository.name
-			}@${digest}`;
+			}${tag}@${digest}`;
 			return {
 				line: l.number,
 				currentImageName: l.argsString.split(" ")[0],

@@ -18,6 +18,7 @@ export interface Configuration {
 	pinningRequired: boolean;
 
 	pinningPullRequests: boolean;
+	pinningIncludeTag: boolean;
 	pinningLabels: string[];
 	pinningAssignReviewers: boolean;
 

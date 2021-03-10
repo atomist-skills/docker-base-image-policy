@@ -58,6 +58,12 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 				"Raise pull requests to pin Docker base images to digests",
 			required: false,
 		},
+		pinningIncludeTag: {
+			type: ParameterType.Boolean,
+			displayName: "Preserve Docker tag",
+			description: "Keep the Docker tag in the `FROM` image when pinning",
+			required: false,
+		},
 		pinningLabels: {
 			type: ParameterType.StringArray,
 			displayName: "Pull request labels",

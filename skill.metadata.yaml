@@ -31,6 +31,12 @@ parameters:
       name: pinningPullRequests
       values:
         - true
+  - name: pinningIncludeTag
+    group: pinning
+    condition:
+      name: pinningPullRequests
+      values:
+        - true
   - name: pinningAssignReviewers
     group: pinning
     condition:
