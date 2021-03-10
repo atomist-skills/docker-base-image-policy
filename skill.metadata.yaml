@@ -25,13 +25,13 @@ parameters:
     group: pinning
   - name: pinningPullRequests
     group: pinning
-  - name: pinningLabels
+  - name: pinningIncludeTag
     group: pinning
     condition:
       name: pinningPullRequests
       values:
         - true
-  - name: pinningIncludeTag
+  - name: pinningLabels
     group: pinning
     condition:
       name: pinningPullRequests
