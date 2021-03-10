@@ -128,7 +128,7 @@ ${_.padStart(l.line.toString(), 3)}: FROM ${l.imageName}
 				return `${prefix}${truncate(
 					l.imageName.split("@")[0],
 					50 - prefix.length,
-					{ direction: "middle", separator: "..." },
+					{ direction: "start", separator: "..." },
 				)}
 
 ${l.currentImageName}
