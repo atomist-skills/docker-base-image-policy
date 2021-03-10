@@ -64,7 +64,7 @@ export const handler: EventHandler<
 			}@${digest}`;
 			return {
 				line: l.number,
-				currentImageName: l.argsString.split[" "][0],
+				currentImageName: l.argsString.split(" ")[0],
 				imageName,
 			};
 		});
