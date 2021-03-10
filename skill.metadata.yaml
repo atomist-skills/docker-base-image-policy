@@ -38,7 +38,17 @@ parameters:
       values:
         - true
 
+  - name: acceptRequired
+    group: accept
   - name: acceptImages
     group: accept
+    condition:
+      name: acceptRequired
+      values:
+        - true
   - name: acceptRegistries
     group: accept
+    condition:
+      name: acceptRequired
+      values:
+        - true

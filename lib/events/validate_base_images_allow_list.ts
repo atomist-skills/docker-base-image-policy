@@ -32,7 +32,10 @@ export const handler: EventHandler<
 > = async ctx => {
 	const cfg = ctx.configuration.parameters;
 
-	if (!(cfg.acceptRegistries?.length > 0 || cfg.acceptImages?.length > 0)) {
+	if (
+		!(cfg.acceptRegistries?.length > 0 || cfg.acceptImages?.length > 0) &&
+		!cfg.acceptRequired
+	) {
 		return status
 			.success(`Allowlist base image policy not configured`)
 			.hidden();
