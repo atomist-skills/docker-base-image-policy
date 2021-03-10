@@ -20,6 +20,7 @@ import {
 	project,
 	repository,
 	status,
+	truncate,
 } from "@atomist/skill";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
@@ -63,6 +64,7 @@ export const handler: EventHandler<
 			}@${digest}`;
 			return {
 				line: l.number,
+				currentImageName: l.argsString.split[" "][0],
 				imageName,
 			};
 		});
@@ -98,7 +100,7 @@ export const handler: EventHandler<
 					  }\` in \`${file.path}\` to the current digest.
 
 \`\`\`
-FROM ${fromLines[0]}
+FROM ${fromLines[0].imageName}
 \`\`\``
 					: `This pull request pins the following Docker base images to their current digests.
 					
@@ -122,7 +124,16 @@ ${_.padStart(l.line.toString(), 3)}: FROM ${l.imageName}
 					ix,
 				);
 				await fs.writeFile(dockerfilePath, replacedDockerfile);
-				return `Pin Docker base image ${l.imageName.split("@")[0]}`;
+				const prefix = "Pin Docker image ";
+				return `${prefix}${truncate(
+					l.imageName.split("@")[0],
+					50 - prefix.length,
+					{ direction: "middle", separator: "..." },
+				)}
+
+${l.currentImageName}
+-> 
+${l.imageName}`;
 			}),
 		},
 	);
