@@ -16,14 +16,6 @@
 
 import { subscription } from "@atomist/skill";
 
-export interface DockerManifestList {
-	manifestList: Array<{
-		digest: string;
-		tags: string[];
-		repository: subscription.datalog.DockerImage["repository"];
-	}>;
-}
-
 export type PinFromOnDockerFile = ValidateBaseImages & {
 	file: {
 		lines: Array<{
@@ -36,14 +28,6 @@ export type PinFromOnDockerFile = ValidateBaseImages & {
 		}>;
 	};
 };
-
-export interface PinFromOnDockerBaseImageUpdate {
-	commit: subscription.datalog.Commit;
-	image: subscription.datalog.DockerImage & DockerManifestList;
-	file: {
-		path: string;
-	};
-}
 
 export interface ValidateBaseImages {
 	commit: subscription.datalog.Commit;
