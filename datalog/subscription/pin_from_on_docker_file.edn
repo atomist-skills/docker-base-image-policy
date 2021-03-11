@@ -30,10 +30,7 @@
                                                                                            (:docker.repository/repository
                                                                                              :as
                                                                                              :name)]}]}])
- :in
- $
- $before-db
- %
+ :in $ $before-db %
  :where
  (or-join [?from-line ?digest]
    (and
@@ -50,7 +47,7 @@
 
  ;; get docker.file and git.commit
  [?from-line :docker.file.line/file ?docker-file]
- [?docker-file :docker.file/commits ?commit]
+ [?docker-file :docker.file/commit ?commit]
 
  ;; check that all from lines have images or manifest-list
  [(q (quote [:find (count ?other-from-line)

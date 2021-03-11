@@ -28,12 +28,9 @@
                                                                                            (:docker.repository/repository
                                                                                              :as
                                                                                              :name)]}]}])
- :in
- $
- $before-db
- %
+ :in $ $before-db %
  :where
- (tx-entity-attr-value :docker.file/commits ?docker-file ?commit)
+ (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]

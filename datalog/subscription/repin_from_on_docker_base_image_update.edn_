@@ -18,7 +18,6 @@
  (pull
    ?new-image
    [:schema/entity-type
-    :docker.image/image
     :docker.image/sha
     :docker.image/digest
     :docker.image/tags
@@ -35,27 +34,28 @@
                                  :as
                                  :name)]}])
  (pull ?docker-file [:schema/entity-type :docker.file/path])
- :in
- $
- $before-db
- %
+ :in $ $before-db %
  :where
  (tx-entity-attr-value :docker.image/digest ?new-image ?new-image-digest)
 
  [?new-image :docker.image/tags ?new-image-tag]
- [?new-image :docker.image/digest ?new-image-digest]
+ [?new-image :docker.image/repository ?new-image-repository]
 
  ;; base images with different digest
  [?base-image :docker.image/tags ?new-image-tag]
+ [?base-image :docker.image/repository ?new-image-repository]
  (not [?base-image :docker.image/digest ?new-image-digest])
 
- ;; get the dockerfile path
- [?image :docker.image/docker-file ?docker-file]
+ ;; get all from instructions that use the base-image
+ [?from-line :docker.file.from/tag ?new-image-tag]
+ [?from-line :docker.file.from/repository ?new-image-repository]
 
- ;; images at tip of default branch that use this base image
- [?image :docker.image/from ?base-image]
- [?image :docker.image/sha ?sha]
+ ;; get the dockerfile path
+ [?from-line :docker.file.line/file ?docker-file]
+ [?docker-file :docker.file/commits ?commit]
+
  [?commit :git.commit/sha ?sha]
  [?ref :git.ref/commit ?commit]
  (is-default-branch? ?ref)
+ (repo-selected? ?repo)
  ]
