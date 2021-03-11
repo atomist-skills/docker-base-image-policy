@@ -56,7 +56,7 @@ export const handler: EventHandler<
 		.filter(l => l.instruction === "FROM")
 		.map(l => {
 			const digest =
-				l.digest || l.manifestList?.digest || l.image?.digest;
+				l.manifestList?.digest || l.image?.digest || l.digest;
 			const tag = cfg.pinningIncludeTag && l.tag ? `:${l.tag}` : "";
 			const imageName = `${
 				l.repository.host !== "hub.docker.com"
@@ -67,8 +67,11 @@ export const handler: EventHandler<
 				line: l.number,
 				currentImageName: l.argsString.split(" ")[0],
 				imageName,
+				changed: l.digest !== l.manifestList?.digest || l.image?.digest,
 			};
 		});
+	const changedFromLines = fromLines.filter(f => f.changed);
+	const maxLength = _.maxBy(changedFromLines, "line").line.toString().length;
 
 	return await github.persistChanges(
 		ctx,
@@ -91,24 +94,28 @@ export const handler: EventHandler<
 				: undefined,
 			labels: cfg.pinningLabels,
 			title:
-				fromLines.length === 1
+				changedFromLines.length === 1
 					? `Pin Docker base image to current digest`
 					: `Pin Docker base images to current digests`,
 			body:
-				fromLines.length === 1
+				changedFromLines.length === 1
 					? `This pull request pins the Docker base image \`${
-							fromLines[0].imageName.split("@")[0]
+							changedFromLines[0].imageName.split("@")[0]
 					  }\` in \`${file.path}\` to the current digest.
 
 \`\`\`
-FROM ${fromLines[0].imageName}
+${_.padStart(changedFromLines[0].line.toString(), maxLength)}: FROM ${
+							changedFromLines[0].imageName
+					  }
 \`\`\``
-					: `This pull request pins the following Docker base images to their current digests.
+					: `This pull request pins the following Docker base images in \`${
+							file.path
+					  }\` to their current digests.
 					
-${fromLines
+${changedFromLines
 	.map(
 		l => `\`\`\`
-${_.padStart(l.line.toString(), 3)}: FROM ${l.imageName}
+${_.padStart(l.line.toString(), maxLength)}: FROM ${l.imageName}
 \`\`\``,
 	)
 	.join("\n\n")}`,
