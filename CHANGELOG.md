@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.0...HEAD)
 
+### Changed
+
+-   Enable pinning pull requests by default. [c1fed2c](https://github.com/atomist-skills/docker-base-image-policy/commit/c1fed2cf559f4f16e1c384ccfb846ce7c67fa78c)
+
 ## [0.1.0](https://github.com/atomist-skills/docker-base-image-policy/tree/0.1.0) - 2021-03-11
 
 ### Added
