@@ -16,14 +16,16 @@
 
 import { subscription } from "@atomist/skill";
 
-export type PinFromOnDockerFile = ValidateBaseImages & {
+export type CommitAndDockerfile = ValidateBaseImages & {
 	file: {
 		lines: Array<{
 			image: {
 				digest: string;
+				tags: string[];
 			};
 			manifestList: {
 				digest: string;
+				tags: string[];
 			};
 		}>;
 	};

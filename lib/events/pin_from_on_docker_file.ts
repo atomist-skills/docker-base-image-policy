@@ -26,11 +26,11 @@ import * as fs from "fs-extra";
 import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
-import { PinFromOnDockerFile } from "../types";
+import { CommitAndDockerfile } from "../types";
 import { replaceFroms } from "../util";
 
 export const handler: EventHandler<
-	PinFromOnDockerFile,
+	CommitAndDockerfile,
 	Configuration
 > = async ctx => {
 	const cfg = ctx.configuration.parameters;

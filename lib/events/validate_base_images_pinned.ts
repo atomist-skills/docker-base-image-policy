@@ -24,10 +24,10 @@ import {
 import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
-import { ValidateBaseImages } from "../types";
+import { CommitAndDockerfile } from "../types";
 
 export const handler: EventHandler<
-	ValidateBaseImages,
+	CommitAndDockerfile,
 	Configuration
 > = async ctx => {
 	const cfg = ctx.configuration.parameters;
@@ -63,11 +63,38 @@ export const handler: EventHandler<
 	const unpinnedFromLines = _.orderBy(file.lines, "number")
 		.filter(l => l.instruction === "FROM")
 		.filter(l => !l.digest);
+	const pinnedFromLines = _.orderBy(file.lines, "number")
+		.filter(l => l.instruction === "FROM")
+		.filter(l => l.digest)
+		.filter(l => !l.tag)
+		.filter(
+			l => l.manifestList?.tags?.length > 0 || l.image?.tags?.length > 0,
+		);
+	const maxLength = _.maxBy(unpinnedFromLines, "number").number.toString()
+		.length;
+
+	const pinnedFromLinesBody = pinnedFromLines
+		.map(l => {
+			const from = `${_.padStart(l.number.toString(), maxLength)}: FROM ${
+				l.argsString
+			}`;
+			return `
+\`\`\`
+${from}
+${_.padStart(" ", from.split(":sha")[0].length)}\`--> ${
+				l.manifestList?.tags?.[0] || l.image?.tags?.[0]
+			} 
+\`\`\``;
+		})
+		.join("\n\n");
 
 	if (unpinnedFromLines.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: "All Docker base images are pinned",
+			body: `All Docker base images are pinned as required
+
+${pinnedFromLinesBody}			
+			`,
 		});
 		await result.success();
 		return status.success(`All Docker base images are pinned`);
@@ -80,10 +107,20 @@ ${unpinnedFromLines
 	.map(
 		l => `
 \`\`\`
-${_.padStart(l.number.toString(), 3)}: FROM ${l.argsString}
+${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
 \`\`\``,
 	)
-	.join("\n\n")}`,
+	.join("\n\n")}${
+				pinnedFromLines.length > 0
+					? `
+
+---
+
+The following Docker base images are pinned
+
+${pinnedFromLinesBody}`
+					: ""
+			}`,
 			annotations: unpinnedFromLines.map(l => ({
 				title: "Pinned base image",
 				message: `${l.repository.name} is not pinned`,
@@ -93,7 +130,7 @@ ${_.padStart(l.number.toString(), 3)}: FROM ${l.argsString}
 				path: file.path,
 			})),
 		});
-		await result.success();
+		await result.failed();
 		return status.success(`Unpinned Docker base images detected`);
 	}
 };
