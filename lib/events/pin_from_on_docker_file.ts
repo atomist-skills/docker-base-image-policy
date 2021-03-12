@@ -95,8 +95,8 @@ export const handler: EventHandler<
 			labels: cfg.pinningLabels,
 			title:
 				changedFromLines.length === 1
-					? `Pin Docker base image to current digest`
-					: `Pin Docker base images to current digests`,
+					? `Pin Docker base image in ${file.path}`
+					: `Pin Docker base images in ${file.path}`,
 			body:
 				changedFromLines.length === 1
 					? `This pull request pins the Docker base image \`${
