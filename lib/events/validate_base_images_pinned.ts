@@ -15,11 +15,13 @@
  */
 
 import {
+	EventContext,
 	EventHandler,
 	github,
 	policy,
 	repository,
 	status,
+	subscription,
 } from "@atomist/skill";
 import * as _ from "lodash";
 
@@ -64,12 +66,18 @@ export const handler: EventHandler<
 		l => l.instruction === "FROM",
 	);
 	const unpinnedFromLines = fromLines.filter(l => !l.digest);
-	const pinnedFromLines = fromLines
-		.filter(l => l.digest)
-		.filter(l => !l.tag)
-		.filter(
-			l => l.manifestList?.tags?.length > 0 || l.image?.tags?.length > 0,
-		);
+	const pinnedFromLines = fromLines.filter(l => l.digest);
+	for (const pinnedFromLine of pinnedFromLines) {
+		if (!pinnedFromLine.tag) {
+			// attempt to load the missing tag
+			pinnedFromLine.tag = await findTag(
+				ctx,
+				pinnedFromLine.repository,
+				pinnedFromLine.digest,
+			);
+		}
+	}
+
 	const maxLength = _.maxBy(fromLines, "number").number.toString().length;
 
 	const pinnedFromLinesBody = pinnedFromLines
@@ -77,12 +85,9 @@ export const handler: EventHandler<
 			const from = `${_.padStart(l.number.toString(), maxLength)}: FROM ${
 				l.argsString
 			}`;
-			return `
-\`\`\`
+			return `\`\`\`
 ${from}
-${_.padStart(" ", from.split(":sha")[0].length)}\`--> ${
-				l.manifestList?.tags?.[0] || l.image?.tags?.[0]
-			} 
+${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag} 
 \`\`\``;
 		})
 		.join("\n\n");
@@ -116,7 +121,7 @@ ${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
 ---
 
 The following Docker base images are pinned
-
+													  
 ${pinnedFromLinesBody}`
 					: ""
 			}`,
@@ -133,3 +138,40 @@ ${pinnedFromLinesBody}`
 		return status.success(`Unpinned Docker base images detected`);
 	}
 };
+
+async function findTag(
+	ctx: EventContext<any, Configuration>,
+	repository: subscription.datalog.DockerImage["repository"],
+	digest: string,
+): Promise<string> {
+	try {
+		const result = await ctx.datalog.query<string>(
+			`[:find
+ ?tags
+ :in $ $before-db %
+ :where
+ [?repository :docker.repository/host ?host]
+ [?repository :docker.repository/repository ?name]
+ (or-join
+  [?tags]
+  (and
+   [?image :docker.image/repository ?repository]
+   [?image :docker.image/digest ?digest]
+   [?image :docker.image/tags ?tags])
+  (and
+   [?manifest :docker.manifest-list/repository ?repository]
+   [?manifest :docker.manifest-list/digest ?digest]
+   [?manifest :docker.manifest-list/tags ?tags]))]
+`,
+			{
+				digest,
+				host: repository.host,
+				name: repository.name,
+			},
+			{ mode: "obj" },
+		);
+		return result[0];
+	} catch (e) {
+		return undefined;
+	}
+}

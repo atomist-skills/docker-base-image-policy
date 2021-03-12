@@ -63,7 +63,9 @@ export const handler: EventHandler<
 	});
 
 	const file = ctx.data.file;
-	const fromLines = file.lines?.filter(l => l.repository);
+	const fromLines = _.orderBy(file.lines, "number").filter(
+		l => l.instruction === "FROM",
+	);
 	const maxLength = _.maxBy(fromLines, "number").number.toString().length;
 
 	const errors = [];
