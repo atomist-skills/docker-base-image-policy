@@ -60,18 +60,17 @@ export const handler: EventHandler<
 		name: `${ctx.skill.name}/pinned`,
 	});
 
-	const unpinnedFromLines = _.orderBy(file.lines, "number")
-		.filter(l => l.instruction === "FROM")
-		.filter(l => !l.digest);
-	const pinnedFromLines = _.orderBy(file.lines, "number")
-		.filter(l => l.instruction === "FROM")
+	const fromLines = _.orderBy(file.lines, "number").filter(
+		l => l.instruction === "FROM",
+	);
+	const unpinnedFromLines = fromLines.filter(l => !l.digest);
+	const pinnedFromLines = fromLines
 		.filter(l => l.digest)
 		.filter(l => !l.tag)
 		.filter(
 			l => l.manifestList?.tags?.length > 0 || l.image?.tags?.length > 0,
 		);
-	const maxLength = _.maxBy(unpinnedFromLines, "number").number.toString()
-		.length;
+	const maxLength = _.maxBy(fromLines, "number").number.toString().length;
 
 	const pinnedFromLinesBody = pinnedFromLines
 		.map(l => {
