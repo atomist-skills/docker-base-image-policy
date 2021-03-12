@@ -53,7 +53,7 @@ export const handler: EventHandler<
 		sha: commit.sha,
 		name: `${ctx.skill.name}/pinned/${file.path.toLowerCase()}`,
 		title: "Pinned Docker base images",
-		body: `Checking if Docker base images are pinned`,
+		body: `Checking if Docker base images in \`${file.path}\` are pinned`,
 		reuse: true,
 	});
 
@@ -95,7 +95,7 @@ ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}
 	if (unpinnedFromLines.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: `All Docker base images are pinned as required
+			body: `All Docker base images in \`${file.path}\` are pinned as required
 
 ${pinnedFromLinesBody}			
 			`,
@@ -105,7 +105,9 @@ ${pinnedFromLinesBody}
 	} else {
 		await check.update({
 			conclusion: "action_required",
-			body: `The following Docker base images are not pinned as required
+			body: `The following Docker base images in \`${
+				file.path
+			}\` are not pinned as required
 
 ${unpinnedFromLines
 	.map(
@@ -120,7 +122,7 @@ ${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
 
 ---
 
-The following Docker base images are pinned
+The following Docker base images in \`${file.path}\` are pinned
 													  
 ${pinnedFromLinesBody}`
 					: ""
