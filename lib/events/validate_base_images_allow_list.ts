@@ -64,6 +64,7 @@ export const handler: EventHandler<
 
 	const file = ctx.data.file;
 	const fromLines = file.lines?.filter(l => l.repository);
+	const maxLength = _.maxBy(fromLines, "number").number.toString().length;
 
 	const errors = [];
 	const annotations: Array<github.UpdateCheck["annotations"][0]> = [];
@@ -73,9 +74,10 @@ export const handler: EventHandler<
 		if (cfg.acceptRegistries?.length > 0) {
 			if (!cfg.acceptRegistries.includes(fromLine.repository.host)) {
 				errors.push(
-					`${_.padStart(fromLine.number.toString(), 3)}: FROM ${
-						fromLine.argsString
-					}`,
+					`${_.padStart(
+						fromLine.number.toString(),
+						maxLength,
+					)}: FROM ${fromLine.argsString}`,
 				);
 				annotations.push({
 					annotationLevel: "failure",
@@ -112,9 +114,10 @@ export const handler: EventHandler<
 
 			if (!allowed) {
 				errors.push(
-					`${_.padStart(fromLine.number.toString(), 3)}: FROM ${
-						fromLine.argsString
-					}`,
+					`${_.padStart(
+						fromLine.number.toString(),
+						maxLength,
+					)}: FROM ${fromLine.argsString}`,
 				);
 				annotations.push({
 					annotationLevel: "failure",
