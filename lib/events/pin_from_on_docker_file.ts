@@ -87,7 +87,7 @@ export const handler: EventHandler<
 			defaultBranch: commit.repo.defaultBranch,
 		},
 		{
-			branch: `atomist/pin-docker-base-image`,
+			branch: `atomist/pin-docker-base-image/${file.path.toLowerCase()}`,
 			assignReviewer: !!cfg.pinningAssignReviewers,
 			reviewers: cfg.pinningAssignReviewers
 				? [commit.author.login]
