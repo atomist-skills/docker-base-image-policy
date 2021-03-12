@@ -42,6 +42,7 @@ export const handler: EventHandler<
 	}
 
 	const commit = ctx.data.commit;
+	const file = ctx.data.file;
 
 	const id = repository.gitHub({
 		owner: commit.repo.org.name,
@@ -51,7 +52,7 @@ export const handler: EventHandler<
 
 	const check = await github.createCheck(ctx, id, {
 		sha: commit.sha,
-		name: `${ctx.skill.name}/allow`,
+		name: `${ctx.skill.name}/allow/${file.path.toLowerCase()}`,
 		title: "Allowed Docker base image",
 		body: `Checking Docker base images in \`${ctx.data.file.path}\` against configured allowlist`,
 		reuse: true,
@@ -62,7 +63,6 @@ export const handler: EventHandler<
 		name: `${ctx.skill.name}/allow`,
 	});
 
-	const file = ctx.data.file;
 	const fromLines = _.orderBy(file.lines, "number").filter(
 		l => l.instruction === "FROM",
 	);

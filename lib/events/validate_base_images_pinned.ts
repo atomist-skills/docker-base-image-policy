@@ -51,7 +51,7 @@ export const handler: EventHandler<
 
 	const check = await github.createCheck(ctx, id, {
 		sha: commit.sha,
-		name: `${ctx.skill.name}/pinned`,
+		name: `${ctx.skill.name}/pinned/${file.path.toLowerCase()}`,
 		title: "Pinned Docker base images",
 		body: `Checking if Docker base images are pinned`,
 		reuse: true,
