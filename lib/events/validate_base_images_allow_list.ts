@@ -61,6 +61,7 @@ export const handler: EventHandler<
 	const result = await policy.result.pending(ctx, {
 		sha: commit.sha,
 		name: `${ctx.skill.name}/allow`,
+		title: "Docker Allowed Base Images Policy",
 	});
 
 	const fromLines = _.orderBy(file.lines, "number").filter(
@@ -136,7 +137,13 @@ export const handler: EventHandler<
 	if (errors.length === 0 && annotations.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: `All base images used in \`${ctx.data.file.path}\` are on configured allowlist`,
+			body: `${policy.badge.link({
+				sha: commit.sha,
+				workspace: ctx.workspaceId,
+				policy: `${ctx.skill.name}/allow`,
+			})}
+			
+All base images used in \`${ctx.data.file.path}\` are on configured allowlist`,
 		});
 		await result.success();
 		return status.success(
@@ -145,7 +152,13 @@ export const handler: EventHandler<
 	} else {
 		await check.update({
 			conclusion: "action_required",
-			body: `Following base images used in \`${
+			body: `${policy.badge.link({
+				sha: commit.sha,
+				workspace: ctx.workspaceId,
+				policy: `${ctx.skill.name}/allow`,
+			})}
+			
+Following base images used in \`${
 				ctx.data.file.path
 			}\` violate configured allowlist
 
@@ -158,7 +171,7 @@ ${e}
 	.join("\n\n")}`,
 			annotations,
 		});
-		await result.failed();
+		await result.failed(policy.result.ResultEntitySeverity.High);
 		return status.success(
 			`Detected not allowed base images used in \`${ctx.data.file.path}\``,
 		);

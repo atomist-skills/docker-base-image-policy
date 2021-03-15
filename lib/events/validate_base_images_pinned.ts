@@ -60,6 +60,7 @@ export const handler: EventHandler<
 	const result = await policy.result.pending(ctx, {
 		sha: commit.sha,
 		name: `${ctx.skill.name}/pinned`,
+		title: `Docker Pinned Base Images Policy`,
 	});
 
 	const fromLines = _.orderBy(file.lines, "number").filter(
@@ -95,7 +96,13 @@ ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}
 	if (unpinnedFromLines.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: `All Docker base images in \`${file.path}\` are pinned as required
+			body: `${policy.badge.link({
+				sha: commit.sha,
+				workspace: ctx.workspaceId,
+				policy: `${ctx.skill.name}/pinned`,
+			})}
+
+All Docker base images in \`${file.path}\` are pinned as required
 
 ${pinnedFromLinesBody}			
 			`,
@@ -105,9 +112,13 @@ ${pinnedFromLinesBody}
 	} else {
 		await check.update({
 			conclusion: "action_required",
-			body: `The following Docker base images in \`${
-				file.path
-			}\` are not pinned as required
+			body: `${policy.badge.link({
+				sha: commit.sha,
+				workspace: ctx.workspaceId,
+				policy: `${ctx.skill.name}/pinned`,
+			})}
+
+The following Docker base images in \`${file.path}\` are not pinned as required
 
 ${unpinnedFromLines
 	.map(
@@ -136,7 +147,7 @@ ${pinnedFromLinesBody}`
 				path: file.path,
 			})),
 		});
-		await result.failed();
+		await result.failed(policy.result.ResultEntitySeverity.High);
 		return status.success(`Unpinned Docker base images detected`);
 	}
 };
