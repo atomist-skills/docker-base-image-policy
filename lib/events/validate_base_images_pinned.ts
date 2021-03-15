@@ -53,7 +53,7 @@ export const handler: EventHandler<
 	const check = await github.createCheck(ctx, id, {
 		sha: commit.sha,
 		name,
-		title: "Pinned Docker base images",
+		title: "Pinned Docker base image policy",
 		body: `Checking if Docker base images in \`${file.path}\` are pinned`,
 		reuse: true,
 	});
@@ -97,11 +97,13 @@ ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}
 	if (unpinnedFromLines.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: `![badge](${await policy.badge.link({
+			body: `${await policy.badge.markdownLink({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
 				policy: name,
-			})})
+				title: "Pinned Docker base image policy",
+				state: policy.result.ResultEntityState.Success,
+			})}
 
 All Docker base images in \`${file.path}\` are pinned as required
 
@@ -113,11 +115,14 @@ ${pinnedFromLinesBody}
 	} else {
 		await check.update({
 			conclusion: "action_required",
-			body: `![badge](${await policy.badge.link({
+			body: `${await policy.badge.markdownLink({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
 				policy: name,
-			})})
+				title: "Pinned Docker base image policy",
+				state: policy.result.ResultEntityState.Failure,
+				severity: policy.result.ResultEntitySeverity.High,
+			})}
 
 The following Docker base images in \`${file.path}\` are not pinned as required
 

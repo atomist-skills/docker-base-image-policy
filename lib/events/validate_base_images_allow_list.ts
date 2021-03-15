@@ -54,7 +54,7 @@ export const handler: EventHandler<
 	const check = await github.createCheck(ctx, id, {
 		sha: commit.sha,
 		name,
-		title: "Allowed Docker base image",
+		title: "Allowed Docker base image policy",
 		body: `Checking Docker base images in \`${ctx.data.file.path}\` against configured allowlist`,
 		reuse: true,
 	});
@@ -138,11 +138,13 @@ export const handler: EventHandler<
 	if (errors.length === 0 && annotations.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: `![badge](${await policy.badge.link({
+			body: `${await policy.badge.markdownLink({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
 				policy: name,
-			})})
+				title: "Allowed Docker base image policy",
+				state: policy.result.ResultEntityState.Success,
+			})}
 			
 All base images used in \`${ctx.data.file.path}\` are on configured allowlist`,
 		});
@@ -153,11 +155,14 @@ All base images used in \`${ctx.data.file.path}\` are on configured allowlist`,
 	} else {
 		await check.update({
 			conclusion: "action_required",
-			body: `![badge](${await policy.badge.link({
+			body: `${await policy.badge.markdownLink({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
 				policy: name,
-			})})
+				title: "Allowed Docker base image policy",
+				state: policy.result.ResultEntityState.Failure,
+				severity: policy.result.ResultEntitySeverity.High,
+			})}
 			
 Following base images used in \`${
 				ctx.data.file.path
