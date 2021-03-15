@@ -100,7 +100,7 @@ ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}
 			body: `${await policy.badge.markdownLink({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
-				policy: name,
+				name,
 				title: "Pinned Docker base image policy",
 				state: policy.result.ResultEntityState.Success,
 			})}
@@ -118,7 +118,7 @@ ${pinnedFromLinesBody}
 			body: `${await policy.badge.markdownLink({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
-				policy: name,
+				name,
 				title: "Pinned Docker base image policy",
 				state: policy.result.ResultEntityState.Failure,
 				severity: policy.result.ResultEntitySeverity.High,

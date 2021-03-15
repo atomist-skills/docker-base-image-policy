@@ -141,7 +141,7 @@ export const handler: EventHandler<
 			body: `${await policy.badge.markdownLink({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
-				policy: name,
+				name,
 				title: "Allowed Docker base image policy",
 				state: policy.result.ResultEntityState.Success,
 			})}
@@ -158,7 +158,7 @@ All base images used in \`${ctx.data.file.path}\` are on configured allowlist`,
 			body: `${await policy.badge.markdownLink({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
-				policy: name,
+				name,
 				title: "Allowed Docker base image policy",
 				state: policy.result.ResultEntityState.Failure,
 				severity: policy.result.ResultEntitySeverity.High,
