@@ -61,7 +61,7 @@ export const handler: EventHandler<
 	const result = await policy.result.pending(ctx, {
 		sha: commit.sha,
 		name,
-		title: `Docker Pinned Base Image Policy`,
+		title: `Pinned Docker base image policy`,
 	});
 
 	const fromLines = _.orderBy(file.lines, "number").filter(
@@ -100,7 +100,7 @@ ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}
 			body: `![badge](${await policy.badge.link({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
-				policy: `${ctx.skill.name}/pinned`,
+				policy: name,
 			})})
 
 All Docker base images in \`${file.path}\` are pinned as required

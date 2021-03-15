@@ -62,7 +62,7 @@ export const handler: EventHandler<
 	const result = await policy.result.pending(ctx, {
 		sha: commit.sha,
 		name,
-		title: "Docker Allowed Base Images Policy",
+		title: "Allowed Docker base image policy",
 	});
 
 	const fromLines = _.orderBy(file.lines, "number").filter(
