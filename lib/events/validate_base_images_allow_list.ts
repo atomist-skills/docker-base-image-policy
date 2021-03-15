@@ -137,7 +137,7 @@ export const handler: EventHandler<
 	if (errors.length === 0 && annotations.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: `${policy.badge.link({
+			body: `${await policy.badge.link({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
 				policy: `${ctx.skill.name}/allow`,
@@ -152,7 +152,7 @@ All base images used in \`${ctx.data.file.path}\` are on configured allowlist`,
 	} else {
 		await check.update({
 			conclusion: "action_required",
-			body: `${policy.badge.link({
+			body: `${await policy.badge.link({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
 				policy: `${ctx.skill.name}/allow`,

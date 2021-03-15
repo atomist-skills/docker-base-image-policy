@@ -96,7 +96,7 @@ ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}
 	if (unpinnedFromLines.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: `${policy.badge.link({
+			body: `${await policy.badge.link({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
 				policy: `${ctx.skill.name}/pinned`,
@@ -112,7 +112,7 @@ ${pinnedFromLinesBody}
 	} else {
 		await check.update({
 			conclusion: "action_required",
-			body: `${policy.badge.link({
+			body: `${await policy.badge.link({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
 				policy: `${ctx.skill.name}/pinned`,
