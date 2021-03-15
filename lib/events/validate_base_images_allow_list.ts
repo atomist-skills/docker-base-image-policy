@@ -50,9 +50,10 @@ export const handler: EventHandler<
 		credential: { token: commit.repo.org.installationToken, scopes: [] },
 	});
 
+	const name = `${ctx.skill.name}/allow/${file.path.toLowerCase()}`;
 	const check = await github.createCheck(ctx, id, {
 		sha: commit.sha,
-		name: `${ctx.skill.name}/allow/${file.path.toLowerCase()}`,
+		name,
 		title: "Allowed Docker base image",
 		body: `Checking Docker base images in \`${ctx.data.file.path}\` against configured allowlist`,
 		reuse: true,
@@ -60,7 +61,7 @@ export const handler: EventHandler<
 
 	const result = await policy.result.pending(ctx, {
 		sha: commit.sha,
-		name: `${ctx.skill.name}/allow`,
+		name,
 		title: "Docker Allowed Base Images Policy",
 	});
 
@@ -137,11 +138,11 @@ export const handler: EventHandler<
 	if (errors.length === 0 && annotations.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: `${await policy.badge.link({
+			body: `![badge](${await policy.badge.link({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
-				policy: `${ctx.skill.name}/allow`,
-			})}
+				policy: name,
+			})})
 			
 All base images used in \`${ctx.data.file.path}\` are on configured allowlist`,
 		});
@@ -152,11 +153,11 @@ All base images used in \`${ctx.data.file.path}\` are on configured allowlist`,
 	} else {
 		await check.update({
 			conclusion: "action_required",
-			body: `${await policy.badge.link({
+			body: `![badge](${await policy.badge.link({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
-				policy: `${ctx.skill.name}/allow`,
-			})}
+				policy: name,
+			})})
 			
 Following base images used in \`${
 				ctx.data.file.path

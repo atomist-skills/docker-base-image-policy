@@ -49,9 +49,10 @@ export const handler: EventHandler<
 		credential: { token: commit.repo.org.installationToken, scopes: [] },
 	});
 
+	const name = `${ctx.skill.name}/pinned/${file.path.toLowerCase()}`;
 	const check = await github.createCheck(ctx, id, {
 		sha: commit.sha,
-		name: `${ctx.skill.name}/pinned/${file.path.toLowerCase()}`,
+		name,
 		title: "Pinned Docker base images",
 		body: `Checking if Docker base images in \`${file.path}\` are pinned`,
 		reuse: true,
@@ -59,8 +60,8 @@ export const handler: EventHandler<
 
 	const result = await policy.result.pending(ctx, {
 		sha: commit.sha,
-		name: `${ctx.skill.name}/pinned`,
-		title: `Docker Pinned Base Images Policy`,
+		name,
+		title: `Docker Pinned Base Image Policy`,
 	});
 
 	const fromLines = _.orderBy(file.lines, "number").filter(
@@ -96,11 +97,11 @@ ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}
 	if (unpinnedFromLines.length === 0) {
 		await check.update({
 			conclusion: "success",
-			body: `${await policy.badge.link({
+			body: `![badge](${await policy.badge.link({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
 				policy: `${ctx.skill.name}/pinned`,
-			})}
+			})})
 
 All Docker base images in \`${file.path}\` are pinned as required
 
@@ -112,11 +113,11 @@ ${pinnedFromLinesBody}
 	} else {
 		await check.update({
 			conclusion: "action_required",
-			body: `${await policy.badge.link({
+			body: `![badge](${await policy.badge.link({
 				sha: commit.sha,
 				workspace: ctx.workspaceId,
-				policy: `${ctx.skill.name}/pinned`,
-			})}
+				policy: name,
+			})})
 
 The following Docker base images in \`${file.path}\` are not pinned as required
 
