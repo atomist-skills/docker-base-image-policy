@@ -17,7 +17,6 @@
 import {
 	EventContext,
 	EventHandler,
-	github,
 	policy,
 	repository,
 	status,
@@ -26,105 +25,82 @@ import {
 import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
+import { policyHandler } from "../policy_handler";
 import { CommitAndDockerfile } from "../types";
 
-export const handler: EventHandler<
+export const handler1: EventHandler<
 	CommitAndDockerfile,
 	Configuration
-> = async ctx => {
-	const cfg = ctx.configuration.parameters;
+> = policyHandler<CommitAndDockerfile, Configuration>({
+	condition: async ctx => {
+		const cfg = ctx.configuration.parameters;
 
-	if (!cfg.pinningRequired) {
-		return status
-			.success(`Pinned base image policy not configured`)
-			.hidden();
-	}
-
-	const commit = ctx.data.commit;
-	const file = ctx.data.file;
-
-	const id = repository.gitHub({
-		owner: commit.repo.org.name,
-		repo: commit.repo.name,
-		credential: { token: commit.repo.org.installationToken, scopes: [] },
-	});
-
-	const name = `${ctx.skill.name}/pinned/${file.path.toLowerCase()}`;
-	const check = await github.createCheck(ctx, id, {
-		sha: commit.sha,
-		name,
-		title: "Pinned Docker base image policy",
-		body: `Checking if Docker base images in \`${file.path}\` are pinned`,
-		reuse: true,
-	});
-
-	const result = await policy.result.pending(ctx, {
-		sha: commit.sha,
-		name,
-		title: `Pinned Docker base image policy`,
-	});
-
-	const fromLines = _.orderBy(file.lines, "number").filter(
-		l => l.instruction === "FROM",
-	);
-	const unpinnedFromLines = fromLines.filter(l => !l.digest);
-	const pinnedFromLines = fromLines.filter(l => l.digest);
-	for (const pinnedFromLine of pinnedFromLines) {
-		if (!pinnedFromLine.tag) {
-			// attempt to load the missing tag
-			pinnedFromLine.tag = await findTag(
-				ctx,
-				pinnedFromLine.repository,
-				pinnedFromLine.digest,
-			);
+		if (!cfg.pinningRequired) {
+			return status
+				.success(`Pinned base image policy not configured`)
+				.hidden();
 		}
-	}
+		return undefined;
+	},
+	id: async ctx =>
+		repository.gitHub({
+			sha: ctx.data.commit.sha,
+			owner: ctx.data.commit.repo.org.name,
+			repo: ctx.data.commit.repo.name,
+			credential: {
+				token: ctx.data.commit.repo.org.installationToken,
+				scopes: [],
+			},
+		}),
+	setup: async ctx => ({
+		name: `${ctx.skill.name}/pinned/${ctx.data.file.path.toLowerCase()}`,
+		title: "Pinned Docker base image policy",
+		body: `Checking if Docker base images in \`${ctx.data.file.path}\` are pinned`,
+	}),
+	execute: async (ctx, options) => {
+		const file = ctx.data.file;
 
-	const maxLength = _.maxBy(fromLines, "number").number.toString().length;
+		const fromLines = _.orderBy(file.lines, "number").filter(
+			l => l.instruction === "FROM",
+		);
+		const unpinnedFromLines = fromLines.filter(l => !l.digest);
+		const pinnedFromLines = fromLines.filter(l => l.digest);
+		for (const pinnedFromLine of pinnedFromLines) {
+			if (!pinnedFromLine.tag) {
+				// attempt to load the missing tag
+				pinnedFromLine.tag = await findTag(
+					ctx,
+					pinnedFromLine.repository,
+					pinnedFromLine.digest,
+				);
+			}
+		}
 
-	const pinnedFromLinesBody = pinnedFromLines
-		.map(l => {
-			const from = `${_.padStart(l.number.toString(), maxLength)}: FROM ${
-				l.argsString
-			}`;
-			return `\`\`\`
+		const maxLength = _.maxBy(fromLines, "number").number.toString().length;
+
+		const pinnedFromLinesBody = pinnedFromLines
+			.map(l => {
+				const from = `${_.padStart(
+					l.number.toString(),
+					maxLength,
+				)}: FROM ${l.argsString}`;
+				return `\`\`\`
 ${from}
 ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag} 
 \`\`\``;
-		})
-		.join("\n\n");
+			})
+			.join("\n\n");
 
-	if (unpinnedFromLines.length === 0) {
-		await check.update({
-			conclusion: "success",
-			body: `${await policy.badge.markdownLink({
-				sha: commit.sha,
-				workspace: ctx.workspaceId,
-				name,
-				title: "Pinned Docker base image policy",
+		if (unpinnedFromLines.length === 0) {
+			return {
 				state: policy.result.ResultEntityState.Success,
-			})}
-
-All Docker base images in \`${file.path}\` are pinned as required
-
-${pinnedFromLinesBody}			
-			`,
-		});
-		await result.success();
-		return status.success(`All Docker base images are pinned`);
-	} else {
-		await check.update({
-			conclusion: "action_required",
-			body: `${await policy.badge.markdownLink({
-				sha: commit.sha,
-				workspace: ctx.workspaceId,
-				name,
-				title: "Pinned Docker base image policy",
-				state: policy.result.ResultEntityState.Failure,
-				severity: policy.result.ResultEntitySeverity.High,
-			})}
-
-The following Docker base images in \`${file.path}\` are not pinned as required
+				status: status.success(`All Docker base images are pinned`),
+				body: `All Docker base images in \`${file.path}\` are pinned as required\n\n${pinnedFromLinesBody}`,
+			};
+		} else {
+			const body = `The following Docker base images in \`${
+				file.path
+			}\` are not pinned as required
 
 ${unpinnedFromLines
 	.map(
@@ -143,20 +119,24 @@ The following Docker base images in \`${file.path}\` are pinned
 													  
 ${pinnedFromLinesBody}`
 					: ""
-			}`,
-			annotations: unpinnedFromLines.map(l => ({
-				title: "Pinned base image",
-				message: `${l.repository.name} is not pinned`,
-				annotationLevel: "failure",
-				startLine: l.number,
-				endLine: l.number,
-				path: file.path,
-			})),
-		});
-		await result.failed(policy.result.ResultEntitySeverity.High);
-		return status.success(`Unpinned Docker base images detected`);
-	}
-};
+			}`;
+			return {
+				state: policy.result.ResultEntityState.Failure,
+				severity: policy.result.ResultEntitySeverity.High,
+				status: status.success(`Unpinned Docker base images detected`),
+				body,
+				annotations: unpinnedFromLines.map(l => ({
+					title: "Pinned base image",
+					message: `${l.repository.name} is not pinned`,
+					annotationLevel: "failure",
+					startLine: l.number,
+					endLine: l.number,
+					path: file.path,
+				})),
+			};
+		}
+	},
+});
 
 async function findTag(
 	ctx: EventContext<any, Configuration>,
