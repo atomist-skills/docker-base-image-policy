@@ -60,7 +60,7 @@ export const handler: EventHandler<
 		title: "Allowed Docker base image policy",
 		body: `Checking Docker base images in \`${ctx.data.file.path}\` against configured allowlist`,
 	}),
-	execute: async (ctx, options) => {
+	execute: async ctx => {
 		const cfg = ctx.configuration.parameters;
 		const file = ctx.data.file;
 

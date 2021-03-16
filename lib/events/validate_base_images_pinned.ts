@@ -57,7 +57,7 @@ export const handler: EventHandler<
 		title: "Pinned Docker base image policy",
 		body: `Checking if Docker base images in \`${ctx.data.file.path}\` are pinned`,
 	}),
-	execute: async (ctx, options) => {
+	execute: async ctx => {
 		const file = ctx.data.file;
 
 		const fromLines = _.orderBy(file.lines, "number").filter(
