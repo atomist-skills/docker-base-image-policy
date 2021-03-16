@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.2...HEAD)
 
+### Changed
+
+-   Required Docker Capabilities. [#37](https://github.com/atomist-skills/docker-base-image-policy/issues/37)
+
 ## [0.1.2](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.1...0.1.2) - 2021-03-15
 
 ### Added
