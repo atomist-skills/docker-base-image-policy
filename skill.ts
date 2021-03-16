@@ -107,7 +107,7 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 				minRequired: 0,
 				usage: "analysis",
 				displayName: "Docker registry",
-				scopes: [CapabilityScope.Configuration],
+				scopes: [CapabilityScope.Subscription],
 			},
 		],
 	},
