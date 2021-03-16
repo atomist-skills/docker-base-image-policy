@@ -28,7 +28,7 @@ import { Configuration } from "../configuration";
 import { policyHandler } from "../policy_handler";
 import { CommitAndDockerfile } from "../types";
 
-export const handler1: EventHandler<
+export const handler: EventHandler<
 	CommitAndDockerfile,
 	Configuration
 > = policyHandler<CommitAndDockerfile, Configuration>({
