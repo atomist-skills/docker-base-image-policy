@@ -42,6 +42,9 @@
      (tx-entity-attr-value :docker.file.from/manifest-list ?from-line ?manifest-list)
      [?manifest-list :docker.manifest-list/digest ?digest]))
 
+ ;; check pinning pull requests are enabled
+ (get-config-value "pinningPullRequests" true true)
+
  ;; either the digest is not present in the dockerfile, or it's a different one
  (or-join [?from-line ?digest]
    [(missing? $ ?from-line :docker.file.from/digest)]

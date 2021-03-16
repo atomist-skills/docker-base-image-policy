@@ -35,6 +35,9 @@
  :where
  (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
 
+ ;; check pinning is required
+ (get-config-value "pinningRequired" true true)
+
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
  (repo-selected? ?repo)
