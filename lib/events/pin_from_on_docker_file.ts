@@ -68,6 +68,7 @@ export const handler: EventHandler<
 				currentImageName: l.argsString.split(" ")[0],
 				imageName,
 				changed: l.digest !== l.manifestList?.digest || l.image?.digest,
+				tag: l.manifestList?.tags?.[0] || l.image?.tags?.[0],
 			};
 		});
 	const changedFromLines = fromLines.filter(f => f.changed);
@@ -103,21 +104,13 @@ export const handler: EventHandler<
 							changedFromLines[0].imageName.split("@")[0]
 					  }\` in \`${file.path}\` to the current digest.
 
-\`\`\`
-${_.padStart(changedFromLines[0].line.toString(), maxLength)}: FROM ${
-							changedFromLines[0].imageName
-					  }
-\`\`\``
+${fromLine(changedFromLines[0], maxLength, cfg.pinningIncludeTag)}`
 					: `This pull request pins the following Docker base images in \`${
 							file.path
 					  }\` to their current digests.
 					
 ${changedFromLines
-	.map(
-		l => `\`\`\`
-${_.padStart(l.line.toString(), maxLength)}: FROM ${l.imageName}
-\`\`\``,
-	)
+	.map(l => fromLine(l, maxLength, cfg.pinningIncludeTag))
 	.join("\n\n")}`,
 		},
 		{
@@ -146,3 +139,20 @@ ${l.imageName}`;
 		},
 	);
 };
+
+function fromLine(
+	l: { line: number; imageName: string; tag: string },
+	maxLength: number,
+	tagIncluded: boolean,
+): string {
+	const from = `${_.padStart(l.line.toString(), maxLength)}: FROM ${
+		l.imageName
+	}`;
+	return `\`\`\`
+${from}${
+		!tagIncluded && l.tag
+			? `\n${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}`
+			: ""
+	} 
+\`\`\``;
+}
