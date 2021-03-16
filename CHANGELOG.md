@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Required Docker Capabilities. [#37](https://github.com/atomist-skills/docker-base-image-policy/issues/37)
+-   Configuration. [#41](https://github.com/atomist-skills/docker-base-image-policy/issues/41)
 
 ## [0.1.2](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.1...0.1.2) - 2021-03-15
 
