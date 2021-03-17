@@ -24,7 +24,8 @@
                                                             :docker.file.line/args-string
                                                             :docker.file.from/tag
                                                             :docker.file.from/digest
-                                                            {:docker.file.from/image [:docker.image/digest]}
+                                                            {:docker.file.from/image [:docker.image/digest
+                                                                                      :docker.image/tags]}
                                                             {:docker.file.from/manifest-list [:docker.manifest-list/digest
                                                                                               :docker.manifest-list/tags]}
                                                             {:docker.file.from/repository [:docker.repository/host
