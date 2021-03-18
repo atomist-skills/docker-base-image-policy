@@ -22,6 +22,18 @@ import { ValidateBaseImages } from "../types";
 import { linkFile } from "../util";
 
 export const handler = policy.handler<ValidateBaseImages, Configuration>({
+	when: ctx => {
+		const files = ctx.data.commit.files.filter(f =>
+			/Dockerfile/.test(f.path),
+		).length;
+		const dockerFiles = ctx.data.commit.dockerFiles.length;
+		if (files !== dockerFiles) {
+			return status
+				.success("Waiting for all Dockerfiles to be parsed")
+				.hidden();
+		}
+		return undefined;
+	},
 	id: ctx => ({
 		sha: ctx.data.commit.sha,
 		owner: ctx.data.commit.repo.org.name,
@@ -34,7 +46,7 @@ export const handler = policy.handler<ValidateBaseImages, Configuration>({
 	details: ctx => ({
 		name: `${ctx.skill.name}/pinned`,
 		title: "Pinned Docker base image policy",
-		body: `Checking if Docker base images in ${ctx.data.commit.files
+		body: `Checking if Docker base images in ${ctx.data.commit.dockerFiles
 			.map(f => `\`${f.path}\``)
 			.join(", ")} are pinned`,
 	}),
@@ -43,10 +55,10 @@ export const handler = policy.handler<ValidateBaseImages, Configuration>({
 		const linesByFile: Array<{
 			path: string;
 			unpinned: string;
-			unpinnedLines: ValidateBaseImages["commit"]["files"][0]["lines"];
+			unpinnedLines: ValidateBaseImages["commit"]["dockerFiles"][0]["lines"];
 			pinned: string;
 		}> = [];
-		for (const file of ctx.data.commit.files) {
+		for (const file of ctx.data.commit.dockerFiles) {
 			const fromLines = _.orderBy(file.lines, "number").filter(
 				l => l.instruction === "FROM",
 			);

@@ -46,7 +46,8 @@ export interface CommitAndDockerfile {
 
 export interface ValidateBaseImages {
 	commit: subscription.datalog.Commit & {
-		files: Array<{
+		files: Array<{ path: string }>;
+		dockerFiles: Array<{
 			path: string;
 			sha: string;
 			lines: Array<{

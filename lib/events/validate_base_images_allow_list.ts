@@ -22,6 +22,18 @@ import { ValidateBaseImages } from "../types";
 import { linkFile } from "../util";
 
 export const handler = policy.handler<ValidateBaseImages, Configuration>({
+	when: ctx => {
+		const files = ctx.data.commit.files.filter(f =>
+			/Dockerfile/.test(f.path),
+		).length;
+		const dockerFiles = ctx.data.commit.dockerFiles.length;
+		if (files !== dockerFiles) {
+			return status
+				.success("Waiting for all Dockerfiles to be parsed")
+				.hidden();
+		}
+		return undefined;
+	},
 	id: ctx => ({
 		sha: ctx.data.commit.sha,
 		owner: ctx.data.commit.repo.org.name,
@@ -34,7 +46,7 @@ export const handler = policy.handler<ValidateBaseImages, Configuration>({
 	details: ctx => ({
 		name: `${ctx.skill.name}/allow`,
 		title: "Allowed Docker base image policy",
-		body: `Checking Docker base images in ${ctx.data.commit.files
+		body: `Checking Docker base images in ${ctx.data.commit.dockerFiles
 			.map(f => `\`${f.path}\``)
 			.join(", ")} against configured allowlist`,
 	}),
@@ -45,7 +57,7 @@ export const handler = policy.handler<ValidateBaseImages, Configuration>({
 		const errors: Array<{ path: string; error: string }> = [];
 		const annotations: Array<github.UpdateCheck["annotations"][0]> = [];
 
-		for (const file of ctx.data.commit.files) {
+		for (const file of ctx.data.commit.dockerFiles) {
 			const fromLines = _.orderBy(file.lines, "number").filter(
 				l => l.instruction === "FROM",
 			);
@@ -126,7 +138,7 @@ export const handler = policy.handler<ValidateBaseImages, Configuration>({
 						commit.repo.org.name
 					}/${commit.repo.name}@${commit.sha.slice(0, 7)}\``,
 				),
-				body: `All base images used in ${ctx.data.commit.files
+				body: `All base images used in ${ctx.data.commit.dockerFiles
 					.map(f => `\`${f.path}\``)
 					.join(", ")} are on configured allowlist`,
 			};
