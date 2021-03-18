@@ -93,7 +93,7 @@ ${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
 			});
 		}
 
-		if (!linesByFile.some(l => l.unpinned.length > 0)) {
+		if (!linesByFile.some(l => l.unpinned)) {
 			return {
 				state: policy.result.ResultEntityState.Success,
 				status: status.success(
@@ -109,7 +109,7 @@ ${linesByFile
 
 ${f.pinned}`,
 	)
-	.join("\n\n")}`,
+	.join("\n\n---\n\n")}`,
 			};
 		} else {
 			const body = `The following Docker base images are not pinned as required:
@@ -119,7 +119,7 @@ ${linesByFile
 	.map(l => f => `\`${f.path}\`
 
 ${f.unpinned}`)
-	.join("\n\n")}${
+	.join("\n\n---\n\n")}${
 				linesByFile.filter(l => l.pinned).length > 0
 					? `
 
