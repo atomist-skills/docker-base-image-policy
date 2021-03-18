@@ -118,9 +118,11 @@ ${f.pinned}`,
 
 ${linesByFile
 	.filter(l => l.unpinned)
-	.map(l => f => `${linkFile(f.path, commit)}
+	.map(
+		f => `${linkFile(f.path, commit)}
 
-${f.unpinned}`)
+${f.unpinned}`,
+	)
 	.sort()
 	.join("\n\n---\n\n")}${
 				linesByFile.filter(l => l.pinned).length > 0
