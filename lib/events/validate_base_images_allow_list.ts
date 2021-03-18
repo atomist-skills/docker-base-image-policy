@@ -145,7 +145,9 @@ ${e}
 \`\`\``,
 	)
 	.join("\n\n")}`,
-).join("\n\n---\n\n")}`;
+)
+	.sort()
+	.join("\n\n---\n\n")}`;
 
 			return {
 				state: policy.result.ResultEntityState.Failure,

@@ -110,6 +110,7 @@ ${linesByFile
 
 ${f.pinned}`,
 	)
+	.sort()
 	.join("\n\n---\n\n")}`,
 			};
 		} else {
@@ -120,6 +121,7 @@ ${linesByFile
 	.map(l => f => `${linkFile(f.path, commit)}
 
 ${f.unpinned}`)
+	.sort()
 	.join("\n\n---\n\n")}${
 				linesByFile.filter(l => l.pinned).length > 0
 					? `
@@ -135,6 +137,7 @@ ${linesByFile
 
 ${f.pinned}`,
 	)
+	.sort()
 	.join("\n\n")}`
 					: ""
 			}`;
