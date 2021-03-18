@@ -40,4 +40,25 @@
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
- (repo-selected? ?repo)]
+ (repo-selected? ?repo)
+
+ ;; ensure that all Dockerfile have been parsed
+ [(q (quote [:find (count ?file)
+             :in $ ?commit
+             :where
+             [?commit :git.commit/file ?file]
+             [?file :git.file/path ?file-path]
+             (string-match ?file-path "Dockerfile" _)
+             ])
+    $ ?commit)
+  [[?file-count]]]
+
+ [(q (quote [:find (count ?docker-file)
+             :in $ ?commit
+             :where
+             [?docker-file :docker.file/commit ?commit]
+             ])
+    $ ?commit)
+  [[?docker-file-count]]]
+
+ [(= ?file-count ?docker-file-count)]]
