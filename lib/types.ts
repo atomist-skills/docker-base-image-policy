@@ -16,26 +16,10 @@
 
 import { subscription } from "@atomist/skill";
 
-export type CommitAndDockerfile = ValidateBaseImages & {
-	file: {
-		lines: Array<{
-			image: {
-				digest: string;
-				tags: string[];
-			};
-			manifestList: {
-				digest: string;
-				tags: string[];
-			};
-		}>;
-	};
-};
-
-export interface ValidateBaseImages {
+export interface CommitAndDockerfile {
 	commit: subscription.datalog.Commit;
 	file: {
 		path: string;
-		sha: string;
 		lines: Array<{
 			number: number;
 			instruction: string;
@@ -48,6 +32,36 @@ export interface ValidateBaseImages {
 			};
 			tag: string;
 			digest: string;
+			image: {
+				digest: string;
+				tags: string[];
+			};
+			manifestList: {
+				digest: string;
+				tags: string[];
+			};
+		}>;
+	};
+}
+
+export interface ValidateBaseImages {
+	commit: subscription.datalog.Commit & {
+		files: Array<{
+			path: string;
+			sha: string;
+			lines: Array<{
+				number: number;
+				instruction: string;
+				argsMap: Record<string, string>;
+				argsArray: string[];
+				argsString: string;
+				repository: {
+					host: string;
+					name: string;
+				};
+				tag: string;
+				digest: string;
+			}>;
 		}>;
 	};
 }

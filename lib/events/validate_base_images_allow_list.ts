@@ -14,152 +14,145 @@
  * limitations under the License.
  */
 
-import {
-	EventHandler,
-	github,
-	policy,
-	repository,
-	status,
-} from "@atomist/skill";
+import { github, policy, status } from "@atomist/skill";
 import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
-import { policyHandler } from "../policy_handler";
 import { ValidateBaseImages } from "../types";
 
-export const handler: EventHandler<
-	ValidateBaseImages,
-	Configuration
-> = policyHandler({
-	condition: async ctx => {
-		const cfg = ctx.configuration.parameters;
-		if (
-			!(
-				cfg.acceptRegistries?.length > 0 || cfg.acceptImages?.length > 0
-			) &&
-			!cfg.acceptRequired
-		) {
-			return status
-				.success(`Allowlist base image policy not configured`)
-				.hidden();
-		}
-		return undefined;
-	},
-	id: async ctx =>
-		repository.gitHub({
-			sha: ctx.data.commit.sha,
-			owner: ctx.data.commit.repo.org.name,
-			repo: ctx.data.commit.repo.name,
-			credential: {
-				token: ctx.data.commit.repo.org.installationToken,
-				scopes: [],
-			},
-		}),
-	setup: async ctx => ({
-		name: `${ctx.skill.name}/allow/${ctx.data.file.path.toLowerCase()}`,
+export const handler = policy.handler<ValidateBaseImages, Configuration>({
+	id: ctx => ({
+		sha: ctx.data.commit.sha,
+		owner: ctx.data.commit.repo.org.name,
+		repo: ctx.data.commit.repo.name,
+		credential: {
+			token: ctx.data.commit.repo.org.installationToken,
+			scopes: [],
+		},
+	}),
+	details: ctx => ({
+		name: `${ctx.skill.name}/allow`,
 		title: "Allowed Docker base image policy",
-		body: `Checking Docker base images in \`${ctx.data.file.path}\` against configured allowlist`,
+		body: `Checking Docker base images in ${ctx.data.commit.files
+			.map(f => `\`${f.path}\``)
+			.join(", ")} against configured allowlist`,
 	}),
 	execute: async ctx => {
 		const cfg = ctx.configuration.parameters;
-		const file = ctx.data.file;
+		const commit = ctx.data.commit;
 
-		const fromLines = _.orderBy(file.lines, "number").filter(
-			l => l.instruction === "FROM",
-		);
-		const maxLength = _.maxBy(fromLines, "number").number.toString().length;
-
-		const errors = [];
+		const errors: Array<{ path: string; error: string }> = [];
 		const annotations: Array<github.UpdateCheck["annotations"][0]> = [];
 
-		for (const fromLine of fromLines) {
-			// Check registry
-			if (cfg.acceptRegistries?.length > 0) {
-				if (!cfg.acceptRegistries.includes(fromLine.repository.host)) {
-					errors.push(
-						`${_.padStart(
-							fromLine.number.toString(),
-							maxLength,
-						)}: FROM ${fromLine.argsString}`,
-					);
-					annotations.push({
-						annotationLevel: "failure",
-						path: file.path,
-						startLine: fromLine.number,
-						endLine: fromLine.number,
-						message: `${fromLine.repository.host} is not an allowed Docker registry`,
-						title: "Allowed Docker registry",
-					});
-				}
-			}
+		for (const file of ctx.data.commit.files) {
+			const fromLines = _.orderBy(file.lines, "number").filter(
+				l => l.instruction === "FROM",
+			);
+			const maxLength = _.maxBy(fromLines, "number").number.toString()
+				.length;
 
-			const imageName = `${
-				fromLine.repository.host !== "hub.docker.com"
-					? `${fromLine.repository.host}/${fromLine.repository.name}`
-					: fromLine.repository.name
-			}${fromLine.tag ? `:${fromLine.tag}` : ""}`;
-
-			// Check image and tag
-			if (cfg.acceptImages?.length > 0) {
-				let allowed = false;
-				for (const acceptImage of cfg.acceptImages) {
-					const image = acceptImage.split(":")[0];
-					const tag = acceptImage.split(":")[1];
-					if (image === fromLine.repository.name) {
-						if (!tag) {
-							allowed = true;
-							break;
-						} else if (fromLine.tag === tag) {
-							allowed = true;
-						}
+			for (const fromLine of fromLines) {
+				// Check registry
+				if (cfg.acceptRegistries?.length > 0) {
+					if (
+						!cfg.acceptRegistries.includes(fromLine.repository.host)
+					) {
+						errors.push({
+							path: file.path,
+							error: `${_.padStart(
+								fromLine.number.toString(),
+								maxLength,
+							)}: FROM ${fromLine.argsString}`,
+						});
+						annotations.push({
+							annotationLevel: "failure",
+							path: file.path,
+							startLine: fromLine.number,
+							endLine: fromLine.number,
+							message: `${fromLine.repository.host} is not an allowed Docker registry`,
+							title: "Allowed Docker registry",
+						});
 					}
 				}
 
-				if (!allowed) {
-					errors.push(
-						`${_.padStart(
-							fromLine.number.toString(),
-							maxLength,
-						)}: FROM ${fromLine.argsString}`,
-					);
-					annotations.push({
-						annotationLevel: "failure",
-						path: file.path,
-						startLine: fromLine.number,
-						endLine: fromLine.number,
-						message: `${imageName} is not an allowed Docker base image`,
-						title: "Allowed Docker base image",
-					});
+				const imageName = `${
+					fromLine.repository.host !== "hub.docker.com"
+						? `${fromLine.repository.host}/${fromLine.repository.name}`
+						: fromLine.repository.name
+				}${fromLine.tag ? `:${fromLine.tag}` : ""}`;
+
+				// Check image and tag
+				if (cfg.acceptImages?.length > 0) {
+					let allowed = false;
+					for (const acceptImage of cfg.acceptImages) {
+						const image = acceptImage.split(":")[0];
+						const tag = acceptImage.split(":")[1];
+						if (image === fromLine.repository.name) {
+							if (!tag) {
+								allowed = true;
+								break;
+							} else if (fromLine.tag === tag) {
+								allowed = true;
+							}
+						}
+					}
+
+					if (!allowed) {
+						errors.push({
+							path: file.path,
+							error: `${_.padStart(
+								fromLine.number.toString(),
+								maxLength,
+							)}: FROM ${fromLine.argsString}`,
+						});
+						annotations.push({
+							annotationLevel: "failure",
+							path: file.path,
+							startLine: fromLine.number,
+							endLine: fromLine.number,
+							message: `${imageName} is not an allowed Docker base image`,
+							title: "Allowed Docker base image",
+						});
+					}
 				}
 			}
 		}
-
 		if (errors.length === 0 && annotations.length === 0) {
 			return {
 				state: policy.result.ResultEntityState.Success,
 				status: status.success(
-					`All base images used in \`${ctx.data.file.path}\` are on allowlist`,
+					`All base images used on allowlist in \`${
+						commit.repo.org.name
+					}/${commit.repo.name}@${commit.sha.slice(0, 7)}\``,
 				),
-				body: `All base images used in \`${ctx.data.file.path}\` are on configured allowlist`,
+				body: `All base images used in ${ctx.data.commit.files
+					.map(f => `\`${f.path}\``)
+					.join(", ")} are on configured allowlist`,
 			};
 		} else {
-			const body = `Following base images used in \`${
-				ctx.data.file.path
-			}\` violate configured allowlist
+			const errorsByFile = _.groupBy(errors, "path");
+			const body = `Following base images used violate configured allowlist:
 
-${errors
+${_.map(
+	errorsByFile,
+	(v, k) => `\`${k}\`
+
+${v
 	.map(
 		e => `\`\`\`
 ${e}
 \`\`\``,
 	)
-	.join("\n\n")}`;
+	.join("\n\n")}`,
+).join("\n\n")}`;
 
 			return {
 				state: policy.result.ResultEntityState.Failure,
 				severity: policy.result.ResultEntitySeverity.High,
 				status: status.success(
-					`Detected not allowed base images used in \`${ctx.data.file.path}\``,
+					`Detected not allowed base images in \`${
+						commit.repo.org.name
+					}/${commit.repo.name}@${commit.sha.slice(0, 7)}\``,
 				),
 				body,
 				annotations,
