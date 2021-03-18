@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { subscription } from "@atomist/skill";
+
 export function replaceLastFrom(
 	dockerfile: string,
 	image: string,
@@ -92,4 +94,11 @@ function findLastFrom(dockerfile: string): RegExpExecArray {
 		}
 	} while (match);
 	return lastMatch;
+}
+
+export function linkFile(
+	path: string,
+	commit: subscription.datalog.Commit,
+): string {
+	return `[\`${path}\`](https://github.com/${commit.repo.org.name}/${commit.repo.name}/blob/${commit.sha}/${path})`;
 }

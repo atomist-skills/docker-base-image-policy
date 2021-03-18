@@ -19,6 +19,7 @@ import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages } from "../types";
+import { linkFile } from "../util";
 
 export const handler = policy.handler<ValidateBaseImages, Configuration>({
 	id: ctx => ({
@@ -135,7 +136,7 @@ export const handler = policy.handler<ValidateBaseImages, Configuration>({
 
 ${_.map(
 	errorsByFile,
-	(v, k) => `\`${k}\`
+	(v, k) => `${linkFile(k, commit)}
 
 ${v
 	.map(

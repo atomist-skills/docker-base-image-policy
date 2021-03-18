@@ -19,6 +19,7 @@ import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages } from "../types";
+import { linkFile } from "../util";
 
 export const handler = policy.handler<ValidateBaseImages, Configuration>({
 	id: ctx => ({
@@ -105,7 +106,7 @@ ${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
 
 ${linesByFile
 	.map(
-		f => `\`${f.path}\`
+		f => `${linkFile(f.path, commit)}
 
 ${f.pinned}`,
 	)
@@ -116,7 +117,7 @@ ${f.pinned}`,
 
 ${linesByFile
 	.filter(l => l.unpinned)
-	.map(l => f => `\`${f.path}\`
+	.map(l => f => `${linkFile(f.path, commit)}
 
 ${f.unpinned}`)
 	.join("\n\n---\n\n")}${
@@ -130,7 +131,7 @@ The following Docker base images are pinned:
 ${linesByFile
 	.filter(l => l.pinned)
 	.map(
-		f => `\`${f.path}\`
+		f => `${linkFile(f.path, commit)}
 
 ${f.pinned}`,
 	)
