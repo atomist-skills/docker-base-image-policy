@@ -20,7 +20,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | [GPL-3.0](#gpl-30)              | 1     |
 | [ISC](#isc)                     | 43    |
 | [MIT AND Zlib](#mit-and-zlib)   | 1     |
-| [MIT](#mit)                     | 578   |
+| [MIT](#mit)                     | 579   |
 | [Public Domain](#public-domain) | 1     |
 | [Python-2.0](#python-20)        | 1     |
 
@@ -41,7 +41,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | Name                                  | Version         | Publisher             | Repository                                                                                                                       |
 | ------------------------------------- | --------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `@atomist/skill-logging`              | `0.2.6`         | Atomist               | [https://github.com/atomist-skills/skill-logging](https://github.com/atomist-skills/skill-logging)                               |
-| `@atomist/skill`                      | `0.9.1-main.78` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
+| `@atomist/skill`                      | `0.9.1-main.79` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
 | `@atomist/slack-messages`             | `1.2.2`         | Atomist               | [https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)                                           |
 | `@google-cloud/common`                | `3.6.0`         | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                       |
 | `@google-cloud/logging`               | `8.2.0`         | Google Inc.           | [https://github.com/googleapis/nodejs-logging](https://github.com/googleapis/nodejs-logging)                                     |
@@ -122,7 +122,7 @@ BSD 3-Clause "New" or "Revised" License - [https://opensource.org/licenses/BSD-3
 | `immutable`                  | `3.7.6`  | Lee Byron                                | [https://github.com/facebook/immutable-js](https://github.com/facebook/immutable-js)                               |
 | `node-forge`                 | `0.10.0` | Digital Bazaar, Inc.                     | [https://github.com/digitalbazaar/forge](https://github.com/digitalbazaar/forge)                                   |
 | `protobufjs`                 | `6.10.2` | Daniel Wirtz                             | [https://github.com/protobufjs/protobuf.js](https://github.com/protobufjs/protobuf.js)                             |
-| `qs`                         | `6.9.6`  |                                          | [https://github.com/ljharb/qs](https://github.com/ljharb/qs)                                                       |
+| `qs`                         | `6.10.0` |                                          | [https://github.com/ljharb/qs](https://github.com/ljharb/qs)                                                       |
 | `signedsource`               | `1.0.0`  |                                          |                                                                                                                    |
 | `source-map`                 | `0.5.7`  | Nick Fitzgerald                          | [https://github.com/mozilla/source-map](https://github.com/mozilla/source-map)                                     |
 | `source-map`                 | `0.6.1`  | Nick Fitzgerald                          | [https://github.com/mozilla/source-map](https://github.com/mozilla/source-map)                                     |
@@ -719,6 +719,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `setimmediate`                                       | `1.0.5`         | YuzuJS                         | [https://github.com/YuzuJS/setImmediate](https://github.com/YuzuJS/setImmediate)                                                                                                                     |
 | `shebang-command`                                    | `2.0.0`         | Kevin Mårtensson               | [https://github.com/kevva/shebang-command](https://github.com/kevva/shebang-command)                                                                                                                 |
 | `shebang-regex`                                      | `3.0.0`         | Sindre Sorhus                  | [https://github.com/sindresorhus/shebang-regex](https://github.com/sindresorhus/shebang-regex)                                                                                                       |
+| `side-channel`                                       | `1.0.4`         | Jordan Harband                 | [https://github.com/ljharb/side-channel](https://github.com/ljharb/side-channel)                                                                                                                     |
 | `slash`                                              | `3.0.0`         | Sindre Sorhus                  | [https://github.com/sindresorhus/slash](https://github.com/sindresorhus/slash)                                                                                                                       |
 | `slice-ansi`                                         | `0.0.4`         | David Caccavella               | [https://github.com/chalk/slice-ansi](https://github.com/chalk/slice-ansi)                                                                                                                           |
 | `snake-case`                                         | `3.0.4`         | Blake Embrey                   | [https://github.com/blakeembrey/change-case](https://github.com/blakeembrey/change-case)                                                                                                             |
