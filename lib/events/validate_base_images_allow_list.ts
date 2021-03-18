@@ -20,29 +20,11 @@ import * as _ from "lodash";
 import { Configuration } from "../configuration";
 import { ValidateBaseImages } from "../types";
 import { linkFile } from "../util";
+import { CreateRepositoryIdFromCommit, DockerfilesTransacted } from "./shared";
 
 export const handler = policy.handler<ValidateBaseImages, Configuration>({
-	when: ctx => {
-		const files = ctx.data.commit.files.filter(f =>
-			/Dockerfile/.test(f.path),
-		).length;
-		const dockerFiles = ctx.data.commit.dockerFiles.length;
-		if (files !== dockerFiles) {
-			return status
-				.success("Waiting for all Dockerfiles to be parsed")
-				.hidden();
-		}
-		return undefined;
-	},
-	id: ctx => ({
-		sha: ctx.data.commit.sha,
-		owner: ctx.data.commit.repo.org.name,
-		repo: ctx.data.commit.repo.name,
-		credential: {
-			token: ctx.data.commit.repo.org.installationToken,
-			scopes: [],
-		},
-	}),
+	when: DockerfilesTransacted,
+	id: CreateRepositoryIdFromCommit,
 	details: ctx => ({
 		name: `${ctx.skill.name}/allow`,
 		title: "Allowed Docker base image policy",
