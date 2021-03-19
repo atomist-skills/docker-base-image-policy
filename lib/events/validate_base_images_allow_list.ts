@@ -122,26 +122,28 @@ export const handler = policy.handler<ValidateBaseImages, Configuration>({
 				),
 				body: `All base images used in ${ctx.data.commit.dockerFiles
 					.map(f => `\`${f.path}\``)
+					.sort()
 					.join(", ")} are on configured allowlist`,
 			};
 		} else {
-			const errorsByFile = _.groupBy(errors, "path");
-			const body = `Following base images used violate configured allowlist:
+			const errorsByFile = _.map(_.groupBy(errors, "path"), (v, k) => ({
+				path: k,
+				errors: v,
+			}));
+			const errorsBody = _.sortBy(errorsByFile, "path").map(
+				e => `${linkFile(e.path, commit)}
 
-${_.map(
-	errorsByFile,
-	(v, k) => `${linkFile(k, commit)}
-
-${v
+${e.errors
 	.map(
 		e => `\`\`\`
 ${e.error}
 \`\`\``,
 	)
 	.join("\n\n")}`,
-)
-	.sort()
-	.join("\n\n---\n\n")}`;
+			);
+			const body = `Following base images used violate configured allowlist:
+
+${errorsBody.join("\n\n---\n\n")}`;
 
 			return {
 				state: policy.result.ResultEntityState.Failure,

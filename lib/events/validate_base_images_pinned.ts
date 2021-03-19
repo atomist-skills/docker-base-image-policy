@@ -34,7 +34,7 @@ export const handler = policy.handler<ValidateBaseImages, Configuration>({
 	}),
 	execute: async ctx => {
 		const commit = ctx.data.commit;
-		const linesByFile: Array<{
+		let linesByFile: Array<{
 			path: string;
 			unpinned: string;
 			unpinnedLines: ValidateBaseImages["commit"]["dockerFiles"][0]["lines"];
@@ -88,6 +88,8 @@ ${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
 			});
 		}
 
+		linesByFile = _.sortBy(linesByFile, "path");
+
 		if (!linesByFile.some(l => l.unpinned)) {
 			return {
 				state: policy.result.ResultEntityState.Success,
@@ -104,7 +106,6 @@ ${linesByFile
 
 ${f.pinned}`,
 	)
-	.sort()
 	.join("\n\n---\n\n")}`,
 			};
 		} else {
@@ -117,7 +118,6 @@ ${linesByFile
 
 ${f.unpinned}`,
 	)
-	.sort()
 	.join("\n\n---\n\n")}${
 				linesByFile.filter(l => l.pinned).length > 0
 					? `
@@ -133,7 +133,6 @@ ${linesByFile
 
 ${f.pinned}`,
 	)
-	.sort()
 	.join("\n\n")}`
 					: ""
 			}`;
