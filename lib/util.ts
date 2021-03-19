@@ -58,27 +58,24 @@ export function replaceFroms(
 	ix = -1,
 ): string {
 	const fromRegexp = /^(FROM\s*)([\S]*)(.*)$/gim;
-	const matches: RegExpExecArray[] = [];
 	let match: RegExpExecArray;
+	let i = 0;
+	let replacedDockerfile = dockerfile;
 	do {
-		match = fromRegexp.exec(dockerfile);
+		match = fromRegexp.exec(replacedDockerfile);
 		if (match) {
-			matches.push(match);
+			if (ix === -1 || i === ix) {
+				const image = images[i];
+				replacedDockerfile =
+					replacedDockerfile.slice(0, match.index) +
+					match[1] +
+					image +
+					match[3] +
+					replacedDockerfile.slice(match.index + match[0].length);
+			}
+			i++;
 		}
 	} while (match);
-	let replacedDockerfile = dockerfile;
-	for (let i = 0; i < matches.length; i++) {
-		if (ix === -1 || i === ix) {
-			const match = matches[i];
-			const image = images[i];
-			replacedDockerfile =
-				replacedDockerfile.slice(0, match.index) +
-				match[1] +
-				image +
-				match[3] +
-				replacedDockerfile.slice(match.index + match[0].length);
-		}
-	}
 	return replacedDockerfile;
 }
 
