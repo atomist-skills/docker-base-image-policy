@@ -71,13 +71,12 @@ export function replaceFroms(
 		if (ix === -1 || i === ix) {
 			const match = matches[i];
 			const image = images[i];
-			const ix = replacedDockerfile.indexOf(match[0]);
 			replacedDockerfile =
-				replacedDockerfile.slice(0, ix) +
+				replacedDockerfile.slice(0, match.index) +
 				match[1] +
 				image +
 				match[3] +
-				replacedDockerfile.slice(ix + match[0].length);
+				replacedDockerfile.slice(match.index + match[0].length);
 		}
 	}
 	return replacedDockerfile;
