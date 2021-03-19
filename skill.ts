@@ -115,6 +115,14 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 				displayName: "Docker registry",
 				scopes: [CapabilityScope.Subscription],
 			},
+			{
+				namespace: "atomist",
+				name: "PolicyResult",
+				minRequired: 0,
+				usage: "policy",
+				displayName: "Policy Result",
+				scopes: [CapabilityScope.Subscription],
+			},
 		],
 	},
 });
