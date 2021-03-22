@@ -33,7 +33,7 @@ moves, even if the Dockerfile author switches the Dockerfile to a different Tag.
 Click the Green button "Use this skill" on the
 [Skill Page](https://go.atomist.com/catalog/skills/atomist/docker-base-image-policy).
 
-![img/public-docker-image-pinning/1.png](img/public-docker-image-pinning/1.png)
+![img/public-docker-image-pinning/1.png](docs/images/settings/1.png)
 
 2.  Enable the Skill. This will take the user through the GitHub App
     integration, and selection of a Docker Registry.
@@ -43,14 +43,14 @@ need to configure an integration to a private registry. However, we will need to
 come back to this when we start tracking updates to tags in private registries.
 For now, you can use the "skip" button to move past this step.
 
-![img/public-docker-image-pinning/2.png](img/public-docker-image-pinning/2.png)
+![img/public-docker-image-pinning/2.png](docs/images/settings/2.png)
 
 3.  The Docker Base Image Policy configuration screen requires that you first
     configure the policy. There are some options to customize how `FROM` line
     tags are managed. Leave the default settings and simply scroll to the bottom
     of this screen and click the "Enable Skill" button.
 
-![img/public-docker-image-pinning/4.png](img/public-docker-image-pinning/4.png)
+![img/public-docker-image-pinning/4.png](docs/images/settings/4.png)
 
 4.  Your policy is now watching the set of Repos that you have selected in the
     Atomist GitHub app. To see this in action, create a new Repo with a simple
@@ -77,16 +77,16 @@ $ git push -u origin master
 The Atomist GitHub application will detect this push, and the policy will then
 create a Pull Request to pin your FROM line.
 
-![img/public-docker-image-pinning/5.png](img/public-docker-image-pinning/5.png)
+![img/public-docker-image-pinning/5.png](docs/images/settings/5.png)
 
 You'll also see that the policy ran in the "log" tab of your workspace.
 
-![img/public-docker-image-pinning/11.png](img/public-docker-image-pinning/11.png)
+![img/public-docker-image-pinning/11.png](docs/images/settings/11.png)
 
 Drill in to the Pull Request and note that Atomist has "pinned" the `FROM`
 clause to the current digest:
 
-![img/public-docker-image-pinning/6.png](img/public-docker-image-pinning/6.png)
+![img/public-docker-image-pinning/6.png](docs/images/settings/6.png)
 
 If you build using this version of the Dockerfile, you'll always get the same
 base image. If the `devel` tag moves, this repo will receive another pull
