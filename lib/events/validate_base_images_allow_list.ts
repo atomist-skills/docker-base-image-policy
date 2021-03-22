@@ -141,7 +141,7 @@ ${e.error}
 	)
 	.join("\n\n")}`,
 			);
-			const body = `Following base images used violate configured allowlist:
+			const body = `The following base images violate configured allowlist:
 
 ${errorsBody.join("\n\n---\n\n")}`;
 
