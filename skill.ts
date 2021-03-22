@@ -46,9 +46,9 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 	parameters: {
 		pinningRequired: {
 			type: ParameterType.Boolean,
-			displayName: "Require pinned base images",
+			displayName: "Create GitHub checks",
 			description:
-				"Set failed GitHub check when there are base images that aren't pinned",
+				"Select to create a GitHub check to identify pinned and unpinned base images in your Docker files.",
 			required: false,
 			defaultValue: true,
 		},
@@ -56,7 +56,7 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 			type: ParameterType.Boolean,
 			displayName: "Raise pull requests",
 			description:
-				"Raise pull requests to pin Docker base images to digests",
+				"Select to raise a pull request when you have an unpinned Docker file, or when the tag in use is updated.",
 			required: false,
 			defaultValue: true,
 		},
@@ -71,14 +71,14 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 		pinningLabels: {
 			type: ParameterType.StringArray,
 			displayName: "Pull request labels",
-			description: "GitHub labels to add to pinning pull requests",
+			description: "Add labels to new pull requests created by this skill.",
 			required: false,
 		},
 		pinningAssignReviewers: {
 			type: ParameterType.Boolean,
-			displayName: "Assign pull request reviewer",
+			displayName: "Pull request reviewers",
 			description:
-				"When raising pull requests to pin Docker base images, assign last committer as reviewer",
+				"Select to assign last committer as a reviewer on new pull requests created by this skill.",
 			required: false,
 		},
 		acceptRequired: {
