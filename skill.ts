@@ -71,7 +71,8 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 		pinningLabels: {
 			type: ParameterType.StringArray,
 			displayName: "Pull request labels",
-			description: "Add labels to new pull requests created by this skill.",
+			description:
+				"Add labels to new pull requests created by this skill.",
 			required: false,
 		},
 		pinningAssignReviewers: {
