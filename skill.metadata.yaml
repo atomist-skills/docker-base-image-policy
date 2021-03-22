@@ -13,37 +13,40 @@
 # limitations under the License.
 
 parameter_groups:
-  - name: pinning
-    display_name: Base Image Pinning
-    description: Base image pinning is a proven approach to make sure that your Docker image builds are repeatable by _pinning_ image references in `FROM` instructions to digests.
+  - name: actions
+    display_name: What actions to take
+  - name: whatToWatch
+    dispay_name: What to watch
   - name: accept
     display_name: Base Images Allowlist
     description: Check used Docker base images against a configured allowlist of registries and images.
 
 parameters:
   - name: pinningRequired
-    group: pinning
+    group: actions
+    tooltip: Unpinned Dockerfiles will result in a failed check.
   - name: pinningPullRequests
-    group: pinning
+    group: actions
   - name: pinningIncludeTag
-    group: pinning
+    group: actions
     condition:
       name: pinningPullRequests
       values:
         - true
   - name: pinningLabels
-    group: pinning
+    group: actions
     condition:
       name: pinningPullRequests
       values:
         - true
   - name: pinningAssignReviewers
-    group: pinning
+    group: actions
     condition:
       name: pinningPullRequests
       values:
         - true
-
+  - name: repoFilter
+    group: whatToWatch
   - name: acceptRequired
     group: accept
   - name: acceptImages
