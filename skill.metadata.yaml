@@ -16,7 +16,7 @@ parameter_groups:
   - name: actions
     display_name: What actions to take
   - name: whatToWatch
-    dispay_name: What to watch
+    display_name: What to watch
   - name: accept
     display_name: Base Images Allowlist
     description: Check used Docker base images against a configured allowlist of registries and images.
