@@ -20,7 +20,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | [GPL-3.0](#gpl-30)              | 1     |
 | [ISC](#isc)                     | 44    |
 | [MIT AND Zlib](#mit-and-zlib)   | 1     |
-| [MIT](#mit)                     | 579   |
+| [MIT](#mit)                     | 581   |
 | [Public Domain](#public-domain) | 1     |
 | [Python-2.0](#python-20)        | 1     |
 
@@ -41,7 +41,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | Name                                  | Version          | Publisher             | Repository                                                                                                                       |
 | ------------------------------------- | ---------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `@atomist/skill-logging`              | `0.2.6`          | Atomist               | [https://github.com/atomist-skills/skill-logging](https://github.com/atomist-skills/skill-logging)                               |
-| `@atomist/skill`                      | `0.9.1-main.105` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
+| `@atomist/skill`                      | `0.9.1-main.111` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
 | `@atomist/slack-messages`             | `1.2.2`          | Atomist               | [https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)                                           |
 | `@google-cloud/common`                | `3.6.0`          | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                       |
 | `@google-cloud/logging`               | `8.2.0`          | Google Inc.           | [https://github.com/googleapis/nodejs-logging](https://github.com/googleapis/nodejs-logging)                                     |
@@ -50,7 +50,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | `@google-cloud/projectify`            | `2.0.1`          | Google Inc.           | [https://github.com/googleapis/nodejs-projectify](https://github.com/googleapis/nodejs-projectify)                               |
 | `@google-cloud/promisify`             | `2.0.3`          | Google Inc.           | [https://github.com/googleapis/nodejs-promisify](https://github.com/googleapis/nodejs-promisify)                                 |
 | `@google-cloud/pubsub`                | `2.10.0`         | Google Inc.           | [https://github.com/googleapis/nodejs-pubsub](https://github.com/googleapis/nodejs-pubsub)                                       |
-| `@google-cloud/storage`               | `5.8.1`          | Google Inc.           | [https://github.com/googleapis/nodejs-storage](https://github.com/googleapis/nodejs-storage)                                     |
+| `@google-cloud/storage`               | `5.8.2`          | Google Inc.           | [https://github.com/googleapis/nodejs-storage](https://github.com/googleapis/nodejs-storage)                                     |
 | `@grpc/grpc-js`                       | `1.2.11`         | Google Inc.           | [https://github.com/grpc/grpc-node/tree/master/packages/grpc-js](https://github.com/grpc/grpc-node/tree/master/packages/grpc-js) |
 | `@grpc/proto-loader`                  | `0.5.6`          | Google Inc.           | [https://github.com/grpc/grpc-node](https://github.com/grpc/grpc-node)                                                           |
 | `@opencensus/core`                    | `0.0.22`         | Google Inc.           | [https://github.com/census-instrumentation/opencensus-node](https://github.com/census-instrumentation/opencensus-node)           |
@@ -341,6 +341,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `@types/lodash.map`                                  | `4.6.13`        |                                | [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)                                                                                             |
 | `@types/lodash.merge`                                | `4.6.6`         |                                | [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)                                                                                             |
 | `@types/lodash.set`                                  | `4.3.6`         |                                | [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)                                                                                             |
+| `@types/lodash.sortby`                               | `4.7.6`         |                                | [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)                                                                                             |
 | `@types/lodash.uniq`                                 | `4.5.6`         |                                | [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)                                                                                             |
 | `@types/lodash`                                      | `4.14.168`      |                                | [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)                                                                                             |
 | `@types/long`                                        | `4.0.1`         |                                | [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)                                                                                             |
@@ -605,6 +606,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `lodash.once`                                        | `4.1.1`         | John-David Dalton              | [https://github.com/lodash/lodash](https://github.com/lodash/lodash)                                                                                                                                 |
 | `lodash.set`                                         | `4.3.2`         | John-David Dalton              | [https://github.com/lodash/lodash](https://github.com/lodash/lodash)                                                                                                                                 |
 | `lodash.snakecase`                                   | `4.1.1`         | John-David Dalton              | [https://github.com/lodash/lodash](https://github.com/lodash/lodash)                                                                                                                                 |
+| `lodash.sortby`                                      | `4.7.0`         | John-David Dalton              | [https://github.com/lodash/lodash](https://github.com/lodash/lodash)                                                                                                                                 |
 | `lodash.union`                                       | `4.6.0`         | John-David Dalton              | [https://github.com/lodash/lodash](https://github.com/lodash/lodash)                                                                                                                                 |
 | `lodash.uniq`                                        | `4.5.0`         | John-David Dalton              | [https://github.com/lodash/lodash](https://github.com/lodash/lodash)                                                                                                                                 |
 | `lodash`                                             | `4.17.20`       | John-David Dalton              | [https://github.com/lodash/lodash](https://github.com/lodash/lodash)                                                                                                                                 |
