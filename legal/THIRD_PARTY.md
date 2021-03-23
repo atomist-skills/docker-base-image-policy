@@ -18,7 +18,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | [CC0-1.0](#cc0-10)              | 2     |
 | [GPL-2.0](#gpl-20)              | 1     |
 | [GPL-3.0](#gpl-30)              | 1     |
-| [ISC](#isc)                     | 43    |
+| [ISC](#isc)                     | 44    |
 | [MIT AND Zlib](#mit-and-zlib)   | 1     |
 | [MIT](#mit)                     | 579   |
 | [Public Domain](#public-domain) | 1     |
@@ -41,7 +41,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | Name                                  | Version          | Publisher             | Repository                                                                                                                       |
 | ------------------------------------- | ---------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `@atomist/skill-logging`              | `0.2.6`          | Atomist               | [https://github.com/atomist-skills/skill-logging](https://github.com/atomist-skills/skill-logging)                               |
-| `@atomist/skill`                      | `0.9.1-main.102` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
+| `@atomist/skill`                      | `0.9.1-main.105` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
 | `@atomist/slack-messages`             | `1.2.2`          | Atomist               | [https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)                                           |
 | `@google-cloud/common`                | `3.6.0`          | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                       |
 | `@google-cloud/logging`               | `8.2.0`          | Google Inc.           | [https://github.com/googleapis/nodejs-logging](https://github.com/googleapis/nodejs-logging)                                     |
@@ -196,6 +196,7 @@ ISC License - [https://www.isc.org/downloads/software-support-policy/isc-license
 | `semver`                    | `5.7.1`   |                    | [https://github.com/npm/node-semver](https://github.com/npm/node-semver)                                     |
 | `semver`                    | `6.3.0`   |                    | [https://github.com/npm/node-semver](https://github.com/npm/node-semver)                                     |
 | `semver`                    | `7.3.4`   |                    | [https://github.com/npm/node-semver](https://github.com/npm/node-semver)                                     |
+| `semver`                    | `7.3.5`   |                    | [https://github.com/npm/node-semver](https://github.com/npm/node-semver)                                     |
 | `set-blocking`              | `2.0.0`   | Ben Coe            | [https://github.com/yargs/set-blocking](https://github.com/yargs/set-blocking)                               |
 | `setprototypeof`            | `1.2.0`   | Wes Todd           | [https://github.com/wesleytodd/setprototypeof](https://github.com/wesleytodd/setprototypeof)                 |
 | `signal-exit`               | `3.0.3`   | Ben Coe            | [https://github.com/tapjs/signal-exit](https://github.com/tapjs/signal-exit)                                 |
