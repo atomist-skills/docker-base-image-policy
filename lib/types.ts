@@ -66,3 +66,47 @@ export interface ValidateBaseImages {
 		}>;
 	};
 }
+
+export interface ValidateLinkingRaw {
+	commit: subscription.datalog.Commit & {
+		id: string;
+		files: Array<{ path: string; id: string }>;
+		dockerFiles: Array<{
+			id: string;
+			path: string;
+		}>;
+	};
+	image: {
+		id: string;
+		sha: string;
+		digest: string;
+		tags: string[];
+		dockerFile: {
+			id: string;
+			path: string;
+		};
+		repository: subscription.datalog.DockerImage["repository"];
+	};
+}
+
+export interface ValidateLinking {
+	commit: subscription.datalog.Commit & {
+		id: string;
+		files: Array<{ path: string; id: string }>;
+		dockerFiles: Array<{
+			id: string;
+			path: string;
+		}>;
+	};
+	image: Array<{
+		id: string;
+		sha: string;
+		digest: string;
+		tags: string[];
+		dockerFile: {
+			id: string;
+			path: string;
+		};
+		repository: subscription.datalog.DockerImage["repository"];
+	}>;
+}

@@ -1,0 +1,51 @@
+[:find
+ ?docker-images
+ (pull
+   ?commit
+   [:db/id
+    :schema/entity-type
+    {:git.commit/repo [:git.repo/name
+                       :git.repo/default-branch
+                       {:git.repo/org [:github.org/installation-token
+                                       :git.org/name
+                                       (:git.org/provider-base-url
+                                         :as
+                                         :base-url)
+                                       :git.provider/url]}]}
+    {:git.commit/author [:git.user/name
+                         :git.user/login
+                         {:git.user/emails [:email.email/address]}]}
+    :git.commit/sha
+    :git.commit/message
+    {(:git.commit/file :as :git.commit/files) [:db/id
+                                               :git.file/path]}
+    {(:docker.file/_commit :as :docker.file/docker-files) [:db/id
+                                                           :docker.file/path]}])
+ :in $ $before-db %
+ :where
+ (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
+
+ ;; get all images on the commit
+ [(q (quote [:find (pull ?docker-image [:db/id
+                                        :schema/entity-type
+                                        :docker.image/sha
+                                        :docker.image/tags
+                                        :docker.image/digest
+                                        {:docker.image/docker-file [:db/id
+                                                                    :docker.file/path]}
+                                        {:docker.image/repository [:docker.repository/host
+                                                                   (:docker.repository/repository
+                                                                     :as
+                                                                     :name)]}])
+             :in $ ?commit
+             :where
+             [?commit :git.commit/sha ?sha]
+             [?docker-image :docker.image/sha ?sha]
+             ])
+    $ ?commit)
+  [[?docker-images]]]
+
+ ;; check repo filter
+ [?commit :git.commit/repo ?repo]
+ (repo-selected? ?repo)
+ ]

@@ -34,7 +34,15 @@ export const DockerfilesTransacted: (
 };
 
 export const CreateRepositoryIdFromCommit: handler.CreateRepositoryId<
-	ValidateBaseImages,
+	{
+		commit: {
+			sha: string;
+			repo: {
+				name: string;
+				org: { name: string; installationToken: string };
+			};
+		};
+	},
 	Configuration
 > = ctx => ({
 	sha: ctx.data.commit.sha,
