@@ -30,7 +30,9 @@ export const handler: MappingEventHandler<
 		const mapped = { image: [], commit: undefined };
 		data.forEach(d => {
 			mapped.commit = d.commit;
-			mapped.image.push(d.image);
+			if (d.image) {
+				mapped.image.push(d.image);
+			}
 		});
 		return mapped;
 	},

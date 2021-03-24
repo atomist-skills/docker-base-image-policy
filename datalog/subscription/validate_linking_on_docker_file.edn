@@ -1,5 +1,4 @@
 [:find
- ?docker-images
  (pull
    ?commit
    [:db/id
@@ -25,27 +24,7 @@
  :where
  (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
 
- ;; get all images on the commit
- [(q (quote [:find (pull ?docker-image [:db/id
-                                        :schema/entity-type
-                                        :docker.image/sha
-                                        :docker.image/tags
-                                        :docker.image/digest
-                                        {:docker.image/docker-file [:db/id
-                                                                    :docker.file/path]}
-                                        {:docker.image/repository [:docker.repository/host
-                                                                   (:docker.repository/repository
-                                                                     :as
-                                                                     :name)]}])
-             :in $ ?commit
-             :where
-             [?commit :git.commit/sha ?sha]
-             [?docker-image :docker.image/sha ?sha]
-             ])
-    $ ?commit)
-  [[?docker-images]]]
-
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
- (repo-selected? ?repo)
+ ;(repo-selected? ?repo)
  ]
