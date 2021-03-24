@@ -29,6 +29,8 @@ import { Configuration } from "../configuration";
 import { CommitAndDockerfile } from "../types";
 import { replaceFroms } from "../util";
 
+const Footer = `<!-- atomist:hide -->\nPinning \`FROM\` lines to digests makes your builds repeatable. Atomist will raise new pull requests whenever the tag moves, so that you know when the base image has been updated. You can follow a new tag at any time. Just replace the digest with the new tag you want to follow. Atomist, will switch to following this new tag.\n<!-- atomist:show -->`;
+
 export const handler: EventHandler<
 	CommitAndDockerfile,
 	Configuration
@@ -69,10 +71,13 @@ export const handler: EventHandler<
 				imageName,
 				changed: l.digest !== l.manifestList?.digest || l.image?.digest,
 				tag: l.manifestList?.tags?.[0] || l.image?.tags?.[0],
+				digest: l.digest,
 			};
 		});
 	const changedFromLines = fromLines.filter(f => f.changed);
 	const maxLength = _.maxBy(changedFromLines, "line").line.toString().length;
+
+	const isRepin = !changedFromLines.some(f => !f.digest);
 
 	return await github.persistChanges(
 		ctx,
@@ -96,22 +101,34 @@ export const handler: EventHandler<
 			labels: cfg.pinningLabels,
 			title:
 				changedFromLines.length === 1
-					? `Pin Docker base image in ${file.path}`
-					: `Pin Docker base images in ${file.path}`,
+					? `${isRepin ? "Re-pin" : "Pin"} Docker base image in ${
+							file.path
+					  }`
+					: `${isRepin ? "Re-pin" : "Pin"} Docker base images in ${
+							file.path
+					  }`,
 			body:
 				changedFromLines.length === 1
-					? `This pull request pins the Docker base image \`${
+					? `This pull request ${
+							isRepin ? "re-pins" : "pins"
+					  } the Docker base image \`${
 							changedFromLines[0].imageName.split("@")[0]
 					  }\` in \`${file.path}\` to the current digest.
 
-${fromLine(changedFromLines[0], maxLength, cfg.pinningIncludeTag)}`
-					: `This pull request pins the following Docker base images in \`${
+${fromLine(changedFromLines[0], maxLength, cfg.pinningIncludeTag)}
+
+${Footer}`
+					: `This pull request ${
+							isRepin ? "re-pins" : "pins"
+					  } the following Docker base images in \`${
 							file.path
 					  }\` to their current digests.
 					
 ${changedFromLines
 	.map(l => fromLine(l, maxLength, cfg.pinningIncludeTag))
-	.join("\n\n")}`,
+	.join("\n\n")}
+
+${Footer}`,
 		},
 		{
 			editors: fromLines.map((l, ix) => async (p: project.Project) => {
@@ -125,7 +142,7 @@ ${changedFromLines
 					ix,
 				);
 				await fs.writeFile(dockerfilePath, replacedDockerfile);
-				const prefix = "Pin Docker image ";
+				const prefix = `${l.digest ? "Re-pin" : "Pin"} Docker image `;
 				return `${prefix}${truncate(
 					l.imageName.split("@")[0],
 					50 - prefix.length,
