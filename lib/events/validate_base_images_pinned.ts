@@ -151,7 +151,10 @@ ${f.pinned}`,
 						.map(l =>
 							l.unpinnedLines.map(ul => ({
 								title: "Pinned base image",
-								message: `${ul.repository.name} is not pinned`,
+								message: `${
+									ul.repository?.name ||
+									ul.argsString.split("@")[0].split(":")[0]
+								} is not pinned`,
 								annotationLevel: "failure",
 								startLine: ul.number,
 								endLine: ul.number,
