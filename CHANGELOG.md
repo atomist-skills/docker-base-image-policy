@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Review skill overview page and parameter descriptions. [#12](https://github.com/atomist-skills/docker-base-image-policy/issues/12)
 -   Update skill icon. [#40](https://github.com/atomist-skills/docker-base-image-policy/issues/40)
+-   PR message. [#64](https://github.com/atomist-skills/docker-base-image-policy/issues/64)
 
 ## [0.1.4](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.3...0.1.4) - 2021-03-18
 
