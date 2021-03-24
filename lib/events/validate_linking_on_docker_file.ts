@@ -63,7 +63,11 @@ export const handler: MappingEventHandler<
 				i => !dockerFiles.some(df => df.id === i.dockerFile?.id),
 			);
 
-			const linkedBody = `The following Dockerfiles and images are linked
+			const linkedBody = `The following ${
+				linked.length === 1
+					? "Dockerfile and image is"
+					: "Dockerfiles and images are"
+			} linked
 
 ${linked
 	.map(
@@ -75,11 +79,19 @@ is linked to ${linkFile(l.dockerFile.path, commit)}`,
 	)
 	.join("\n\n")}`;
 
-			const unlinkedDockerFilesBody = `The following Dockerfiles are not linked to an image
+			const unlinkedDockerFilesBody = `The following ${
+				unlinkedDockerFiles.length === 1
+					? "Dockerfile is"
+					: "Dockerfiles are"
+			} not linked to an image
 
 ${unlinkedDockerFiles.map(l => `* ${linkFile(l.path, commit)}`).join("\n")}`;
 
-			const unlinkedImagesBody = `The following Docker images are not linked to a Dockerfile
+			const unlinkedImagesBody = `The following ${
+				unlinkedImages.length === 1
+					? "Docker image is"
+					: "Docker images are"
+			} not linked to a Dockerfile
 
 ${unlinkedImages
 	.map(
