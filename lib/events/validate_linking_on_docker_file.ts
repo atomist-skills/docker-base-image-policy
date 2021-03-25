@@ -38,7 +38,7 @@ export const handler: MappingEventHandler<
 	},
 	handle: policy.handler<ValidateLinking, Configuration>({
 		id: CreateRepositoryIdFromCommit,
-		details: ctx => ({
+		details: () => ({
 			name: `docker-image-policy/linked`,
 			title: "Linked Dockerfile and image policy",
 			body: `Checking if all Dockerfiles and images are linked`,
