@@ -27,7 +27,11 @@
                                                             {:docker.file.from/image [:docker.image/digest
                                                                                       :docker.image/tags]}
                                                             {:docker.file.from/manifest-list [:docker.manifest-list/digest
-                                                                                              :docker.manifest-list/tags]}
+                                                                                              :docker.manifest-list/tags
+                                                                                              {:docker.manifest-list/images [:docker.image/digest
+                                                                                                                             {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
+                                                                                                                                                                                       :docker.platform/variant
+                                                                                                                                                                                       :docker.platform/architecture]}]}]}
                                                             {:docker.file.from/repository [:docker.repository/host
                                                                                            (:docker.repository/repository
                                                                                              :as

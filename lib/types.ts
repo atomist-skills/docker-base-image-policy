@@ -39,6 +39,14 @@ export interface CommitAndDockerfile {
 			manifestList: {
 				digest: string;
 				tags: string[];
+				images: Array<{
+					digest: string;
+					platform: Array<{
+						os: string;
+						variant: string;
+						architecture: string;
+					}>;
+				}>;
 			};
 		}>;
 	};

@@ -25,6 +25,7 @@ import {
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 
+import { changelog } from "../changelog";
 import { Configuration } from "../configuration";
 import { CommitAndDockerfile } from "../types";
 import { replaceFroms } from "../util";
@@ -72,9 +73,21 @@ export const handler: EventHandler<
 				changed: l.digest !== l.manifestList?.digest || l.image?.digest,
 				tag: l.manifestList?.tags?.[0] || l.image?.tags?.[0],
 				digest: l.digest,
+				changelog: undefined,
 			};
 		});
 	const changedFromLines = fromLines.filter(f => f.changed);
+
+	for (const changedFromLine of _.orderBy(file.lines, "number").filter(
+		l => l.instruction === "FROM",
+	)) {
+		const cfl = changedFromLines.find(
+			c => c.line === changedFromLine.number,
+		);
+		if (cfl) {
+			cfl.changelog = await changelog(ctx, project, changedFromLine);
+		}
+	}
 	const maxLength = _.maxBy(changedFromLines, "line").line.toString().length;
 
 	const isRepin = !changedFromLines.some(f => !f.digest);
@@ -158,7 +171,7 @@ ${l.imageName}`;
 };
 
 function fromLine(
-	l: { line: number; imageName: string; tag: string },
+	l: { line: number; imageName: string; tag: string; changelog: string },
 	maxLength: number,
 	tagIncluded: boolean,
 ): string {
@@ -171,5 +184,5 @@ ${from}${
 			? `\n${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}`
 			: ""
 	} 
-\`\`\``;
+\`\`\`${l.changelog ? `\n\n${l.changelog}` : ""}`;
 }
