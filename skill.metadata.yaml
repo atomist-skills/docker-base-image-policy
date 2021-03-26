@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+configuration_description: This policy is active when there is a push to a repository containing a Docker file, or when a Docker tag you are using is updated in the Docker registry. Read more information on configuration and get step-by-step instructions.
+
 parameter_groups:
   - name: actions
     display_name: What actions to take
