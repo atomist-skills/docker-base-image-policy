@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Check to indicate successful linkage of image -> dockerfile -> commit. [#22](https://github.com/atomist-skills/docker-base-image-policy/issues/22)
+-   Add changelog for Docker Hub images. [ab14574](https://github.com/atomist-skills/docker-base-image-policy/commit/ab1457496b40c5c42d61e613736021ad38e585ae)
 
 ## [0.1.5](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.4...0.1.5) - 2021-03-24
 
