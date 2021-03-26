@@ -12,6 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+metatags:
+  title: Docker Base Image Policy | Atomist
+  description: Let's get cooking
+  twitter:
+    title: Docker Base Image Policy | Atomist
+    description: It's a masterpiece.
+    image: https://via.placeholder.com/150.jpg
+  og:
+    title: Docker Base Image Policy | Atomist
+    description: Mmm mmmm delicious.
+    image: https://via.placeholder.com/150.jpg
+
 configuration_description: This policy is active when there is a push to a repository containing a Docker file, or when a Docker tag you are using is updated in the Docker registry. Read more information on configuration and get step-by-step instructions.
 is_policy: true
 
