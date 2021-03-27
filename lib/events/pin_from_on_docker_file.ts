@@ -70,7 +70,7 @@ export const handler: EventHandler<
 				line: l.number,
 				currentImageName: l.argsString.split(" ")[0],
 				imageName,
-				changed: l.digest !== l.manifestList?.digest || l.image?.digest,
+				changed: l.digest !== digest,
 				tag: l.manifestList?.tags?.[0] || l.image?.tags?.[0],
 				digest: l.digest,
 				changelog: undefined,
