@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.6...HEAD)
 
+### Fixed
+
+-   Use platfrom to get image from manifest-list. [fee76da](https://github.com/atomist-skills/docker-base-image-policy/commit/fee76da3fc7b1355b9c9f29b91058d9eae3e95fd)
+
 ## [0.1.6](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.5...0.1.6) - 2021-03-26
 
 ### Added
