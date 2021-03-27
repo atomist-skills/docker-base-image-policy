@@ -118,14 +118,14 @@ export async function changelog(
 		architecture: "amd64",
 	};
 	if (fromLine.manifestList) {
-		proposedDigest = fromLine.manifestList.images.find(i =>
+		proposedDigest = fromLine.manifestList?.images?.find(i =>
 			i.platform.some(
 				p => p.os === "linux" && p.architecture === "amd64",
 			),
 		)?.digest;
 		if (!proposedDigest) {
-			proposedDigest = fromLine.manifestList.images[0].digest;
-			platform = fromLine.manifestList.images[0].platform[0];
+			proposedDigest = fromLine.manifestList?.images?.[0].digest;
+			platform = fromLine.manifestList?.images?.[0].platform[0];
 		}
 	}
 
