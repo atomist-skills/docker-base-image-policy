@@ -43,7 +43,7 @@ export interface CommitAndDockerfile {
 					digest: string;
 					platform: Array<{
 						os: string;
-						variant: string;
+						variant?: string;
 						architecture: string;
 					}>;
 				}>;

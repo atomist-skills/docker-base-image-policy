@@ -34,6 +34,7 @@ import { CommitAndDockerfile } from "./types";
 async function getCurrentDigest(
 	fromLine: CommitAndDockerfile["file"]["lines"][0],
 	repository: subscription.datalog.DockerImage["repository"],
+	platform: CommitAndDockerfile["file"]["lines"][0]["manifestList"]["images"][0]["platform"][0],
 	ctx: EventContext<any, Configuration>,
 ): Promise<string> {
 	// Get the digest of the current image
@@ -63,8 +64,8 @@ async function getCurrentDigest(
 			host: repository.host,
 			name: repository.name,
 			digest: fromLine.digest,
-			os: "linux",
-			arch: "amd64",
+			os: platform.os,
+			arch: platform.architecture,
 		},
 	)) as Array<{ image: { digest: string } }>;
 	if (oldImageDigest?.length > 0) {
@@ -112,12 +113,20 @@ export async function changelog(
 
 	// Get the digest of the new image
 	let proposedDigest = fromLine.image?.digest;
+	let platform: CommitAndDockerfile["file"]["lines"][0]["manifestList"]["images"][0]["platform"][0] = {
+		os: "linux",
+		architecture: "amd64",
+	};
 	if (fromLine.manifestList) {
 		proposedDigest = fromLine.manifestList.images.find(i =>
 			i.platform.some(
 				p => p.os === "linux" && p.architecture === "amd64",
 			),
 		)?.digest;
+		if (!proposedDigest) {
+			proposedDigest = fromLine.manifestList.images[0].digest;
+			platform = fromLine.manifestList.images[0].platform[0];
+		}
 	}
 
 	if (!proposedDigest) {
@@ -125,7 +134,12 @@ export async function changelog(
 		return undefined;
 	}
 
-	const currentDigest = await getCurrentDigest(fromLine, repository, ctx);
+	const currentDigest = await getCurrentDigest(
+		fromLine,
+		repository,
+		platform,
+		ctx,
+	);
 	const file = await getLibraryFileCommit(p, repository);
 
 	const outputFile = path.join(os.tmpdir(), guid());
@@ -177,12 +191,8 @@ ${_.flattenDeep(
 		diff
 			.filter(d => d.DiffType === "File")
 			.map(d => [
-				...(d.Diff.Adds || []).map(
-					a => `| \`${a.Name}\` | | ${niceBytes(a.Size2)} |`,
-				),
-				...(d.Diff.Dels || []).map(
-					d => `| \`${d.Name}\` | ${niceBytes(d.Size1)} | |`,
-				),
+				...(d.Diff.Adds || []).map(a => `| \`${a.Name}\` | | + |`),
+				...(d.Diff.Dels || []).map(d => `| \`${d.Name}\` | | - |`),
 				...(d.Diff.Mods || []).map(
 					m =>
 						`| \`${m.Name}\` | ${niceBytes(m.Size1)} | ${niceBytes(
