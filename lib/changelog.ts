@@ -140,6 +140,12 @@ export async function changelog(
 		platform,
 		ctx,
 	);
+
+	if (proposedDigest === currentDigest) {
+		log.debug("Same digests");
+		return undefined;
+	}
+
 	const file = await getLibraryFileCommit(p, repository);
 
 	const outputFile = path.join(os.tmpdir(), guid());
