@@ -237,8 +237,8 @@ export async function changelog(
 		fileDiff,
 		historyDiff,
 		sizeDiff: {
-			current: sizeDiff.Size1,
-			proposed: sizeDiff.Size2,
+			current: sizeDiff?.Size1,
+			proposed: sizeDiff?.Size2,
 		},
 	});
 

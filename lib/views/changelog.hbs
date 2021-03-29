@@ -19,8 +19,8 @@ New image build caused by commit docker-library/official-images@{{file.sha}} to 
 
 Comparing Docker image `{{imageName}}` at
 
-_Current_ `{{fromLine.digest}}` ({{bytes sizeDiff.current}}) and
-_Proposed_ `{{or fromLine.image.digest fromLine.manifestList.digest}}` ({{bytes sizeDiff.proposed}}) digests:
+_Current_ `{{fromLine.digest}}` {{#if sizeDiff.current}}({{bytes sizeDiff.current}}){{/if}} and
+_Proposed_ `{{or fromLine.image.digest fromLine.manifestList.digest}}` {{#if sizeDiff.proposed}}({{bytes sizeDiff.proposed}}){{/if}} digests:
 
 #### Packages
 
