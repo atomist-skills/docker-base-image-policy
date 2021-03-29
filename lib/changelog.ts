@@ -78,38 +78,41 @@ async function getLibraryFileCommit(
 	p: project.Project,
 	repository: subscription.datalog.DockerImage["repository"],
 ): Promise<{ sha: string; commit: { message: string } }> {
-	// Get commit on the definition file
-	return (
-		await github.api(p.id).repos.listCommits({
-			owner: "docker-library",
-			repo: "official-images",
-			path: `library/${repository.name}`,
-			per_page: 1,
-		} as any)
-	).data[0];
+	if (
+		repository.host === "hub.docker.com" &&
+		!repository.name.includes("/")
+	) {
+		// Get commit on the definition file
+		return (
+			await github.api(p.id).repos.listCommits({
+				owner: "docker-library",
+				repo: "official-images",
+				path: `library/${repository.name}`,
+				per_page: 1,
+			} as any)
+		).data[0];
+	}
+	return undefined;
 }
 
 export async function changelog(
 	ctx: EventContext<any, Configuration>,
 	p: project.Project,
 	fromLine: CommitAndDockerfile["file"]["lines"][0],
+	registries: CommitAndDockerfile["registry"],
 ): Promise<string> {
 	const repository = fromLine.repository;
-	// Ony calculate changelog for official docker images from Docker Hub
-	if (
-		!(
-			repository.host === "hub.docker.com" &&
-			!repository.name.includes("/")
-		)
-	) {
-		log.debug("Only create changelog for official Docker Hub images");
-		return undefined;
-	}
 
 	if (!fromLine.digest) {
 		log.debug("from line not pinned");
 		return undefined;
 	}
+
+	const imageName = `${
+		repository.host !== "hub.docker.com"
+			? `${repository.host}/${repository.name}`
+			: repository.name
+	}`;
 
 	// Get the digest of the new image
 	let proposedDigest = fromLine.image?.digest;
@@ -148,11 +151,13 @@ export async function changelog(
 
 	const file = await getLibraryFileCommit(p, repository);
 
+	await prepareCredentials(registries);
+
 	const outputFile = path.join(os.tmpdir(), guid());
 	const args = [
 		"diff",
-		`${repository.name}@${currentDigest}`,
-		`${repository.name}@${proposedDigest}`,
+		`${imageName}@${currentDigest}`,
+		`${imageName}@${proposedDigest}`,
 		"--type=history",
 		"--type=apt",
 		"--type=node",
@@ -166,7 +171,8 @@ export async function changelog(
 	];
 	const result = await childProcess.spawnPromise("container-diff", args);
 	if (result.status !== 0) {
-		throw new Error("Failed to diff images");
+		log.warn(`Failed to diff container images`);
+		return undefined;
 	}
 
 	const diff = await fs.readJson(outputFile);
@@ -240,7 +246,7 @@ ${historyDiff.sort().join("\n")}
 
 	const cl = `<!-- atomist:hide -->
 <details>
-<summary>Changelog for <code>${repository.name}${
+<summary>Changelog for <code>${imageName}${
 		fromLine.tag ? `:${fromLine.tag}` : ""
 	}</code></summary>
 <p>
@@ -261,7 +267,7 @@ ${file.commit.message}
 		: ""
 }### Comparison
 
-Comparing Docker image \`${repository.name}${
+Comparing Docker image \`${imageName}${
 		fromLine.tag ? `:${fromLine.tag}` : ""
 	}\` at
 
@@ -300,4 +306,43 @@ function niceBytes(x: string): string {
 		n = n / 1024;
 	}
 	return n.toFixed(n < 10 && l > 0 ? 1 : 0) + "" + units[l];
+}
+
+async function prepareCredentials(
+	registries: CommitAndDockerfile["registry"],
+): Promise<void> {
+	if (registries.length === 0) {
+		return;
+	}
+	const dockerConfig = {
+		auths: {},
+	} as any;
+
+	for (const registry of registries) {
+		const creds = {
+			login: registry.username,
+			secret: registry.secret,
+		};
+
+		if (registry.serverUrl?.startsWith("registry.hub.docker.com")) {
+			dockerConfig.auths["https://index.docker.io/v1/"] = {
+				auth: Buffer.from(creds?.login + ":" + creds?.secret)?.toString(
+					"base64",
+				),
+			};
+		} else if (registry.serverUrl) {
+			const url = /^(?:https?:\/\/)?(.*?)\/?$/.exec(registry.serverUrl);
+			dockerConfig.auths[url[1]] = {
+				auth: Buffer.from(creds?.login + ":" + creds?.secret)?.toString(
+					"base64",
+				),
+			};
+		}
+	}
+
+	await fs.ensureDir(path.join(os.homedir(), ".docker"));
+	await fs.writeJson(
+		path.join(os.homedir(), ".docker", "config.json"),
+		dockerConfig,
+	);
 }

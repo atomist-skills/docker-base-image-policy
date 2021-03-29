@@ -50,6 +50,7 @@ export interface CommitAndDockerfile {
 			};
 		}>;
 	};
+	registry: subscription.datalog.DockerRegistry[];
 }
 
 export interface ValidateBaseImages {

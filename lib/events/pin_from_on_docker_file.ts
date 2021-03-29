@@ -15,13 +15,16 @@
  */
 
 import {
-	EventHandler,
+	EventContext,
 	github,
+	MappingEventHandler,
 	project,
 	repository,
 	status,
+	subscription,
 	truncate,
 } from "@atomist/skill";
+import { wrapEventHandler } from "@atomist/skill/lib/map";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 
@@ -32,142 +35,179 @@ import { replaceFroms } from "../util";
 
 const Footer = `<!-- atomist:hide -->\nPinning \`FROM\` lines to digests makes your builds repeatable. Atomist will raise new pull requests whenever the tag moves, so that you know when the base image has been updated. You can follow a new tag at any time. Just replace the digest with the new tag you want to follow. Atomist, will switch to following this new tag.\n<!-- atomist:show -->`;
 
-export const handler: EventHandler<
-	CommitAndDockerfile,
+export const handler: MappingEventHandler<
+	CommitAndDockerfile[],
+	CommitAndDockerfile & { registry: subscription.datalog.DockerRegistry },
 	Configuration
-> = async ctx => {
-	const cfg = ctx.configuration.parameters;
-	const commit = ctx.data.commit;
-	const file = ctx.data.file;
-
-	if (!cfg.pinningPullRequests) {
-		return status.success(`Pin base image policy not configured`).hidden();
-	}
-
-	const project = await ctx.project.clone(
-		repository.gitHub({
-			owner: commit.repo.org.name,
-			repo: commit.repo.name,
-			credential: {
-				token: commit.repo.org.installationToken,
-				scopes: [],
-			},
-		}),
-	);
-
-	const fromLines = _.orderBy(file.lines, "number")
-		.filter(l => l.instruction === "FROM")
-		.map(l => {
-			const digest =
-				l.manifestList?.digest || l.image?.digest || l.digest;
-			const tag = cfg.pinningIncludeTag && l.tag ? `:${l.tag}` : "";
-			const imageName = `${
-				l.repository.host !== "hub.docker.com"
-					? `${l.repository.host}/${l.repository.name}`
-					: l.repository.name
-			}${tag}@${digest}`;
-			return {
-				line: l.number,
-				currentImageName: l.argsString.split(" ")[0],
-				imageName,
-				changed: l.digest !== digest,
-				tag: l.manifestList?.tags?.[0] || l.image?.tags?.[0],
-				digest: l.digest,
-				changelog: undefined,
-			};
-		});
-	const changedFromLines = fromLines.filter(f => f.changed);
-
-	for (const changedFromLine of _.orderBy(file.lines, "number").filter(
-		l => l.instruction === "FROM",
-	)) {
-		const cfl = changedFromLines.find(
-			c => c.line === changedFromLine.number,
-		);
-		if (cfl) {
-			cfl.changelog = await changelog(ctx, project, changedFromLine);
+> = {
+	map: data => {
+		const result: Map<string, CommitAndDockerfile> = new Map();
+		for (const event of data) {
+			if (result.has(event.commit.sha)) {
+				result.get(event.commit.sha).registry.push(event.registry);
+			} else {
+				result.set(event.commit.sha, {
+					file: event.file,
+					commit: event.commit,
+					registry: [event.registry],
+				});
+			}
 		}
-	}
-	const maxLength = _.maxBy(changedFromLines, "line").line.toString().length;
+		return [...result.values()];
+	},
+	handle: wrapEventHandler(
+		async (ctx: EventContext<CommitAndDockerfile, Configuration>) => {
+			const cfg = ctx.configuration.parameters;
+			const commit = ctx.data.commit;
+			const file = ctx.data.file;
 
-	const isRepin = !changedFromLines.some(f => !f.digest);
+			if (!cfg.pinningPullRequests) {
+				return status
+					.success(`Pin base image policy not configured`)
+					.hidden();
+			}
 
-	return await github.persistChanges(
-		ctx,
-		project,
-		"pr",
-		{
-			branch: commit.repo.defaultBranch,
-			author: {
-				login: undefined,
-				name: undefined,
-				email: undefined,
-			},
-			defaultBranch: commit.repo.defaultBranch,
-		},
-		{
-			branch: `atomist/pin-docker-base-image/${file.path.toLowerCase()}`,
-			assignReviewer: !!cfg.pinningAssignReviewers,
-			reviewers: cfg.pinningAssignReviewers
-				? [commit.author.login]
-				: undefined,
-			labels: cfg.pinningLabels,
-			title:
-				changedFromLines.length === 1
-					? `${isRepin ? "Re-pin" : "Pin"} Docker base image in ${
-							file.path
-					  }`
-					: `${isRepin ? "Re-pin" : "Pin"} Docker base images in ${
-							file.path
-					  }`,
-			body:
-				changedFromLines.length === 1
-					? `This pull request ${
-							isRepin ? "re-pins" : "pins"
-					  } the Docker base image \`${
-							changedFromLines[0].imageName.split("@")[0]
-					  }\` in \`${file.path}\` to the current digest.
+			const project = await ctx.project.clone(
+				repository.gitHub({
+					owner: commit.repo.org.name,
+					repo: commit.repo.name,
+					credential: {
+						token: commit.repo.org.installationToken,
+						scopes: [],
+					},
+				}),
+			);
+
+			const fromLines = _.orderBy(file.lines, "number")
+				.filter(l => l.instruction === "FROM")
+				.map(l => {
+					const digest =
+						l.manifestList?.digest || l.image?.digest || l.digest;
+					const tag =
+						cfg.pinningIncludeTag && l.tag ? `:${l.tag}` : "";
+					const imageName = `${
+						l.repository.host !== "hub.docker.com"
+							? `${l.repository.host}/${l.repository.name}`
+							: l.repository.name
+					}${tag}@${digest}`;
+					return {
+						line: l.number,
+						currentImageName: l.argsString.split(" ")[0],
+						imageName,
+						changed: l.digest !== digest,
+						tag: l.manifestList?.tags?.[0] || l.image?.tags?.[0],
+						digest: l.digest,
+						changelog: undefined,
+					};
+				});
+			const changedFromLines = fromLines.filter(f => f.changed);
+
+			for (const changedFromLine of _.orderBy(
+				file.lines,
+				"number",
+			).filter(l => l.instruction === "FROM")) {
+				const cfl = changedFromLines.find(
+					c => c.line === changedFromLine.number,
+				);
+				if (cfl) {
+					cfl.changelog = await changelog(
+						ctx,
+						project,
+						changedFromLine,
+						ctx.data.registry,
+					);
+				}
+			}
+			const maxLength = _.maxBy(changedFromLines, "line").line.toString()
+				.length;
+
+			const isRepin = !changedFromLines.some(f => !f.digest);
+
+			return await github.persistChanges(
+				ctx,
+				project,
+				"pr",
+				{
+					branch: commit.repo.defaultBranch,
+					author: {
+						login: undefined,
+						name: undefined,
+						email: undefined,
+					},
+					defaultBranch: commit.repo.defaultBranch,
+				},
+				{
+					branch: `atomist/pin-docker-base-image/${file.path.toLowerCase()}`,
+					assignReviewer: !!cfg.pinningAssignReviewers,
+					reviewers: cfg.pinningAssignReviewers
+						? [commit.author.login]
+						: undefined,
+					labels: cfg.pinningLabels,
+					title:
+						changedFromLines.length === 1
+							? `${
+									isRepin ? "Re-pin" : "Pin"
+							  } Docker base image in ${file.path}`
+							: `${
+									isRepin ? "Re-pin" : "Pin"
+							  } Docker base images in ${file.path}`,
+					body:
+						changedFromLines.length === 1
+							? `This pull request ${
+									isRepin ? "re-pins" : "pins"
+							  } the Docker base image \`${
+									changedFromLines[0].imageName.split("@")[0]
+							  }\` in \`${file.path}\` to the current digest.
 
 ${fromLine(changedFromLines[0], maxLength, cfg.pinningIncludeTag)}
 
 ${Footer}`
-					: `This pull request ${
-							isRepin ? "re-pins" : "pins"
-					  } the following Docker base images in \`${
-							file.path
-					  }\` to their current digests.
+							: `This pull request ${
+									isRepin ? "re-pins" : "pins"
+							  } the following Docker base images in \`${
+									file.path
+							  }\` to their current digests.
 					
 ${changedFromLines
 	.map(l => fromLine(l, maxLength, cfg.pinningIncludeTag))
 	.join("\n\n")}
 
 ${Footer}`,
-		},
-		{
-			editors: fromLines.map((l, ix) => async (p: project.Project) => {
-				const dockerfilePath = p.path(file.path);
-				const dockerfile = (
-					await fs.readFile(dockerfilePath)
-				).toString();
-				const replacedDockerfile = replaceFroms(
-					dockerfile,
-					fromLines.map(l => l.imageName),
-					ix,
-				);
-				await fs.writeFile(dockerfilePath, replacedDockerfile);
-				const prefix = `${l.digest ? "Re-pin" : "Pin"} Docker image `;
-				return `${prefix}${truncate(
-					l.imageName.split("@")[0],
-					50 - prefix.length,
-					{ direction: "start", separator: "..." },
-				)}
+				},
+				{
+					editors: fromLines.map(
+						(l, ix) => async (p: project.Project) => {
+							const dockerfilePath = p.path(file.path);
+							const dockerfile = (
+								await fs.readFile(dockerfilePath)
+							).toString();
+							const replacedDockerfile = replaceFroms(
+								dockerfile,
+								fromLines.map(l => l.imageName),
+								ix,
+							);
+							await fs.writeFile(
+								dockerfilePath,
+								replacedDockerfile,
+							);
+							const prefix = `${
+								l.digest ? "Re-pin" : "Pin"
+							} Docker image `;
+							return `${prefix}${truncate(
+								l.imageName.split("@")[0],
+								50 - prefix.length,
+								{ direction: "start", separator: "..." },
+							)}
 
 ${l.currentImageName}
 -> 
 ${l.imageName}`;
-			}),
+						},
+					),
+				},
+			);
 		},
-	);
+	),
 };
 
 function fromLine(
