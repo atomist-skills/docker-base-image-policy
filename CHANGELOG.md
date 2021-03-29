@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.7...HEAD)
 
+### Changed
+
+-   Update to DevSecOps category. [3cfa236](https://github.com/atomist-skills/docker-base-image-policy/commit/3cfa2367a81c1e2502d49313c317461de588d6a3)
+
 ## [0.1.7](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.6...0.1.7) - 2021-03-27
 
 ### Fixed
