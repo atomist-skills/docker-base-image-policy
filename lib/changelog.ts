@@ -22,6 +22,7 @@ import {
 	log,
 	project,
 	subscription,
+	template,
 } from "@atomist/skill";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
@@ -178,52 +179,45 @@ export async function changelog(
 
 	const diff = await fs.readJson(outputFile);
 
-	const packageDiff = diff
-		.filter(d => ["Apt", "RPM", "Node", "pip"].includes(d.DiffType))
-		.filter(d => d.Diff?.InfoDiff?.length > 0);
-
-	const packageBody =
-		packageDiff.length === 0
-			? `No package differences detected`
-			: `The following package differences were detected: 
-
-| Name | Current | Proposed | Type |
-| ---- | ------- | -------- | ---- |
-${_.flattenDeep(
-	packageDiff.map(p =>
-		p.Diff.InfoDiff.map(
-			id =>
-				`| \`${id.Package}\` | \`${id.Info1.Version}\` | \`${id.Info2.Version}\` | ${p.DiffType} |`,
-		),
-	),
-)
-	.sort()
-	.join("\n")}`;
-
-	const fileDiff = _.flattenDeep(
-		diff
-			.filter(d => d.DiffType === "File")
-			.map(d => [
-				...(d.Diff.Adds || []).map(a => `| \`${a.Name}\` | | + |`),
-				...(d.Diff.Dels || []).map(d => `| \`${d.Name}\` | | - |`),
-				...(d.Diff.Mods || []).map(
-					m =>
-						`| \`${m.Name}\` | ${niceBytes(m.Size1)} | ${niceBytes(
-							m.Size2,
-						)} |`,
+	const packageDiff = _.sortBy(
+		_.flatten(
+			diff
+				.filter(d => ["Apt", "RPM", "Node", "pip"].includes(d.DiffType))
+				.filter(d => d.Diff?.InfoDiff?.length > 0)
+				.map(p =>
+					p.Diff.InfoDiff.map(id => ({
+						package: id.Package,
+						current: id.Info1.Version,
+						proposed: id.Info2.Version,
+						type: p.DiffType,
+					})),
 				),
-			]),
+		),
+		"package",
 	);
 
-	const fileBody =
-		fileDiff.length > 0
-			? `The following file differences were detected:
-			
-| Name | Current | Proposed |
-| ---- | ------- | -------- |
-${fileDiff.sort().join("\n")}
-`
-			: "No file differences detected";
+	const fileDiff = _.sortBy(
+		_.flattenDeep(
+			diff
+				.filter(d => d.DiffType === "File")
+				.map(d => [
+					...(d.Diff.Adds || []).map(a => ({
+						file: a.Name,
+						proposed: "+",
+					})),
+					...(d.Diff.Dels || []).map(d => ({
+						file: d.Name,
+						proposed: "-",
+					})),
+					...(d.Diff.Mods || []).map(m => ({
+						file: m.Name,
+						current: m.Size1,
+						proposed: m.Size2,
+					})),
+				]),
+		),
+		"file",
+	);
 
 	const historyDiff = _.flattenDeep(
 		diff
@@ -234,79 +228,21 @@ ${fileDiff.sort().join("\n")}
 			]),
 	);
 
-	const historyBody =
-		historyDiff.length > 0
-			? `The following differences in \`docker inspect\` were detected:
-\`\`\`			
-${historyDiff.sort().join("\n")}
-\`\`\`
-`
-			: "No differences in `docker inspect` detected";
-
 	const sizeDiff = diff.find(d => d.DiffType === "Size")?.Diff?.[0];
-
-	const cl = `<!-- atomist:hide -->
-<details>
-<summary>Changelog for <code>${imageName}${
-		fromLine.tag ? `:${fromLine.tag}` : ""
-	}</code></summary>
-<p>
-
-${
-	file
-		? `### Commit
-
-New image build caused by commit docker-library/official-images@${file.sha} to [\`library/${repository.name}\`](https://github.com/docker-library/official-images/blob/${file.sha}/library/${repository.name}):
-
-\`\`\`
-${file.commit.message}
-\`\`\`
-
----
-
-`
-		: ""
-}### Comparison
-
-Comparing Docker image \`${imageName}${
-		fromLine.tag ? `:${fromLine.tag}` : ""
-	}\` at
-
-_Current_ \`${fromLine.digest}\` (${niceBytes(sizeDiff.Size1)}) and 
-_Proposed_ \`${
-		fromLine.image?.digest || fromLine.manifestList?.digest
-	}\` (${niceBytes(sizeDiff.Size2)}) digests: 
-
-#### Packages
-
-${packageBody}
-
-#### Files
-
-${fileBody}
-
-#### History
-
-${historyBody}
-
----
-
-</p>
-</details>
-<!-- atomist:show -->`;
+	const cl = await template.render("changelog", {
+		imageName: `${imageName}${fromLine.tag ? `:${fromLine.tag}` : ""}`,
+		fromLine,
+		file,
+		packageDiff,
+		fileDiff,
+		historyDiff,
+		sizeDiff: {
+			current: sizeDiff.Size1,
+			proposed: sizeDiff.Size2,
+		},
+	});
 
 	return cl;
-}
-
-const units = ["b", "kb", "mb", "gb", "tb", "pb"];
-function niceBytes(x: string): string {
-	let l = 0,
-		n = parseInt(x, 10) || 0;
-
-	while (n >= 1024 && ++l) {
-		n = n / 1024;
-	}
-	return n.toFixed(n < 10 && l > 0 ? 1 : 0) + "" + units[l];
 }
 
 async function prepareCredentials(

@@ -1,0 +1,71 @@
+<!-- atomist:hide -->
+<details>
+<summary>Changelog for <code>{{imageName}}</code></summary>
+<p>
+
+{{#if file}}
+### Commit
+
+New image build caused by commit docker-library/official-images@{{file.sha}} to [\`library/{{repository.name}}\`](https://github.com/docker-library/official-images/blob/{{file.sha}}/library/{{repository.name}}):
+
+\`\`\`
+{{file.commit.message}}
+\`\`\`
+
+---
+
+{{/if}}
+### Comparison
+
+Comparing Docker image `{{imageName}}` at
+
+_Current_ `{{fromLine.digest}}` ({{bytes sizeDiff.current}}) and
+_Proposed_ `{{or fromLine.image.digest fromLine.manifestList.digest}}` ({{bytes sizeDiff.proposed}}) digests:
+
+#### Packages
+
+{{#if packageDiff}}
+The following package differences were detected:
+
+| Name | Current | Proposed | Type |
+| ---- | ------- | -------- | ---- |
+{{#each packageDiff}}
+| `{{package}}` | `{{current}}` | `{{proposed}}` | {{type}} |
+{{/each}}
+{{else}}
+No package differences detected
+{{/if}}
+
+#### Files
+
+{{#if fileDiff}}
+The following file modifications were detected:
+
+| Name | Current | Proposed |
+| ---- | ------- | -------- |
+{{#each fileDiff}}
+| `{{file}}` | `{{bytes current}}` | `{{bytes proposed}}` |
+{{/each}}
+{{else}}
+No file modifications detected
+{{/if}}
+
+#### History
+
+{{#if historyDiff}}
+The following differences in `docker inspect` were detected:
+
+```
+{{#each historyDiff}}
+{{this}}
+{{/each}}
+```
+{{else}}
+No differences in `docker inspect` detected
+{{/if}}
+
+---
+
+</p>
+</details>
+<!-- atomist:show -->
