@@ -219,13 +219,17 @@ export async function changelog(
 		"file",
 	);
 
-	const historyDiff = _.flattenDeep(
-		diff
-			.filter(d => d.DiffType === "History")
-			.map(d => [
-				...(d.Diff.Adds || []).map(a => `+ ${a}`),
-				...(d.Diff.Dels || []).map(d => `- ${d}`),
-			]),
+	const historyDiff = _.sortBy(
+		_.flattenDeep(
+			diff
+				.filter(d => d.DiffType === "History")
+				.map(d => [
+					...(d.Diff.Adds || []).map(a => ({ type: "+", text: a })),
+					...(d.Diff.Dels || []).map(r => ({ type: "-", text: r })),
+				]),
+		),
+		["text", "type"],
+		["asc", "desc"],
 	);
 
 	const sizeDiff = diff.find(d => d.DiffType === "Size")?.Diff?.[0];
