@@ -30,7 +30,7 @@ The following package differences were detected:
 | Name | Current | Proposed | Type |
 | ---- | ------- | -------- | ---- |
 {{#each packageDiff}}
-| `{{package}}` | `{{current}}` | `{{proposed}}` | {{type}} |
+| `{{package}}` | {{code current}} | {{code proposed}} | {{type}} |
 {{/each}}
 {{else}}
 No package differences detected
@@ -44,7 +44,7 @@ The following file modifications were detected:
 | Name | Current | Proposed |
 | ---- | ------- | -------- |
 {{#each fileDiff}}
-| `{{file}}` | `{{bytes current}}` | `{{bytes proposed}}` |
+| `{{file}}` | {{code (bytes current)}} | {{code (bytes proposed)}} |
 {{/each}}
 {{else}}
 No file modifications detected
