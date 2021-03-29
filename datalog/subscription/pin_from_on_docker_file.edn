@@ -36,6 +36,13 @@
                                                                                            (:docker.repository/repository
                                                                                              :as
                                                                                              :name)]}]}])
+ (pull
+   ?docker-registry
+   [:schema/entity-type
+    :docker.registry/type
+    :docker.registry/secret
+    :docker.registry/username
+    :docker.registry/server-url])
  :in $ $before-db %
  :where
  (or-join [?from-line ?digest]
@@ -48,6 +55,12 @@
 
  ;; check pinning pull requests are enabled
  (get-config-value "pinningPullRequests" true true)
+
+ (capability-configuration
+   "atomist"
+   "DockerRegistry"
+   "analysis"
+   ?docker-registry)
 
  ;; either the digest is not present in the dockerfile, or it's a different one
  (or-join [?from-line ?digest]
