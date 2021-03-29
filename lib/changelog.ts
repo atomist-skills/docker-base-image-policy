@@ -233,7 +233,7 @@ export async function changelog(
 	);
 
 	const sizeDiff = diff.find(d => d.DiffType === "Size")?.Diff?.[0];
-	const cl = await template.render("changelog", {
+	return template.render("changelog", {
 		imageName: `${imageName}${fromLine.tag ? `:${fromLine.tag}` : ""}`,
 		fromLine,
 		file,
@@ -245,8 +245,6 @@ export async function changelog(
 			proposed: sizeDiff?.Size2,
 		},
 	});
-
-	return cl;
 }
 
 async function prepareCredentials(
