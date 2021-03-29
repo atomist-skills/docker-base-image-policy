@@ -20,7 +20,7 @@ WORKDIR "/skill"
 COPY package.json package-lock.json ./
 
 RUN npm ci --no-optional \
-    && npm cache clean --force
+    && rm -rf /root/.npm
 
 COPY --from=build /usr/src/ .
 
