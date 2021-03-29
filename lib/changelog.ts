@@ -151,7 +151,7 @@ export async function changelog(
 
 	const file = await getLibraryFileCommit(p, repository);
 
-	await prepareCredentials(registries);
+	await prepareCredentials(registries, repository);
 
 	const outputFile = path.join(os.tmpdir(), guid());
 	const args = [
@@ -170,6 +170,7 @@ export async function changelog(
 		`--output=${outputFile}`,
 	];
 	const result = await childProcess.spawnPromise("container-diff", args);
+	await removeCredentials();
 	if (result.status !== 0) {
 		log.warn(`Failed to diff container images`);
 		return undefined;
@@ -310,8 +311,15 @@ function niceBytes(x: string): string {
 
 async function prepareCredentials(
 	registries: CommitAndDockerfile["registry"],
+	repository: CommitAndDockerfile["file"]["lines"][0]["repository"],
 ): Promise<void> {
 	if (registries.length === 0) {
+		return;
+	}
+	if (
+		repository.host === "hub.docker.com" &&
+		!repository.name.includes("/")
+	) {
 		return;
 	}
 	const dockerConfig = {
@@ -320,7 +328,10 @@ async function prepareCredentials(
 
 	for (const registry of registries) {
 		const creds = {
-			login: registry.username,
+			login:
+				registry.type === subscription.datalog.DockerRegistryType.Gcr
+					? "_json_key"
+					: registry.username,
 			secret: registry.secret,
 		};
 
@@ -331,8 +342,8 @@ async function prepareCredentials(
 				),
 			};
 		} else if (registry.serverUrl) {
-			const url = /^(?:https?:\/\/)?(.*?)\/?$/.exec(registry.serverUrl);
-			dockerConfig.auths[url[1]] = {
+			const url = registry.serverUrl.split("/");
+			dockerConfig.auths[url[0]] = {
 				auth: Buffer.from(creds?.login + ":" + creds?.secret)?.toString(
 					"base64",
 				),
@@ -345,4 +356,8 @@ async function prepareCredentials(
 		path.join(os.homedir(), ".docker", "config.json"),
 		dockerConfig,
 	);
+}
+
+async function removeCredentials(): Promise<void> {
+	await fs.remove(path.join(os.homedir(), ".docker", "config.json"));
 }
