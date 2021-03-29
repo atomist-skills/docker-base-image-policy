@@ -9,7 +9,7 @@ RUN npm ci --no-optional && \
     npm run compile && \
     rm -rf node_modules .git
 
-FROM atomist/skill:node14@sha256:8ef6d05ac5c67e1b4cf709454a4f2f064cee163f90514186c31840f67b158e6f
+FROM atomist/skill:node14@sha256:ad07d2a6709a4eca2d711c849ce15bf6aaf3ebeb4724d03c25a06e2d8b6ff54e
 
 RUN curl -LO https://storage.googleapis.com/container-diff/latest/container-diff-linux-amd64 && \
     chmod +x container-diff-linux-amd64 && \
