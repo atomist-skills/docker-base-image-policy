@@ -1,5 +1,5 @@
 # Set up build
-FROM node:lts@sha256:359104ed81c918c2ca3bfb01faa069e33949013fde25c6a471b0fa27d19d78ca AS build
+FROM node:lts AS build
 
 WORKDIR /usr/src
 
@@ -10,7 +10,7 @@ RUN npm ci --no-optional && \
     rm -rf node_modules .git
 
 # Set up runtime container
-FROM atomist/skill:node14@sha256:ecbfe63a0c9d51d12dc94ef21f8780e3d87cdc998d8ecdc3ea096b3a675fc9ec
+FROM atomist/skill:node14
 
 RUN curl -LO https://storage.googleapis.com/container-diff/latest/container-diff-linux-amd64 && \
     chmod +x container-diff-linux-amd64 && \
