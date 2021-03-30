@@ -139,4 +139,5 @@
  (is-default-branch? ?ref)
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
- (repo-selected? ?repo)]
+ (repo-selected? ?repo)
+ ]

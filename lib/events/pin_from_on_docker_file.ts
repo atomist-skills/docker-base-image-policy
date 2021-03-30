@@ -65,7 +65,9 @@ export const handler: MappingEventHandler<
 					commit: event.commit,
 					registry: [event.registry],
 					image: event.image ? [event.image] : [],
-					manifestList: event.manifestList ? event.manifestList : [],
+					manifestList: event.manifestList
+						? [event.manifestList]
+						: [],
 				});
 			}
 		}
