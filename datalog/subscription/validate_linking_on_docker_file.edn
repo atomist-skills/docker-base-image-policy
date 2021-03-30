@@ -24,6 +24,9 @@
  :where
  (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
 
+ ;; check linking is required
+ (get-config-value "linkingRequired" false true)
+
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
  ;(repo-selected? ?repo)

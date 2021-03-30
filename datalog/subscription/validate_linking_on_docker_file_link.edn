@@ -24,6 +24,10 @@
  :in $ $before-db %
  :where
  (tx-entity-attr-value :docker.image/docker-file ?image _)
+
+ ;; check linking is required
+ (get-config-value "linkingRequired" false true)
+
  [?image :docker.image/sha ?sha]
  [?commit :git.commit/sha ?sha]
 

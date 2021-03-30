@@ -104,6 +104,13 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 			required: false,
 			visibility: ParameterVisibility.Hidden,
 		},
+		linkingRequired: {
+			type: ParameterType.Boolean,
+			displayName: "Require linking",
+			description: "Verify Docker images and Dockerfiles are linked",
+			required: false,
+			visibility: ParameterVisibility.Hidden,
+		},
 		repoFilter: parameter.repoFilter(),
 	},
 

@@ -25,4 +25,6 @@ export interface Configuration {
 	acceptRequired: boolean;
 	acceptImages: string[];
 	acceptRegistries: string[];
+
+	linkingRequired: boolean;
 }
