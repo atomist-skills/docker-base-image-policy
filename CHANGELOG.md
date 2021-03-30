@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.11...HEAD)
 
+### Fixed
+
+-   Make docker-registy optional. [6061cdb](https://github.com/atomist-skills/docker-base-image-policy/commit/6061cdba0ba5554cad2798102eda2615496a610e)
+
 ## [0.1.11](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.10...0.1.11) - 2021-03-30
 
 ### Added
