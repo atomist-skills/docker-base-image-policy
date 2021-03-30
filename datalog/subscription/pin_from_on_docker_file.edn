@@ -89,11 +89,13 @@
  ;; check pinning pull requests are enabled
  (get-config-value "pinningPullRequests" true true)
 
- (capability-configuration
-   "atomist"
-   "DockerRegistry"
-   "analysis"
-   ?docker-registry)
+ (or-join [?docker-registry]
+   (capability-configuration
+     "atomist"
+     "DockerRegistry"
+     "analysis"
+     ?docker-registry)
+   [(ground "empty") ?docker-registry])
 
  ;; either the digest is not present in the dockerfile, or it's a different one
  (or-join [?from-line ?digest]
