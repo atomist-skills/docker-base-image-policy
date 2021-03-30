@@ -51,6 +51,21 @@ export interface CommitAndDockerfile {
 		}>;
 	};
 	registry: subscription.datalog.DockerRegistry[];
+	image: Array<
+		Pick<subscription.datalog.DockerImage, "repository" | "digest" | "tags">
+	>;
+	manifestList: Array<{
+		digest: string;
+		tags: string[];
+		images: Array<{
+			digest: string;
+			platform: Array<{
+				os: string;
+				variant?: string;
+				architecture: string;
+			}>;
+		}>;
+	}>;
 }
 
 export interface ValidateBaseImages {

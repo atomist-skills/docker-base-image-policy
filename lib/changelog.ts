@@ -32,49 +32,6 @@ import * as path from "path";
 import { Configuration } from "./configuration";
 import { CommitAndDockerfile } from "./types";
 
-async function getCurrentDigest(
-	fromLine: CommitAndDockerfile["file"]["lines"][0],
-	repository: subscription.datalog.DockerImage["repository"],
-	platform: CommitAndDockerfile["file"]["lines"][0]["manifestList"]["images"][0]["platform"][0],
-	ctx: EventContext<any, Configuration>,
-): Promise<string> {
-	// Get the digest of the current image
-	let oldDigest = fromLine.digest;
-	const oldImageDigest = (await ctx.datalog.query<{
-		image: { digest: string };
-	}>(
-		`[:find
- (pull ?image [:schema/entity-type 
-               :docker.image/digest])
- :in
- $
- $before-db
- %
- :where
- [?repository :docker.repository/host ?host]
- [?repository :docker.repository/repository ?name]
- [?manifest :docker.manifest-list/repository ?repository]
- [?manifest
-  :docker.manifest-list/digest
-  ?digest]
- [?manifest :docker.manifest-list/images ?image]
- [?platform :docker.platform/image ?image]
- [?platform :docker.platform/os ?os]
- [?platform :docker.platform/architecture ?arch]]`,
-		{
-			host: repository.host,
-			name: repository.name,
-			digest: fromLine.digest,
-			os: platform.os,
-			arch: platform.architecture,
-		},
-	)) as Array<{ image: { digest: string } }>;
-	if (oldImageDigest?.length > 0) {
-		oldDigest = oldImageDigest[0].image.digest;
-	}
-	return oldDigest;
-}
-
 async function getLibraryFileCommit(
 	p: project.Project,
 	repository: subscription.datalog.DockerImage["repository"],
@@ -101,6 +58,8 @@ export async function changelog(
 	p: project.Project,
 	fromLine: CommitAndDockerfile["file"]["lines"][0],
 	registries: CommitAndDockerfile["registry"],
+	images: CommitAndDockerfile["image"],
+	manifests: CommitAndDockerfile["manifestList"],
 ): Promise<string> {
 	const repository = fromLine.repository;
 
@@ -138,12 +97,22 @@ export async function changelog(
 		return undefined;
 	}
 
-	const currentDigest = await getCurrentDigest(
-		fromLine,
-		repository,
-		platform,
-		ctx,
-	);
+	let currentDigest = fromLine.digest;
+	if (manifests.some(m => m.digest === currentDigest)) {
+		const matchingImage = manifests
+			.find(m => m.digest === currentDigest)
+			.images.find(i =>
+				i.platform.some(
+					p =>
+						p.os === platform.os &&
+						p.architecture === platform.architecture &&
+						p.variant === platform.variant,
+				),
+			);
+		if (matchingImage) {
+			currentDigest = matchingImage.digest;
+		}
+	}
 
 	if (proposedDigest === currentDigest) {
 		log.debug("Same digests");

@@ -1,4 +1,22 @@
 [:find
+ (pull ?image [:db/id
+               :schema/entity-type
+               {:docker.image/repository [:docker.repository/host
+                                          (:docker.repository/repository
+                                            :as
+                                            :name)]}
+               :docker.image/digest
+               :docker.image/tags
+               {:docker.manifest-list/repository [:docker.repository/host
+                                                  (:docker.repository/repository
+                                                    :as
+                                                    :name)]}
+               :docker.manifest-list/digest
+               :docker.manifest-list/tags
+               {:docker.manifest-list/images [:docker.image/digest
+                                              {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
+                                                                                                        :docker.platform/variant
+                                                                                                        :docker.platform/architecture]}]}])
  (pull
    ?commit
    [:schema/entity-type
@@ -38,7 +56,8 @@
                                                                                              :name)]}]}])
  (pull
    ?docker-registry
-   [:schema/entity-type
+   [:db/id
+    :schema/entity-type
     :docker.registry/type
     :docker.registry/secret
     :docker.registry/username
@@ -99,6 +118,21 @@
   [[?from-count]]]
 
  [(= ?total-from-count ?from-count)]
+
+ ;; resolve all images and manifest-list currently used in FROM lines
+ [?other-from-line :docker.file.line/file ?docker-file]
+ [?other-from-line :docker.file.line/instruction "FROM"]
+ (or-join [?other-from-line ?image]
+   (and
+     [?other-from-line :docker.file.from/digest ?digest]
+     [?image :docker.image/digest ?digest])
+   (and
+     [?other-from-line :docker.file.from/digest ?digest]
+     [?image :docker.manifest-list/digest ?digest])
+   (and
+     [(missing? $ ?other-from-line :docker.file.from/digest)]
+     [(ground "scratch") ?image])
+   )
 
  ;; head commits
  [?ref :git.ref/commit ?commit]

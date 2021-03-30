@@ -37,23 +37,45 @@ const Footer = `<!-- atomist:hide -->\nPinning \`FROM\` lines to digests makes y
 
 export const handler: MappingEventHandler<
 	CommitAndDockerfile[],
-	CommitAndDockerfile & { registry: subscription.datalog.DockerRegistry },
+	CommitAndDockerfile & {
+		registry: subscription.datalog.DockerRegistry;
+		image: CommitAndDockerfile["image"][0];
+		manifestList: CommitAndDockerfile["manifestList"][0];
+	},
 	Configuration
 > = {
 	map: data => {
 		const result: Map<string, CommitAndDockerfile> = new Map();
 		for (const event of data) {
 			if (result.has(event.commit.sha)) {
-				result.get(event.commit.sha).registry.push(event.registry);
+				if (event.registry) {
+					result.get(event.commit.sha).registry.push(event.registry);
+				}
+				if (event.manifestList) {
+					result
+						.get(event.commit.sha)
+						.manifestList.push(event.manifestList);
+				}
+				if (event.image) {
+					result.get(event.commit.sha).image.push(event.image);
+				}
 			} else {
 				result.set(event.commit.sha, {
 					file: event.file,
 					commit: event.commit,
 					registry: [event.registry],
+					image: event.image ? [event.image] : [],
+					manifestList: event.manifestList ? event.manifestList : [],
 				});
 			}
 		}
-		return [...result.values()];
+		return [...result.values()].map(r => ({
+			file: r.file,
+			commit: r.commit,
+			registry: _.uniqBy(r.registry, "id"),
+			image: _.uniqBy(r.image, "id"),
+			manifestList: _.uniqBy(r.manifestList, "id"),
+		}));
 	},
 	handle: wrapEventHandler(
 		async (ctx: EventContext<CommitAndDockerfile, Configuration>) => {
@@ -115,6 +137,8 @@ export const handler: MappingEventHandler<
 						project,
 						changedFromLine,
 						ctx.data.registry,
+						ctx.data.image,
+						ctx.data.manifestList,
 					);
 				}
 			}
