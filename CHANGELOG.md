@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.9...HEAD)
 
+### Changed
+
+-   Disable the linking check by default. [20a8c8d](https://github.com/atomist-skills/docker-base-image-policy/commit/20a8c8d664c29aef2418332ea092507871a5be4e)
+
 ## [0.1.9](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.8...0.1.9) - 2021-03-30
 
 ### Fixed
