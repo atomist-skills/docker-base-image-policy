@@ -6,11 +6,11 @@
 {{#if file}}
 ### Commit
 
-New image build caused by commit docker-library/official-images@{{file.sha}} to [\`library/{{repository.name}}\`](https://github.com/docker-library/official-images/blob/{{file.sha}}/library/{{repository.name}}):
+New image build caused by commit docker-library/official-images@{{file.sha}} to [\`library/{{fromLine.repository.name}}\`](https://github.com/docker-library/official-images/blob/{{file.sha}}/library/{{fromLine.repository.name}}):
 
-\`\`\`
+```
 {{file.commit.message}}
-\`\`\`
+```
 
 ---
 
