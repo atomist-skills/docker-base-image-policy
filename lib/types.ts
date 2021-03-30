@@ -35,6 +35,10 @@ export interface CommitAndDockerfile {
 			image: {
 				digest: string;
 				tags: string[];
+				dockerFile: {
+					path: string;
+					commit: subscription.datalog.Commit;
+				};
 			};
 			manifestList: {
 				digest: string;

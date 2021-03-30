@@ -35,13 +35,13 @@ import { CommitAndDockerfile } from "./types";
 async function getLibraryFileCommit(
 	p: project.Project,
 	repository: subscription.datalog.DockerImage["repository"],
-): Promise<{ sha: string; commit: { message: string } }> {
+): Promise<{ sha: string; message: string; slug: string; path: string }> {
 	if (
 		repository.host === "hub.docker.com" &&
 		!repository.name.includes("/")
 	) {
 		// Get commit on the definition file
-		return (
+		const result = (
 			await github.api(p.id).repos.listCommits({
 				owner: "docker-library",
 				repo: "official-images",
@@ -49,6 +49,12 @@ async function getLibraryFileCommit(
 				per_page: 1,
 			} as any)
 		).data[0];
+		return {
+			slug: "docker-library/official-images",
+			path: `library/${repository.name}`,
+			sha: result.sha,
+			message: result.commit.message,
+		};
 	}
 	return undefined;
 }
@@ -80,6 +86,12 @@ export async function changelog(
 		os: "linux",
 		architecture: "amd64",
 	};
+	let file: {
+		slug: string;
+		message: string;
+		sha: string;
+		path: string;
+	};
 	if (fromLine.manifestList) {
 		proposedDigest = fromLine.manifestList?.images?.find(i =>
 			i.platform.some(
@@ -90,6 +102,13 @@ export async function changelog(
 			proposedDigest = fromLine.manifestList?.images?.[0].digest;
 			platform = fromLine.manifestList?.images?.[0].platform[0];
 		}
+	} else if (fromLine.image?.dockerFile?.commit) {
+		file = {
+			slug: `${fromLine.image.dockerFile.commit.repo?.org?.name}/${fromLine.image.dockerFile.commit.repo?.name}`,
+			message: fromLine.image.dockerFile.commit.message,
+			sha: fromLine.image.dockerFile.commit.sha,
+			path: fromLine.image.dockerFile.path,
+		};
 	}
 
 	if (!proposedDigest) {
@@ -119,7 +138,7 @@ export async function changelog(
 		return undefined;
 	}
 
-	const file = await getLibraryFileCommit(p, repository);
+	file = file || (await getLibraryFileCommit(p, repository));
 
 	await prepareCredentials(registries, repository);
 

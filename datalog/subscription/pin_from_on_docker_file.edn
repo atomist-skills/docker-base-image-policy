@@ -43,7 +43,21 @@
                                                             :docker.file.from/tag
                                                             :docker.file.from/digest
                                                             {:docker.file.from/image [:docker.image/digest
-                                                                                      :docker.image/tags]}
+                                                                                      :docker.image/tags
+                                                                                      {:docker.image/docker-file [:docker.file/path
+                                                                                                                  {:docker.file/commit [{:git.commit/repo [:git.repo/name
+                                                                                                                                                           :git.repo/default-branch
+                                                                                                                                                           {:git.repo/org [:github.org/installation-token
+                                                                                                                                                                           :git.org/name
+                                                                                                                                                                           (:git.org/provider-base-url
+                                                                                                                                                                             :as
+                                                                                                                                                                             :base-url)
+                                                                                                                                                                           :git.provider/url]}]}
+                                                                                                                                        {:git.commit/author [:git.user/name
+                                                                                                                                                             :git.user/login
+                                                                                                                                                             {:git.user/emails [:email.email/address]}]}
+                                                                                                                                        :git.commit/sha
+                                                                                                                                        :git.commit/message]}]}]}
                                                             {:docker.file.from/manifest-list [:docker.manifest-list/digest
                                                                                               :docker.manifest-list/tags
                                                                                               {:docker.manifest-list/images [:docker.image/digest
