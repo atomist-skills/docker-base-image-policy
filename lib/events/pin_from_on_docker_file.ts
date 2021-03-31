@@ -63,7 +63,7 @@ export const handler: MappingEventHandler<
 				result.set(event.commit.sha, {
 					file: event.file,
 					commit: event.commit,
-					registry: [event.registry],
+					registry: event.registry ? [event.registry] : [],
 					image: event.image ? [event.image] : [],
 					manifestList: event.manifestList
 						? [event.manifestList]

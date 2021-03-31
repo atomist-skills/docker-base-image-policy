@@ -236,15 +236,21 @@ export async function changelog(
 		["asc", "desc"],
 	);
 
+	const arrayDiff = (a1: string[][], a2: string[][]) => {
+		const j1 = a1.map(a => a.join(" ")).sort();
+		const j2 = a2.map(a => a.join(" ")).sort();
+		return _.difference(j1, j2);
+	};
+
 	const portsDiff = _.sortBy(
 		[
-			..._.difference(currentPorts, proposedPorts).map(r => ({
+			...arrayDiff(currentPorts, proposedPorts).map(r => ({
 				type: "-",
-				text: r.join(" "),
+				text: r,
 			})),
-			..._.difference(proposedPorts, currentPorts).map(a => ({
+			...arrayDiff(proposedPorts, currentPorts).map(r => ({
 				type: "+",
-				text: a.join(" "),
+				text: r,
 			})),
 		],
 		["text", "type"],
@@ -253,13 +259,13 @@ export async function changelog(
 
 	const envDiff = _.sortBy(
 		[
-			..._.difference(currentEnv, proposedEnv).map(r => ({
+			...arrayDiff(currentEnv, proposedEnv).map(r => ({
 				type: "-",
-				text: r.join(" "),
+				text: r,
 			})),
-			..._.difference(proposedEnv, currentEnv).map(a => ({
+			...arrayDiff(proposedEnv, currentEnv).map(r => ({
 				type: "+",
-				text: a.join(" "),
+				text: r,
 			})),
 		],
 		["text", "type"],
