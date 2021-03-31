@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.13...HEAD)
 
+### Fixed
+
+-   Fix undefined access when diffing arrays. [b41ed1c](https://github.com/atomist-skills/docker-base-image-policy/commit/b41ed1c9668066bd14bdd7308167aa896dc45901)
+
 ## [0.1.13](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.12...0.1.13) - 2021-03-31
 
 ### Added
