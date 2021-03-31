@@ -237,8 +237,8 @@ export async function changelog(
 	);
 
 	const arrayDiff = (a1: string[][], a2: string[][]) => {
-		const j1 = a1.map(a => a.join(" ")).sort();
-		const j2 = a2.map(a => a.join(" ")).sort();
+		const j1 = (a1 || []).map(a => a.join(" ")).sort();
+		const j2 = (a2 || []).map(a => a.join(" ")).sort();
 		return _.difference(j1, j2);
 	};
 
