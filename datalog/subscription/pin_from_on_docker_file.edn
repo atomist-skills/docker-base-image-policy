@@ -7,6 +7,8 @@
                                             :name)]}
                :docker.image/digest
                :docker.image/tags
+               :docker.image/ports
+               :docker.image/env
                {:docker.manifest-list/repository [:docker.repository/host
                                                   (:docker.repository/repository
                                                     :as
@@ -14,6 +16,9 @@
                :docker.manifest-list/digest
                :docker.manifest-list/tags
                {:docker.manifest-list/images [:docker.image/digest
+                                              :docker.image/ports
+                                              :docker.image/env
+                                              :docker.image/tags
                                               {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
                                                                                                         :docker.platform/variant
                                                                                                         :docker.platform/architecture]}]}])
@@ -44,6 +49,8 @@
                                                             :docker.file.from/digest
                                                             {:docker.file.from/image [:docker.image/digest
                                                                                       :docker.image/tags
+                                                                                      :docker.image/ports
+                                                                                      :docker.image/env
                                                                                       {:docker.image/docker-file [:docker.file/path
                                                                                                                   {:docker.file/commit [{:git.commit/repo [:git.repo/name
                                                                                                                                                            :git.repo/default-branch
@@ -61,6 +68,9 @@
                                                             {:docker.file.from/manifest-list [:docker.manifest-list/digest
                                                                                               :docker.manifest-list/tags
                                                                                               {:docker.manifest-list/images [:docker.image/digest
+                                                                                                                             :docker.image/tags
+                                                                                                                             :docker.image/ports
+                                                                                                                             :docker.image/env
                                                                                                                              {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
                                                                                                                                                                                        :docker.platform/variant
                                                                                                                                                                                        :docker.platform/architecture]}]}]}

@@ -64,6 +64,34 @@ The following differences in `docker inspect` were detected:
 No differences in `docker inspect` detected
 {{/if}}
 
+#### Ports
+
+{{#if portsDiff}}
+The following different exposed ports were detected:
+
+```
+{{#each portsDiff}}
+{{type}} {{text}}
+{{/each}}
+```
+{{else}}
+No different exposed ports detected
+{{/if}}
+
+#### Environment Variables
+
+{{#if envDiff}}
+The following different environment variables were detected:
+
+```
+{{#each envDiff}}
+{{type}} {{text}}
+{{/each}}
+```
+{{else}}
+No different environment variables detected
+{{/if}}
+
 ---
 
 </p>

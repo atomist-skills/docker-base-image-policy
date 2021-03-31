@@ -82,6 +82,8 @@ export async function changelog(
 
 	// Get the digest of the new image
 	let proposedDigest = fromLine.image?.digest;
+	let proposedPorts = fromLine.image?.ports || [];
+	let proposedEnv = fromLine.image?.env || [];
 	let platform: CommitAndDockerfile["file"]["lines"][0]["manifestList"]["images"][0]["platform"][0] = {
 		os: "linux",
 		architecture: "amd64",
@@ -93,15 +95,18 @@ export async function changelog(
 		path: string;
 	};
 	if (fromLine.manifestList) {
-		proposedDigest = fromLine.manifestList?.images?.find(i =>
+		let proposedImage = fromLine.manifestList?.images?.find(i =>
 			i.platform.some(
 				p => p.os === "linux" && p.architecture === "amd64",
 			),
-		)?.digest;
-		if (!proposedDigest) {
-			proposedDigest = fromLine.manifestList?.images?.[0].digest;
-			platform = fromLine.manifestList?.images?.[0].platform[0];
+		);
+		if (!proposedImage) {
+			proposedImage = fromLine.manifestList?.images?.[0];
 		}
+		proposedDigest = proposedImage.digest;
+		platform = proposedImage.platform as any;
+		proposedPorts = proposedImage.ports || [];
+		proposedEnv = proposedImage.env || [];
 	} else if (fromLine.image?.dockerFile?.commit) {
 		file = {
 			slug: `${fromLine.image.dockerFile.commit.repo?.org?.name}/${fromLine.image.dockerFile.commit.repo?.name}`,
@@ -117,6 +122,8 @@ export async function changelog(
 	}
 
 	let currentDigest = fromLine.digest;
+	let currentPorts;
+	let currentEnv;
 	if (manifests.some(m => m.digest === currentDigest)) {
 		const matchingImage = manifests
 			.find(m => m.digest === currentDigest)
@@ -130,6 +137,15 @@ export async function changelog(
 			);
 		if (matchingImage) {
 			currentDigest = matchingImage.digest;
+			currentPorts = matchingImage.ports || [];
+			currentEnv = matchingImage.env || [];
+		}
+	} else if (images.some(i => i.digest === currentDigest)) {
+		const matchingImage = images.find(i => i.digest === currentDigest);
+		if (matchingImage) {
+			currentDigest = matchingImage.digest;
+			currentPorts = matchingImage.ports || [];
+			currentEnv = matchingImage.env || [];
 		}
 	}
 
@@ -220,6 +236,36 @@ export async function changelog(
 		["asc", "desc"],
 	);
 
+	const portsDiff = _.sortBy(
+		[
+			..._.difference(currentPorts, proposedPorts).map(r => ({
+				type: "-",
+				text: r.join(" "),
+			})),
+			..._.difference(proposedPorts, currentPorts).map(a => ({
+				type: "+",
+				text: a.join(" "),
+			})),
+		],
+		["text", "type"],
+		["asc", "desc"],
+	);
+
+	const envDiff = _.sortBy(
+		[
+			..._.difference(currentEnv, proposedEnv).map(r => ({
+				type: "-",
+				text: r.join(" "),
+			})),
+			..._.difference(proposedEnv, currentEnv).map(a => ({
+				type: "+",
+				text: a.join(" "),
+			})),
+		],
+		["text", "type"],
+		["asc", "desc"],
+	);
+
 	const sizeDiff = diff.find(d => d.DiffType === "Size")?.Diff?.[0];
 	return template.render("changelog", {
 		imageName: `${imageName}${fromLine.tag ? `:${fromLine.tag}` : ""}`,
@@ -232,6 +278,8 @@ export async function changelog(
 			current: sizeDiff?.Size1,
 			proposed: sizeDiff?.Size2,
 		},
+		envDiff,
+		portsDiff,
 	});
 }
 

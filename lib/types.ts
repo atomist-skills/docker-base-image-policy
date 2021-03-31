@@ -35,6 +35,8 @@ export interface CommitAndDockerfile {
 			image: {
 				digest: string;
 				tags: string[];
+				env: Array<Array<string>>;
+				ports: Array<Array<string>>;
 				dockerFile: {
 					path: string;
 					commit: subscription.datalog.Commit;
@@ -45,6 +47,9 @@ export interface CommitAndDockerfile {
 				tags: string[];
 				images: Array<{
 					digest: string;
+					tags: string[];
+					env: Array<Array<string>>;
+					ports: Array<Array<string>>;
 					platform: Array<{
 						os: string;
 						variant?: string;
@@ -56,13 +61,23 @@ export interface CommitAndDockerfile {
 	};
 	registry: subscription.datalog.DockerRegistry[];
 	image: Array<
-		Pick<subscription.datalog.DockerImage, "repository" | "digest" | "tags">
+		Pick<
+			subscription.datalog.DockerImage,
+			"repository" | "digest" | "tags"
+		> & {
+			tags: string[];
+			env: Array<Array<string>>;
+			ports: Array<Array<string>>;
+		}
 	>;
 	manifestList: Array<{
 		digest: string;
 		tags: string[];
 		images: Array<{
 			digest: string;
+			tags: string[];
+			env: Array<Array<string>>;
+			ports: Array<Array<string>>;
 			platform: Array<{
 				os: string;
 				variant?: string;
