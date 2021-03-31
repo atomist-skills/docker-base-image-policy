@@ -105,7 +105,7 @@ export async function changelog(
 			proposedImage = fromLine.manifestList?.images?.[0];
 		}
 		proposedDigest = proposedImage.digest;
-		platform = proposedImage.platform as any;
+		platform = proposedImage.platform[0];
 		proposedPorts = proposedImage.ports || [];
 		proposedEnv = proposedImage.env || [];
 	} else if (fromLine.image?.dockerFile?.commit) {
