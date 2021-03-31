@@ -10,7 +10,7 @@ RUN npm ci --no-optional && \
     rm -rf node_modules .git
 
 # Set up runtime container
-FROM atomist/skill:node14@sha256:ecbfe63a0c9d51d12dc94ef21f8780e3d87cdc998d8ecdc3ea096b3a675fc9ec
+FROM atomist/skill:node14@sha256:a0fc4eb9fc3a103bb6db377245ee20eac6e48ccb08c7e40b1d2ea113900c06cd
 
 RUN curl -LO https://storage.googleapis.com/container-diff/latest/container-diff-linux-amd64 && \
     chmod +x container-diff-linux-amd64 && \
