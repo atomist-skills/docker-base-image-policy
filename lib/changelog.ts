@@ -88,6 +88,7 @@ export async function changelog(
 		os: "linux",
 		architecture: "amd64",
 	};
+
 	let file: {
 		slug: string;
 		message: string;
@@ -122,8 +123,8 @@ export async function changelog(
 	}
 
 	let currentDigest = fromLine.digest;
-	let currentPorts;
-	let currentEnv;
+	let currentPorts = [];
+	let currentEnv = [];
 	if (manifests.some(m => m.digest === currentDigest)) {
 		const matchingImage = manifests
 			.find(m => m.digest === currentDigest)
@@ -273,6 +274,7 @@ export async function changelog(
 	);
 
 	const sizeDiff = diff.find(d => d.DiffType === "Size")?.Diff?.[0];
+
 	return template.render("changelog", {
 		imageName: `${imageName}${fromLine.tag ? `:${fromLine.tag}` : ""}`,
 		fromLine,
