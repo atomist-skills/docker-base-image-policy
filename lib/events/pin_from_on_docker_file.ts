@@ -17,6 +17,7 @@
 import {
 	EventContext,
 	github,
+	handleError,
 	MappingEventHandler,
 	project,
 	repository,
@@ -134,13 +135,15 @@ export const handler: MappingEventHandler<
 					c => c.line === changedFromLine.number,
 				);
 				if (cfl) {
-					cfl.changelog = await changelog(
-						ctx,
-						project,
-						changedFromLine,
-						ctx.data.registry,
-						ctx.data.image,
-						ctx.data.manifestList,
+					cfl.changelog = await handleError(async () =>
+						changelog(
+							ctx,
+							project,
+							changedFromLine,
+							ctx.data.registry,
+							ctx.data.image,
+							ctx.data.manifestList,
+						),
 					);
 				}
 			}
