@@ -1,4 +1,18 @@
 [:find
+ (pull ?image [:db/id
+               :schema/entity-type
+               {:docker.image/repository [:docker.repository/host
+                                          (:docker.repository/repository
+                                            :as
+                                            :name)]}
+               :docker.image/digest
+               :docker.image/tags
+               {:docker.manifest-list/repository [:docker.repository/host
+                                                  (:docker.repository/repository
+                                                    :as
+                                                    :name)]}
+               :docker.manifest-list/digest
+               :docker.manifest-list/tags])
  (pull
    ?commit
    [:schema/entity-type
@@ -38,6 +52,21 @@
 
  ;; check pinning is required
  (get-config-value "pinningRequired" true true)
+
+ ;; resolve all images and manifest-list currently used in FROM lines
+ [?other-from-line :docker.file.line/file ?docker-file]
+ [?other-from-line :docker.file.line/instruction "FROM"]
+ (or-join [?other-from-line ?image]
+   (and
+     [?other-from-line :docker.file.from/digest ?digest]
+     [?image :docker.image/digest ?digest])
+   (and
+     [?other-from-line :docker.file.from/digest ?digest]
+     [?image :docker.manifest-list/digest ?digest])
+   (and
+     [(missing? $ ?other-from-line :docker.file.from/digest)]
+     [(ground "scratch") ?image])
+   )
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]

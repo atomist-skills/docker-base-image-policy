@@ -87,6 +87,38 @@ export interface CommitAndDockerfile {
 	}>;
 }
 
+export interface ValidateBaseImagesRaw {
+	commit: subscription.datalog.Commit & {
+		files: Array<{ path: string }>;
+		dockerFiles: Array<{
+			path: string;
+			sha: string;
+			lines: Array<{
+				number: number;
+				instruction: string;
+				argsMap: Record<string, string>;
+				argsArray: string[];
+				argsString: string;
+				repository: {
+					host: string;
+					name: string;
+				};
+				tag: string;
+				digest: string;
+			}>;
+		}>;
+	};
+	image: Pick<
+		subscription.datalog.DockerImage,
+		"repository" | "digest" | "tags"
+	>;
+	manifestList: {
+		digest: string;
+		tags: string[];
+		repository: subscription.datalog.DockerImage["repository"];
+	};
+}
+
 export interface ValidateBaseImages {
 	commit: subscription.datalog.Commit & {
 		files: Array<{ path: string }>;
@@ -108,6 +140,14 @@ export interface ValidateBaseImages {
 			}>;
 		}>;
 	};
+	image: Array<
+		Pick<subscription.datalog.DockerImage, "repository" | "digest" | "tags">
+	>;
+	manifestList: Array<{
+		digest: string;
+		tags: string[];
+		repository: subscription.datalog.DockerImage["repository"];
+	}>;
 }
 
 export interface ValidateLinkingRaw {
