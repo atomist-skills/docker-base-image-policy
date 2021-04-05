@@ -157,7 +157,7 @@ export async function changelog(
 	}
 
 	if (dryRun) {
-		return `Changelog for \`${imageName}\` pending...`;
+		return template.render("changelog_pending", { imageName });
 	}
 
 	file = file || (await getLibraryFileCommit(p, repository));
