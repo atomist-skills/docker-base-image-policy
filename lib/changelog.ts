@@ -66,6 +66,7 @@ export async function changelog(
 	registries: CommitAndDockerfile["registry"],
 	images: CommitAndDockerfile["image"],
 	manifests: CommitAndDockerfile["manifestList"],
+	dryRun: boolean,
 ): Promise<string> {
 	const repository = fromLine.repository;
 
@@ -153,6 +154,10 @@ export async function changelog(
 	if (proposedDigest === currentDigest) {
 		log.debug("Same digests");
 		return undefined;
+	}
+
+	if (dryRun) {
+		return `Changelog for \`${imageName}\` pending...`;
 	}
 
 	file = file || (await getLibraryFileCommit(p, repository));

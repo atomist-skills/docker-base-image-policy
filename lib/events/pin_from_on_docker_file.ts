@@ -143,13 +143,13 @@ export const handler: MappingEventHandler<
 							ctx.data.registry,
 							ctx.data.image,
 							ctx.data.manifestList,
+							true,
 						),
 					);
 				}
 			}
 			const maxLength = _.maxBy(changedFromLines, "line").line.toString()
 				.length;
-
 			const isRepin = !changedFromLines.some(f => !f.digest);
 
 			return await github.persistChanges(
@@ -202,6 +202,57 @@ ${changedFromLines
 	.join("\n\n")}
 
 ${Footer}`,
+					update: async () => {
+						for (const changedFromLine of _.orderBy(
+							file.lines,
+							"number",
+						).filter(l => l.instruction === "FROM")) {
+							const cfl = changedFromLines.find(
+								c => c.line === changedFromLine.number,
+							);
+							if (cfl) {
+								cfl.changelog = await handleError(async () =>
+									changelog(
+										ctx,
+										project,
+										changedFromLine,
+										ctx.data.registry,
+										ctx.data.image,
+										ctx.data.manifestList,
+										false,
+									),
+								);
+							}
+						}
+						return {
+							body:
+								changedFromLines.length === 1
+									? `This pull request ${
+											isRepin ? "re-pins" : "pins"
+									  } the Docker base image \`${
+											changedFromLines[0].imageName.split(
+												"@",
+											)[0]
+									  }\` in \`${
+											file.path
+									  }\` to the current digest.
+
+${fromLine(changedFromLines[0], maxLength, cfg.pinningIncludeTag)}
+
+${Footer}`
+									: `This pull request ${
+											isRepin ? "re-pins" : "pins"
+									  } the following Docker base images in \`${
+											file.path
+									  }\` to their current digests.
+					
+${changedFromLines
+	.map(l => fromLine(l, maxLength, cfg.pinningIncludeTag))
+	.join("\n\n")}
+
+${Footer}`,
+						};
+					},
 				},
 				{
 					editors: fromLines.map(
