@@ -12,9 +12,15 @@ RUN npm ci --no-optional && \
 # Set up runtime container
 FROM atomist/skill:node14
 
-RUN curl -LO https://storage.googleapis.com/container-diff/latest/container-diff-linux-amd64 && \
+RUN apt-get update && \
+    apt-get install -y curl=7.68.0-1ubuntu4.3 && \
+    curl -LO https://storage.googleapis.com/container-diff/latest/container-diff-linux-amd64 && \
     chmod +x container-diff-linux-amd64 && \
-    mv container-diff-linux-amd64 /usr/local/bin/container-diff
+    mv container-diff-linux-amd64 /usr/local/bin/container-diff && \
+    apt-get remove -y curl && \
+    apt-get autoremove -y && \
+    apt-get clean -y && \
+    rm -rf /var/cache/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR "/skill"
 
