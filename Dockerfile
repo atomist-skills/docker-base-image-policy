@@ -1,31 +1,37 @@
-# Set up build
-FROM node:lts@sha256:8eb45f4677c813ad08cef8522254640aa6a1800e75a9c213a0a651f6f3564189 AS build
+FROM ubuntu@sha256:54bb6cbe5bfa4c5741fc8baa547dc95cf3fdbd5c55a5ed4784fed077e0bf9d87
 
-WORKDIR /usr/src
+LABEL maintainer="Atomist <docker@atomist.com>"
 
-COPY . ./
+# Install Git
+RUN apt-get update && \
+    apt-get install -y git=1:2.27.0-1ubuntu1.1 && \
+    apt-get clean -y && \
+    rm -rf /var/cache/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN npm ci --no-optional && \
-    npm run compile && \
-    rm -rf node_modules .git
+# Install Node and NPM
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN apt-get update && \
+    apt-get install -y curl=7.68.0-1ubuntu4.3 && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs=14.16.1-deb-1nodesource1 && \
+    apt-get remove -y curl && \
+    apt-get autoremove -y && \
+    apt-get clean -y && \
+    rm -rf /var/cache/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Set up runtime container
-FROM atomist/skill:node14@sha256:bf3135547ed70a413d521a4cc574c5688d827fdd5350a9be61512e576a784864
+# ENV VARs needed for Node.js
+ENV BLUEBIRD_WARNINGS 0
+ENV NODE_ENV production
+ENV NODE_NO_WARNINGS 1
+ENV NPM_CONFIG_LOGLEVEL warn
+ENV SUPPRESS_NO_CONFIG_WARNING true
 
-RUN curl -LO https://storage.googleapis.com/container-diff/latest/container-diff-linux-amd64 && \
-    chmod +x container-diff-linux-amd64 && \
-    mv container-diff-linux-amd64 /usr/local/bin/container-diff
-
-WORKDIR "/skill"
-
-COPY package.json package-lock.json ./
-
-RUN npm ci --no-optional \
-    && rm -rf /root/.npm
-
-COPY --from=build /usr/src/ .
-
+# Install latest version of the Atomist CLI
+RUN npm install -g @atomist/skill@0.9.1 \
+    && rm -rf /root/.npm/
+    
 WORKDIR "/atm/home"
 
-ENTRYPOINT ["node", "--no-deprecation", "--no-warnings", "--expose_gc", "--optimize_for_size", "--always_compact", "--max_old_space_size=512", "/skill/node_modules/.bin/atm-skill"]
-CMD ["run"]
+# Define the entrypoint
+ENTRYPOINT ["atm-skill"]
+CMD ["help"]
