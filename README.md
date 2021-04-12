@@ -8,7 +8,7 @@ and the [Atomist documentation site][atomist-doc] for instructions on how to get
 started using Atomist Skills.
 
 [atomist-skill]:
-    https://go.atomist.com/catalog/skills/atomist/docker-base-image-skill
+    https://go.atomist.com/catalog/skills/atomist/docker-base-image-policy
     "Atomist Skills Catalog - Automate All Your Software Tasks"
 [atomist-doc]: https://docs.atomist.com/ "Atomist Documentation"
 
