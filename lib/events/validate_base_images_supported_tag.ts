@@ -224,7 +224,7 @@ ${f.supported}`,
 								.map(l =>
 									l.unsupportedLines.map(ul => ({
 										title: "Unsupported tag",
-										message: `${ul.tag} is not a supported tag for image ${ul.repository?.name}}`,
+										message: `${ul.tag} is not a supported tag for image ${ul.repository?.name}`,
 										annotationLevel: "failure",
 										startLine: ul.number,
 										endLine: ul.number,
