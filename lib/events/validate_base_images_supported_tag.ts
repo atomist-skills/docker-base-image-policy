@@ -109,10 +109,9 @@ export const handler: MappingEventHandler<
 						}
 					}
 
-					const maxLength = _.maxBy(
-						fromLines,
-						"number",
-					).number.toString().length;
+					const maxLength =
+						_.maxBy(fromLines, "number")?.number?.toString()
+							.length || 0;
 
 					const supportedLinesBody = supportedLines
 						.map(l => {
@@ -143,8 +142,22 @@ ${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
 				}
 
 				linesByFile = _.sortBy(linesByFile, "path");
+				if (
+					!linesByFile.some(l => l.unsupported) &&
+					!linesByFile.some(l => l.supported)
+				) {
+					return {
+						state: policy.result.ResultEntityState.Neutral,
+						status: status.success(
+							`No official Docker base images in \`${
+								commit.repo.org.name
+							}/${commit.repo.name}@${commit.sha.slice(0, 7)}\``,
+						),
+						body: `No official Docker base images being used in any of the Dockerfiles
 
-				if (!linesByFile.some(l => l.unsupported)) {
+${linesByFile.map(f => `${linkFile(f.path, commit)}`).join("\n\n---\n\n")}`,
+					};
+				} else if (!linesByFile.some(l => l.unsupported)) {
 					return {
 						state: policy.result.ResultEntityState.Success,
 						status: status.success(

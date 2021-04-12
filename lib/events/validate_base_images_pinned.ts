@@ -139,7 +139,7 @@ ${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
 								commit.repo.org.name
 							}/${commit.repo.name}@${commit.sha.slice(0, 7)}\``,
 						),
-						body: `All Docker base images are pinned as required.
+						body: `All Docker base images are pinned
 
 ${linesByFile
 	.map(
@@ -150,7 +150,7 @@ ${f.pinned}`,
 	.join("\n\n---\n\n")}`,
 					};
 				} else {
-					const body = `The following Docker base images are not pinned as required:
+					const body = `The following Docker base images are not pinned:
 
 ${linesByFile
 	.filter(l => l.unpinned)

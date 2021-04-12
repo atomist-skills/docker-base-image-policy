@@ -51,7 +51,7 @@
  (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
 
  ;; check pinning is required
- (get-config-value "pinningRequired" true true)
+ (get-config-value "supportedTagRequired" true true)
 
  ;; resolve all images and manifest-list currently used in FROM lines
  [?other-from-line :docker.file.line/file ?docker-file]
