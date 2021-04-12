@@ -66,7 +66,7 @@ export const handler: MappingEventHandler<
 			id: CreateRepositoryIdFromCommit,
 			details: ctx => ({
 				name: `${ctx.skill.name}/tag`,
-				title: "Supported base image tag policy",
+				title: "Supported Docker base image tag policy",
 				body: `Checking if Docker base images in ${ctx.data.commit.dockerFiles
 					.map(f => `\`${f.path}\``)
 					.join(", ")} use supported tags`,
