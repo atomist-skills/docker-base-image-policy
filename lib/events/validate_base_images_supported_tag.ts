@@ -99,8 +99,8 @@ export const handler: MappingEventHandler<
 					const unSupportedLines = [];
 					for (const fromLine of fromLines) {
 						const tags = await mSupportedTags(
-							commit,
 							fromLine.repository.name,
+							commit,
 						);
 						if (tags.includes(fromLine.tag)) {
 							supportedLines.push(fromLine);
@@ -126,12 +126,16 @@ ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}
 						})
 						.join("\n\n");
 					const unSupportedLinesBody = unSupportedLines
-						.map(
-							l => `
-\`\`\`
-${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
-\`\`\``,
-						)
+						.map(l => {
+							const from = `${_.padStart(
+								l.number.toString(),
+								maxLength,
+							)}: FROM ${l.argsString}`;
+							return `\`\`\`
+${from}
+${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag} 
+\`\`\``;
+						})
 						.join("\n\n");
 					linesByFile.push({
 						path: file.path,
@@ -240,8 +244,8 @@ ${f.supported}`,
 };
 
 async function supportedTags(
-	commit: ValidateBaseImages["commit"],
 	name: string,
+	commit: ValidateBaseImages["commit"],
 ): Promise<string[]> {
 	const libraryFile = new Buffer(
 		((
