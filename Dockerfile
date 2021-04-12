@@ -10,7 +10,7 @@ RUN npm ci --no-optional && \
     rm -rf node_modules .git
 
 # Set up runtime container
-FROM atomist/skill:node14@sha256:4d16839ef11bcecc6dff2156dd06324ca2f9e768b6736795feeeebc3d55e3cd8
+FROM atomist/skill:node14@sha256:a2d9b138b2f5ac6ab86a0b9c352fec888f1bf0f542d2f483770d3997b53d59ea
 
 RUN apt-get update && \
     apt-get install -y curl=7.68.0-1ubuntu4.3 && \
