@@ -98,3 +98,16 @@ export function linkFile(
 ): string {
 	return `[\`${path}\`](https://github.com/${commit.repo.org.name}/${commit.repo.name}/blob/${commit.sha}/${path})`;
 }
+
+export function imageName(
+	repository: subscription.datalog.DockerImage["repository"],
+): string {
+	if (!repository) {
+		return undefined;
+	}
+	return `${
+		repository.host !== "hub.docker.com"
+			? `${repository.host}/${repository.name}`
+			: repository.name
+	}`;
+}

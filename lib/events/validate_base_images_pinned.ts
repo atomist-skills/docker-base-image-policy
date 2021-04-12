@@ -20,7 +20,7 @@ import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages, ValidateBaseImagesRaw } from "../types";
-import { linkFile } from "../util";
+import { imageName, linkFile } from "../util";
 import {
 	CreateRepositoryIdFromCommit,
 	DockerfilesTransacted,
@@ -193,7 +193,7 @@ ${f.pinned}`,
 									l.unpinnedLines.map(ul => ({
 										title: "Pinned base image",
 										message: `${
-											ul.repository?.name ||
+											imageName(ul.repository) ||
 											ul.argsString
 												.split("@")[0]
 												.split(":")[0]
