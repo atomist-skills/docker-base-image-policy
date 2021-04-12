@@ -22,6 +22,8 @@ export interface Configuration {
 	pinningLabels: string[];
 	pinningAssignReviewers: boolean;
 
+	supportedTagRequired: boolean;
+
 	acceptRequired: boolean;
 	acceptImages: string[];
 	acceptRegistries: string[];

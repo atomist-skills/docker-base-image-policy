@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { EventContext, handler, HandlerStatus, status } from "@atomist/skill";
+import {
+	EventContext,
+	handler,
+	HandlerStatus,
+	status,
+	subscription,
+} from "@atomist/skill";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages } from "../types";
@@ -53,3 +59,19 @@ export const CreateRepositoryIdFromCommit: handler.CreateRepositoryId<
 		scopes: [],
 	},
 });
+
+export function findTag(
+	ctx: EventContext<ValidateBaseImages, Configuration>,
+	repository: subscription.datalog.DockerImage["repository"],
+	digest: string,
+): string {
+	const image = ctx.data.image?.find(i => i.digest === digest);
+	if (image) {
+		return image.tags?.join(", ");
+	}
+	const manifestList = ctx.data.manifestList?.find(m => m.digest === digest);
+	if (manifestList) {
+		return manifestList.tags?.join(", ");
+	}
+	return undefined;
+}

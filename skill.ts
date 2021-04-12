@@ -64,7 +64,8 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 		pinningIncludeTag: {
 			type: ParameterType.Boolean,
 			displayName: "Preserve Docker tag",
-			description: "Keep the Docker tag in the `FROM` image when pinning",
+			description:
+				"Keep the Docker tag in the `FROM` image when pinning.",
 			required: false,
 			defaultValue: true,
 			visibility: ParameterVisibility.Hidden,
@@ -83,31 +84,39 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 				"Select to assign last committer as a reviewer on new pull requests created by this skill.",
 			required: false,
 		},
+		supportedTagRequired: {
+			type: ParameterType.Boolean,
+			displayName: "Unsupported tag warning",
+			description:
+				"Select to create a GitHub check identify supported and unsupported tag of official Docker images.",
+			required: false,
+			defaultValue: true,
+		},
 		acceptRequired: {
 			type: ParameterType.Boolean,
 			displayName: "Require allowlist",
-			description: "Verify Docker base images against allowlist",
+			description: "Verify Docker base images against allowlist.",
 			required: false,
 			visibility: ParameterVisibility.Hidden,
 		},
 		acceptImages: {
 			type: ParameterType.StringArray,
 			displayName: "Allowed base images",
-			description: "Allowed Docker base images with or without tags",
+			description: "Allowed Docker base images with or without tags.",
 			required: false,
 			visibility: ParameterVisibility.Hidden,
 		},
 		acceptRegistries: {
 			type: ParameterType.StringArray,
 			displayName: "Allowed Docker registries",
-			description: "Allowed Docker registry host names",
+			description: "Allowed Docker registry host names.",
 			required: false,
 			visibility: ParameterVisibility.Hidden,
 		},
 		linkingRequired: {
 			type: ParameterType.Boolean,
 			displayName: "Require linking",
-			description: "Verify Docker images and Dockerfiles are linked",
+			description: "Verify Docker images and Dockerfiles are linked.",
 			required: false,
 			visibility: ParameterVisibility.Hidden,
 		},

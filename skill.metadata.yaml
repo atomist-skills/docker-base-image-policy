@@ -60,6 +60,9 @@ parameters:
       name: pinningPullRequests
       values:
         - true
+  - name: supportedTagRequired
+    group: actions
+    tooltip: Dockerfiles that use unsupported tags of official Docker images will result in a failed check.
   - name: repoFilter
     group: whatToWatch
   - name: acceptRequired
