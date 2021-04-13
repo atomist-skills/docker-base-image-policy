@@ -20,7 +20,7 @@ import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages, ValidateBaseImagesRaw } from "../types";
-import { linkFile } from "../util";
+import { linkFile, printTag } from "../util";
 import {
 	CreateRepositoryIdFromCommit,
 	DockerfilesTransacted,
@@ -122,8 +122,7 @@ export const handler: MappingEventHandler<
 								maxLength,
 							)}: FROM ${l.argsString}`;
 							return `\`\`\`
-${from}
-${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag} 
+${from}${printTag(from, l)}
 \`\`\`
 
 ${highlightTag(l.tag, usedTags.get(l.repository.name), l.repository.name)}`;
@@ -136,8 +135,7 @@ ${highlightTag(l.tag, usedTags.get(l.repository.name), l.repository.name)}`;
 								maxLength,
 							)}: FROM ${l.argsString}`;
 							return `\`\`\`
-${from}
-${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag} 
+${from}${printTag(from, l)} 
 \`\`\`
 
 ${highlightTag(l.tag, usedTags.get(l.repository.name), l.repository.name)}`;
@@ -272,7 +270,7 @@ async function supportedTags(
 	).toString();
 
 	const tagRegexp = /`([^,`]*)`/gm;
-	const tagsText = /# Supported tags and respective `Dockerfile` links([\s\S]*?)#/gm.exec(
+	const tagsText = /# Supported tags and respective `Dockerfile` links([\s\S]*?)# Quick reference/gm.exec(
 		libraryFile,
 	);
 	const tags = [];
@@ -292,12 +290,11 @@ async function supportedTags(
 
 function highlightTag(tag: string, text: string, name: string): string {
 	const formattedTag = `\`${tag}\``;
-	const highlightedText = text.replace(
-		new RegExp(formattedTag, "gm"),
-		`**${formattedTag}**`,
-	);
+	const highlightedText = text
+		.replace(new RegExp(formattedTag, "gm"), `**${formattedTag}**`)
+		.replace(/##/gm, "####");
 	return `<details>
-<summary>Supported tags for <code>${name}</code></summary>
+<summary>Supported tags and respective <code>Dockerfile</code> links for <code>${name}</code></summary>
 
 <p>
 

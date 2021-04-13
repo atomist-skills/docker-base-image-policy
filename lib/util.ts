@@ -15,6 +15,9 @@
  */
 
 import { subscription } from "@atomist/skill";
+import * as _ from "lodash";
+
+import { ValidateBaseImages } from "./types";
 
 export function replaceLastFrom(
 	dockerfile: string,
@@ -110,4 +113,17 @@ export function imageName(
 			? `${repository.host}/${repository.name}`
 			: repository.name
 	}`;
+}
+
+export function printTag(
+	from: string,
+	fromLine: ValidateBaseImages["commit"]["dockerFiles"][0]["lines"][0],
+): string {
+	if (from.includes("@sha")) {
+		return `\n${_.padStart("", from.split("@sha")[0].length)}\`--> ${
+			fromLine.tag
+		}`;
+	} else {
+		return "";
+	}
 }
