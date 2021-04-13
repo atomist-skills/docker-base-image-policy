@@ -291,7 +291,10 @@ async function supportedTags(
 function highlightTag(tag: string, text: string, name: string): string {
 	const formattedTag = `\`${tag}\``;
 	const highlightedText = text
-		.replace(new RegExp(formattedTag, "gm"), `**${formattedTag}**`)
+		.replace(
+			new RegExp(formattedTag, "gm"),
+			`<ins>**${formattedTag}**</ins>`,
+		)
 		.replace(/##/gm, "####");
 	return `<details>
 <summary>Supported tags and respective <code>Dockerfile</code> links for <code>${name}</code></summary>
