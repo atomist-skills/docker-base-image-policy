@@ -47,7 +47,7 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 	parameters: {
 		pinningRequired: {
 			type: ParameterType.Boolean,
-			displayName: "Create GitHub checks",
+			displayName: "Pinned Docker base images check",
 			description:
 				"Select to create a GitHub check to identify pinned and unpinned base images in your Docker files.",
 			required: false,
@@ -86,7 +86,7 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 		},
 		supportedTagRequired: {
 			type: ParameterType.Boolean,
-			displayName: "Unsupported tag warning",
+			displayName: "Unsupported Docker tag check",
 			description:
 				"Select to create a GitHub check identify supported and unsupported tag of official Docker images.",
 			required: false,
