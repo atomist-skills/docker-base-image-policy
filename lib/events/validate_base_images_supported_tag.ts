@@ -97,12 +97,14 @@ export const handler: MappingEventHandler<
 					}
 					const supportedLines = [];
 					const unSupportedLines = [];
+					const usedTags = new Map<string, string>();
 					for (const fromLine of fromLines) {
 						const tags = await mSupportedTags(
 							fromLine.repository.name,
 							commit,
 						);
-						if (tags.includes(fromLine.tag)) {
+						usedTags.set(fromLine.repository.name, tags.text);
+						if (tags.supported.includes(fromLine.tag)) {
 							supportedLines.push(fromLine);
 						} else {
 							unSupportedLines.push(fromLine);
@@ -122,7 +124,9 @@ export const handler: MappingEventHandler<
 							return `\`\`\`
 ${from}
 ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag} 
-\`\`\``;
+\`\`\`
+
+${highlightTag(l.tag, usedTags.get(l.repository.name), l.repository.name)}`;
 						})
 						.join("\n\n");
 					const unSupportedLinesBody = unSupportedLines
@@ -134,7 +138,9 @@ ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}
 							return `\`\`\`
 ${from}
 ${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag} 
-\`\`\``;
+\`\`\`
+
+${highlightTag(l.tag, usedTags.get(l.repository.name), l.repository.name)}`;
 						})
 						.join("\n\n");
 					linesByFile.push({
@@ -246,7 +252,7 @@ ${f.supported}`,
 async function supportedTags(
 	name: string,
 	commit: ValidateBaseImages["commit"],
-): Promise<string[]> {
+): Promise<{ supported: string[]; text: string }> {
 	const libraryFile = new Buffer(
 		((
 			await github
@@ -258,22 +264,45 @@ async function supportedTags(
 				})
 				.repos.getContent({
 					owner: "docker-library",
-					repo: "official-images",
-					path: `library/${name}`,
+					repo: "docs",
+					path: `${name}/README.md`,
 				})
 		).data as any).content,
 		"base64",
 	).toString();
 
-	const regexp = /^Tags:(.*)$/gm;
+	const tagRegexp = /`([^,`]*)`/gm;
+	const tagsText = /# Supported tags and respective `Dockerfile` links([\s\S]*?)#/gm.exec(
+		libraryFile,
+	);
 	const tags = [];
 	let match: RegExpExecArray;
 	do {
-		match = regexp.exec(libraryFile);
+		match = tagRegexp.exec(tagsText[1]);
 		if (match) {
-			tags.push(...match[1].split(",").map(t => t.trim()));
+			tags.push(match[1]);
 		}
 	} while (match);
 
-	return _.uniq(tags);
+	return {
+		supported: _.uniq(tags),
+		text: tagsText[1].trim(),
+	};
+}
+
+function highlightTag(tag: string, text: string, name: string): string {
+	const formattedTag = `\`${tag}\``;
+	const highlightedText = text.replace(
+		new RegExp(formattedTag, "gm"),
+		`**${formattedTag}**`,
+	);
+	return `<details>
+<summary>Supported tags for <code>${name}</code></summary>
+
+<p>
+
+${highlightedText}
+
+</p>
+</details>`;
 }

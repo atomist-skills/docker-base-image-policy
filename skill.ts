@@ -102,7 +102,8 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 		acceptImages: {
 			type: ParameterType.StringArray,
 			displayName: "Allowed base images",
-			description: "Allowed Docker base images with or without tags.",
+			description:
+				"Allowed Docker base images with or without supported.",
 			required: false,
 			visibility: ParameterVisibility.Hidden,
 		},
