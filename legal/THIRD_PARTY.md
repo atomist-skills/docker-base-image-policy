@@ -20,7 +20,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | [GPL-3.0](#gpl-30)              | 1     |
 | [ISC](#isc)                     | 44    |
 | [MIT AND Zlib](#mit-and-zlib)   | 1     |
-| [MIT](#mit)                     | 587   |
+| [MIT](#mit)                     | 588   |
 | [Public Domain](#public-domain) | 1     |
 | [Python-2.0](#python-20)        | 1     |
 
@@ -41,7 +41,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | Name                                  | Version         | Publisher             | Repository                                                                                                                       |
 | ------------------------------------- | --------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `@atomist/skill-logging`              | `0.2.6`         | Atomist               | [https://github.com/atomist-skills/skill-logging](https://github.com/atomist-skills/skill-logging)                               |
-| `@atomist/skill`                      | `0.9.2-main.29` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
+| `@atomist/skill`                      | `0.9.2-main.33` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
 | `@atomist/slack-messages`             | `1.2.2`         | Atomist               | [https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)                                           |
 | `@google-cloud/common`                | `3.6.0`         | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                       |
 | `@google-cloud/logging`               | `8.2.0`         | Google Inc.           | [https://github.com/googleapis/nodejs-logging](https://github.com/googleapis/nodejs-logging)                                     |
@@ -475,6 +475,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `fast-deep-equal`                                    | `3.1.3`         | Evgeny Poberezkin              | [https://github.com/epoberezkin/fast-deep-equal](https://github.com/epoberezkin/fast-deep-equal)                                                                                                     |
 | `fast-glob`                                          | `3.2.5`         | Denis Malinochkin              | [https://github.com/mrmlnc/fast-glob](https://github.com/mrmlnc/fast-glob)                                                                                                                           |
 | `fast-json-stable-stringify`                         | `2.1.0`         | James Halliday                 | [https://github.com/epoberezkin/fast-json-stable-stringify](https://github.com/epoberezkin/fast-json-stable-stringify)                                                                               |
+| `fastest-levenshtein`                                | `1.0.12`        | Kasper U. Weihe                | [https://github.com/ka-weihe/fastest-levenshtein](https://github.com/ka-weihe/fastest-levenshtein)                                                                                                   |
 | `fbjs-css-vars`                                      | `1.0.2`         |                                | [https://github.com/facebook/fbjs](https://github.com/facebook/fbjs)                                                                                                                                 |
 | `fbjs`                                               | `3.0.0`         |                                | [https://github.com/facebook/fbjs](https://github.com/facebook/fbjs)                                                                                                                                 |
 | `figures`                                            | `1.7.0`         | Sindre Sorhus                  | [https://github.com/sindresorhus/figures](https://github.com/sindresorhus/figures)                                                                                                                   |
