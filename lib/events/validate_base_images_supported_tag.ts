@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { github, MappingEventHandler, policy, status } from "@atomist/skill";
+import {
+	github,
+	levenshteinSort,
+	MappingEventHandler,
+	policy,
+	status,
+} from "@atomist/skill";
 import { wrapEventHandler } from "@atomist/skill/lib/map";
 import * as _ from "lodash";
 
@@ -97,13 +103,16 @@ export const handler: MappingEventHandler<
 					}
 					const supportedLines = [];
 					const unSupportedLines = [];
-					const usedTags = new Map<string, string>();
+					const usedTags = new Map<
+						string,
+						{ supported: string[]; text: string }
+					>();
 					for (const fromLine of fromLines) {
 						const tags = await mSupportedTags(
 							fromLine.repository.name,
 							commit,
 						);
-						usedTags.set(fromLine.repository.name, tags.text);
+						usedTags.set(fromLine.repository.name, tags);
 						if (tags.supported.includes(fromLine.tag)) {
 							supportedLines.push(fromLine);
 						} else {
@@ -125,7 +134,12 @@ export const handler: MappingEventHandler<
 ${from}${printTag(from, l)}
 \`\`\`
 
-${highlightTag(l.tag, usedTags.get(l.repository.name), l.repository.name)}`;
+${highlightTag(
+	l.tag,
+	usedTags.get(l.repository.name).text,
+	l.repository.name,
+	usedTags.get(l.repository.name).supported,
+)}`;
 						})
 						.join("\n\n");
 					const unSupportedLinesBody = unSupportedLines
@@ -138,7 +152,12 @@ ${highlightTag(l.tag, usedTags.get(l.repository.name), l.repository.name)}`;
 ${from}${printTag(from, l)} 
 \`\`\`
 
-${highlightTag(l.tag, usedTags.get(l.repository.name), l.repository.name)}`;
+${highlightTag(
+	l.tag,
+	usedTags.get(l.repository.name).text,
+	l.repository.name,
+	usedTags.get(l.repository.name).supported,
+)}`;
 						})
 						.join("\n\n");
 					linesByFile.push({
@@ -176,7 +195,7 @@ ${linesByFile.map(f => `${linkFile(f.path, commit)}`).join("\n\n---\n\n")}`,
 								7,
 							)}\` use supported tags`,
 						),
-						body: `All Docker base images use supported tags.
+						body: `All Docker base images use supported tags
 
 ${linesByFile
 	.map(
@@ -288,7 +307,12 @@ async function supportedTags(
 	};
 }
 
-function highlightTag(tag: string, text: string, name: string): string {
+function highlightTag(
+	tag: string,
+	text: string,
+	name: string,
+	tags: string[],
+): string {
 	const formattedTag = `\`${tag}\``;
 	const highlightedText = text
 		.replace(
@@ -296,7 +320,10 @@ function highlightTag(tag: string, text: string, name: string): string {
 			`<ins>**${formattedTag}**</ins>`,
 		)
 		.replace(/##/gm, "####");
-	return `<details>
+	const suggested = suggestTag(tag, tags);
+	return `Based on current tag \`${tag}\` the closest supported tag appears to be \`${suggested}\`
+
+<details>
 <summary>Supported tags and respective <code>Dockerfile</code> links for <code>${name}</code></summary>
 
 <p>
@@ -305,4 +332,8 @@ ${highlightedText}
 
 </p>
 </details>`;
+}
+
+export function suggestTag(current: string, tags: string[]): string {
+	return levenshteinSort(current, tags)[0];
 }
