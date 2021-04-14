@@ -157,7 +157,9 @@ export async function changelog(
 	}
 
 	if (dryRun) {
-		return template.render("changelog_pending", { imageName });
+		return template.render("changelog_pending", {
+			imageName: `${imageName}${fromLine.tag ? `:${fromLine.tag}` : ""}`,
+		});
 	}
 
 	file = file || (await getLibraryFileCommit(p, repository));
