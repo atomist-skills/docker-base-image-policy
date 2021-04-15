@@ -26,7 +26,6 @@ import {
 	subscription,
 	truncate,
 } from "@atomist/skill";
-import { info } from "@atomist/skill/lib/log";
 import { wrapEventHandler } from "@atomist/skill/lib/map";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
@@ -214,7 +213,7 @@ ${Footer}`,
 							);
 							if (cfl) {
 								cfl.changelog = await handleError(async () => {
-									info(
+									log.info(
 										"Compiling changelog for FROM line '%s'",
 										changedFromLine.argsString,
 									);
@@ -263,7 +262,7 @@ ${Footer}`,
 				{
 					editors: fromLines.map(
 						(l, ix) => async (p: project.Project) => {
-							info("Editing Dockerfile '%s'", file.path);
+							log.info("Editing Dockerfile '%s'", file.path);
 							const dockerfilePath = p.path(file.path);
 							const dockerfile = (
 								await fs.readFile(dockerfilePath)
