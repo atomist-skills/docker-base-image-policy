@@ -17,10 +17,10 @@ New image build caused by commit {{file.slug}}@{{file.sha}} to [`{{file.path}}`]
 {{/if}}
 ### Comparison
 
-Comparing Docker image `{{imageName}}` at
+Comparing Docker image `{{imageName}}` at digests
 
 _Current_ `{{fromLine.digest}}` {{#if sizeDiff.current}}({{bytes sizeDiff.current}}){{/if}} and
-_Proposed_ `{{or fromLine.image.digest fromLine.manifestList.digest}}` {{#if sizeDiff.proposed}}({{bytes sizeDiff.proposed}}){{/if}} digests:
+_Proposed_ `{{or fromLine.image.digest fromLine.manifestList.digest}}` {{#if sizeDiff.proposed}}({{bytes sizeDiff.proposed}}){{/if}}:
 
 #### Packages
 
