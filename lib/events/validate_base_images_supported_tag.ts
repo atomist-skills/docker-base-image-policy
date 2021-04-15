@@ -107,7 +107,7 @@ export const handler: MappingEventHandler<
 						string,
 						{ supported: string[]; text: string }
 					>();
-					for (const fromLine of fromLines) {
+					for (const fromLine of fromLines.filter(f => f.tag)) {
 						const tags = await mSupportedTags(
 							fromLine.repository.name,
 							commit,
@@ -168,7 +168,9 @@ ${highlightTag(
 					});
 				}
 
-				linesByFile = _.sortBy(linesByFile, "path");
+				linesByFile = _.sortBy(linesByFile, "path").filter(
+					l => l.supported || l.unsupported,
+				);
 				if (
 					!linesByFile.some(l => l.unsupported) &&
 					!linesByFile.some(l => l.supported)
@@ -321,9 +323,13 @@ function highlightTag(
 		)
 		.replace(/##/gm, "####");
 	const suggested = suggestTag(tag, tags);
-	return `Based on current tag \`${tag}\` the closest supported tag appears to be \`${suggested}\`
+	return `${
+		suggested !== tag
+			? `Based on current tag \`${tag}\` the closest supported tag appears to be \`${suggested}\`
 
-<details>
+`
+			: ""
+	}<details>
 <summary>Supported tags and respective <code>Dockerfile</code> links for <code>${name}</code></summary>
 
 <p>
