@@ -19,7 +19,7 @@
     "project": "tsconfig.json",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "simple-import-sort"],
+  "plugins": ["@typescript-eslint", "simple-import-sort", "deprecation"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-floating-promises": ["error"],
@@ -36,6 +36,7 @@
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     "sort-imports": "off",
-    "import/order": "off"
+    "import/order": "off",
+    "deprecation/deprecation": "warn"
   }
 }
