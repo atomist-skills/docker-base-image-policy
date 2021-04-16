@@ -272,7 +272,7 @@ async function supportedTags(
 	name: string,
 	commit: ValidateBaseImages["commit"],
 ): Promise<{ supported: string[]; text: string }> {
-	const libraryFile = new Buffer(
+	const libraryFile = Buffer.from(
 		((
 			await github
 				.api({
