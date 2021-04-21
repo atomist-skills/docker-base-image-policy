@@ -78,6 +78,7 @@ export const handler: MappingEventHandler<
 					.join(", ")} use supported tags`,
 			}),
 			execute: async ctx => {
+				const cfg = ctx.configuration.parameters;
 				const mSupportedTags = _.memoize(supportedTags);
 				const commit = ctx.data.commit;
 				let linesByFile: Array<{
@@ -236,7 +237,9 @@ ${f.supported}`,
 							: ""
 					}`;
 					return {
-						state: policy.result.ResultEntityState.Failure,
+						state: cfg.supportedTagFailCheck
+							? policy.result.ResultEntityState.Failure
+							: policy.result.ResultEntityState.Neutral,
 						severity: policy.result.ResultEntitySeverity.High,
 						status: status.success(
 							`Docker base images \`${commit.repo.org.name}/${

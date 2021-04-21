@@ -39,7 +39,12 @@ parameter_groups:
 parameters:
   - name: pinningRequired
     group: actions
-    tooltip: Unpinned Dockerfiles will result in a failed check.
+  - name: pinningFailCheck
+    group: actions
+    condition:
+      name: pinningRequired
+      values:
+        - true
   - name: pinningPullRequests
     group: actions
   - name: pinningIncludeTag
@@ -62,7 +67,12 @@ parameters:
         - true
   - name: supportedTagRequired
     group: actions
-    tooltip: Dockerfiles that use unsupported tags of official Docker images will result in a failed check.
+  - name: supportedTagFailCheck
+    group: actions
+    condition:
+      name: supportedTagRequired
+      values:
+        - true
   - name: repoFilter
     group: whatToWatch
   - name: acceptRequired

@@ -16,6 +16,7 @@
 
 export interface Configuration {
 	pinningRequired: boolean;
+	pinningFailCheck: boolean;
 
 	pinningPullRequests: boolean;
 	pinningIncludeTag: boolean;
@@ -23,6 +24,7 @@ export interface Configuration {
 	pinningAssignReviewers: boolean;
 
 	supportedTagRequired: boolean;
+	supportedTagFailCheck: boolean;
 
 	acceptRequired: boolean;
 	acceptImages: string[];

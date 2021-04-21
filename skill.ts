@@ -53,6 +53,14 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 			required: false,
 			defaultValue: true,
 		},
+		pinningFailCheck: {
+			type: ParameterType.Boolean,
+			displayName: "Fail pinned Docker base images check",
+			description:
+				"Select to fail check if there unpinned Docker base images. If left unchecked, the check will be neutral.",
+			defaultValue: false,
+			required: false,
+		},
 		pinningPullRequests: {
 			type: ParameterType.Boolean,
 			displayName: "Raise pull requests",
@@ -91,6 +99,14 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 				"Select to create a GitHub check identify supported and unsupported tag of official Docker images.",
 			required: false,
 			defaultValue: true,
+		},
+		supportedTagFailCheck: {
+			type: ParameterType.Boolean,
+			displayName: "Fail unsupported Docker tag check",
+			description:
+				"Select to fail check if there unsupported Docker base images. If left unchecked, the check will be neutral.",
+			defaultValue: false,
+			required: false,
 		},
 		acceptRequired: {
 			type: ParameterType.Boolean,

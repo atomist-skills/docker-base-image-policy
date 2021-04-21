@@ -72,6 +72,7 @@ export const handler: MappingEventHandler<
 					.join(", ")} are pinned`,
 			}),
 			execute: async ctx => {
+				const cfg = ctx.configuration.parameters;
 				const commit = ctx.data.commit;
 				let linesByFile: Array<{
 					path: string;
@@ -178,7 +179,9 @@ ${f.pinned}`,
 							: ""
 					}`;
 					return {
-						state: policy.result.ResultEntityState.Failure,
+						state: cfg.pinningFailCheck
+							? policy.result.ResultEntityState.Failure
+							: policy.result.ResultEntityState.Neutral,
 						severity: policy.result.ResultEntitySeverity.High,
 						status: status.success(
 							`Unpinned Docker base images \`${
