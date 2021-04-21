@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Move digest word up in compare sentence. [167534c](https://github.com/atomist-skills/docker-base-image-policy/commit/167534cb603b640e4298050efb5bf5f0c71559ed)
+-   Make checks neutral by default and allow config. [2a32c36](https://github.com/atomist-skills/docker-base-image-policy/commit/2a32c364cd11cffd94a393e755612047878f2dac)
 
 ## [0.1.19](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.18...0.1.19) - 2021-04-14
 
