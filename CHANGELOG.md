@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.22...HEAD)
 
+### Changed
+
+-   Polish tag printing. [3ff2649](https://github.com/atomist-skills/docker-base-image-policy/commit/3ff26494a6ac588fc28cc9b7ebf26f9ec77fa6b5)
+
 ## [0.1.22](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.21...0.1.22) - 2021-04-22
 
 ### Changed
