@@ -20,7 +20,7 @@ import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages, ValidateBaseImagesRaw } from "../types";
-import { imageName, linkFile } from "../util";
+import { imageName, linkFile, printTag } from "../util";
 import {
 	CreateRepositoryIdFromCommit,
 	DockerfilesTransacted,
@@ -109,8 +109,7 @@ export const handler: MappingEventHandler<
 								maxLength,
 							)}: FROM ${l.argsString}`;
 							return `\`\`\`
-${from}
-${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag} 
+${from}${printTag(from, l)}
 \`\`\``;
 						})
 						.join("\n\n");

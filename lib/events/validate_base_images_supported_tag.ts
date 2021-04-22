@@ -332,7 +332,7 @@ function highlightTag(
 	const suggested = suggestTag(tag, tags);
 	return `${
 		suggested !== tag
-			? `Based on current tag \`${tag}\` the closest supported tag appears to be \`${suggested}\`
+			? `Based on current tag \`${tag}\` in use, the closest supported tag appears to be \`${suggested}\`.
 
 `
 			: ""
