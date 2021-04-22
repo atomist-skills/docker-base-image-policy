@@ -54,7 +54,8 @@
  (get-config-value "pinningRequired" true true)
 
  ;; resolve all images and manifest-list currently used in FROM lines
- [?other-from-line :docker.file.line/file ?docker-file]
+ [?other-docker-file :docker.file/commit ?commit]
+ [?other-from-line :docker.file.line/file ?other-docker-file]
  [?other-from-line :docker.file.line/instruction "FROM"]
  (or-join [?other-from-line ?image]
    (and
