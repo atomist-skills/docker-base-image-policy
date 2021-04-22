@@ -119,7 +119,11 @@ export function printTag(
 	from: string,
 	fromLine: ValidateBaseImages["commit"]["dockerFiles"][0]["lines"][0],
 ): string {
-	if (from.includes("@sha") && !from.includes(`:${fromLine.tag}@`)) {
+	if (
+		fromLine.tag &&
+		from.includes("@sha") &&
+		!from.includes(`:${fromLine.tag}@`)
+	) {
 		return `\n${_.padStart("", from.split("@sha")[0].length)}\`--> ${
 			fromLine.tag
 		}`;
