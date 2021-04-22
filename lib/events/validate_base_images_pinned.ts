@@ -182,7 +182,9 @@ ${f.pinned}`,
 						state: cfg.pinningFailCheck
 							? policy.result.ResultEntityState.Failure
 							: policy.result.ResultEntityState.Neutral,
-						severity: policy.result.ResultEntitySeverity.High,
+						severity: cfg.pinningFailCheck
+							? policy.result.ResultEntitySeverity.High
+							: undefined,
 						status: status.success(
 							`Unpinned Docker base images \`${
 								commit.repo.org.name
@@ -201,7 +203,9 @@ ${f.pinned}`,
 												.split("@")[0]
 												.split(":")[0]
 										} is not pinned`,
-										annotationLevel: "failure",
+										annotationLevel: cfg.pinningFailCheck
+											? "failure"
+											: "notice",
 										startLine: ul.number,
 										endLine: ul.number,
 										path: l.path,

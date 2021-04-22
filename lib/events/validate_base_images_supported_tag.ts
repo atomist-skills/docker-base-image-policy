@@ -240,7 +240,9 @@ ${f.supported}`,
 						state: cfg.supportedTagFailCheck
 							? policy.result.ResultEntityState.Failure
 							: policy.result.ResultEntityState.Neutral,
-						severity: policy.result.ResultEntitySeverity.High,
+						severity: cfg.supportedTagFailCheck
+							? policy.result.ResultEntitySeverity.High
+							: undefined,
 						status: status.success(
 							`Docker base images \`${commit.repo.org.name}/${
 								commit.repo.name
@@ -257,7 +259,9 @@ ${f.supported}`,
 									l.unsupportedLines.map(ul => ({
 										title: "Unsupported tag",
 										message: `${ul.tag} is not a supported tag for image ${ul.repository?.name}`,
-										annotationLevel: "failure",
+										annotationLevel: cfg.supportedTagFailCheck
+											? "failure"
+											: "notice",
 										startLine: ul.number,
 										endLine: ul.number,
 										path: l.path,
