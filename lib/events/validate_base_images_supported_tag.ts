@@ -122,24 +122,24 @@ export const handler: MappingEventHandler<
 							fromLine.repository.name,
 							commit,
 						);
-						const suggestedTag = suggestTag(
-							fromLine.tag,
-							tags.supported,
-						);
-						if (suggestedTag) {
-							tagSuggestions.push({
-								file,
-								ref: guid(),
-								to: `${imageName(
-									fromLine.repository,
-								)}:${suggestedTag}`,
-								from: fromLine.argsString,
-							});
-						}
 						usedTags.set(fromLine.repository.name, tags);
 						if (tags.supported.includes(fromLine.tag)) {
 							supportedLines.push(fromLine);
 						} else {
+							const suggestedTag = suggestTag(
+								fromLine.tag,
+								tags.supported,
+							);
+							if (suggestedTag) {
+								tagSuggestions.push({
+									file,
+									ref: guid().slice(0, 20),
+									to: `${imageName(
+										fromLine.repository,
+									)}:${suggestedTag}`,
+									from: fromLine.argsString,
+								});
+							}
 							unSupportedLines.push(fromLine);
 						}
 					}
@@ -306,7 +306,7 @@ ${f.supported}`,
 									})),
 								),
 						),
-						actions: tagSuggestions.map(ts => ({
+						actions: tagSuggestions.slice(0, 3).map(ts => ({
 							label: `Use ${ts.to.split(":")[1]}`,
 							description: `Update to ${truncate(
 								ts.to,
