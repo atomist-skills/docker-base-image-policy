@@ -1,0 +1,52 @@
+[:find
+ (pull
+   ?check-run
+   [:schema/entity-type
+    :github.checkrun/name
+    :github.checkrun/source-id
+    :github.checkrun/requested-action-id])
+ (pull
+   ?commit
+   [:schema/entity-type
+    {(:git.ref/_commit :as :git.ref/refs) [:git.ref/name
+                                           :git.ref/type]}
+    {:git.commit/repo [:git.repo/name
+                       {:git.repo/org [:github.org/installation-token
+                                       :git.org/name
+                                       (:git.org/provider-base-url
+                                         :as
+                                         :base-url)
+                                       :git.provider/url]}]}
+    {:git.commit/author [:git.user/name
+                         :git.user/login
+                         {:git.user/emails [:email.email/address]}]}
+    :git.commit/sha
+    :git.commit/message])
+ (pull
+   ?from-update
+   [:schema/entity-type
+    :base.image.from.update/path
+    :base.image.from.update/from
+    :base.image.from.update/to])
+ :in
+ $
+ $before
+ %
+ :where
+ (tx-entity-attr-value :github.checkrun/action ?check-run _)
+ [?check-run
+  :github.checkrun/action
+  :github.checkrun.action/requested_action]
+ [?check-run :github.checkrun/name "docker-base-image-policy/tag"]
+ [?check-run :github.checkrun/checksuite ?check-suite]
+ [?check-run :github.checkrun/requested-action-id ?ref]
+ [?check-suite :github.checksuite/commit ?commit]
+ [?commit :git.commit/sha ?sha]
+
+ [?from-update :base.image.from.update/ref ?ref]
+ [?from-update :base.image.from.update/sha ?sha]
+
+ ;; check repo filter
+ [?commit :git.commit/repo ?repo]
+ (repo-selected? ?repo)
+ ]

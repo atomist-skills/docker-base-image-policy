@@ -15,18 +15,21 @@
  */
 
 import {
+	datalog,
 	github,
+	guid,
 	levenshteinSort,
 	MappingEventHandler,
 	policy,
 	status,
+	truncate,
 } from "@atomist/skill";
 import { wrapEventHandler } from "@atomist/skill/lib/map";
 import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages, ValidateBaseImagesRaw } from "../types";
-import { linkFile, printTag } from "../util";
+import { imageName, linkFile, printTag } from "../util";
 import {
 	CreateRepositoryIdFromCommit,
 	DockerfilesTransacted,
@@ -80,6 +83,12 @@ export const handler: MappingEventHandler<
 			execute: async ctx => {
 				const cfg = ctx.configuration.parameters;
 				const mSupportedTags = _.memoize(supportedTags);
+				const tagSuggestions: Array<{
+					file: ValidateBaseImages["commit"]["dockerFiles"][0];
+					from: string;
+					to: string;
+					ref: string;
+				}> = [];
 				const commit = ctx.data.commit;
 				let linesByFile: Array<{
 					path: string;
@@ -113,6 +122,20 @@ export const handler: MappingEventHandler<
 							fromLine.repository.name,
 							commit,
 						);
+						const suggestedTag = suggestTag(
+							fromLine.tag,
+							tags.supported,
+						);
+						if (suggestedTag) {
+							tagSuggestions.push({
+								file,
+								ref: guid(),
+								to: `${imageName(
+									fromLine.repository,
+								)}:${suggestedTag}`,
+								from: fromLine.argsString,
+							});
+						}
 						usedTags.set(fromLine.repository.name, tags);
 						if (tags.supported.includes(fromLine.tag)) {
 							supportedLines.push(fromLine);
@@ -167,6 +190,21 @@ ${highlightTag(
 						unsupported: unSupportedLinesBody,
 						unsupportedLines: unSupportedLines,
 					});
+				}
+
+				// Transact tag suggestions
+				if (tagSuggestions.length > 0) {
+					await ctx.datalog.transact(
+						tagSuggestions.map(ts =>
+							datalog.entity("base.image.from/update", {
+								sha: commit.sha,
+								path: ts.file.path,
+								ref: ts.ref,
+								from: ts.from,
+								to: ts.to,
+							}),
+						),
+					);
 				}
 
 				linesByFile = _.sortBy(linesByFile, "path").filter(
@@ -268,6 +306,18 @@ ${f.supported}`,
 									})),
 								),
 						),
+						actions: tagSuggestions.map(ts => ({
+							label: `Use ${ts.to.split(":")[1]}`,
+							description: `Update to ${truncate(
+								ts.to,
+								40 - "Update to ".length,
+								{
+									direction: "start",
+									separator: "...",
+								},
+							)}`,
+							identifier: ts.ref,
+						})),
 					};
 				}
 			},
