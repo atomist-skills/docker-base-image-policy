@@ -1,6 +1,6 @@
 {
   "name": "@atomist/docker-base-image-policy",
-  "homepage": "https://github.com/atomist-skills/docker-base-image-policy",
+  "homepage": "https://github.com/atomist-skills/docker-base-image-policy#readme",
   "license": "Apache-2.0",
   "author": {
     "name": "Atomist, Inc.",
@@ -54,7 +54,7 @@
     "word-wrap": "^1.2.3"
   },
   "devDependencies": {
-    "@atomist/npm-tools": "^0.1.1-master.0",
+    "@atomist/npm-tools": "^0.1.1-main.0",
     "@google-cloud/functions-framework": "^1.7.1",
     "@types/fs-extra": "^9.0.11",
     "@types/mocha": "^8.2.2",
