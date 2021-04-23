@@ -26,9 +26,10 @@
     "clean:npm": "rimraf node_modules",
     "clean:run": "rimraf *-v8.log profile.txt log",
     "clean:test": "rimraf .nyc_output coverage",
-    "compile": "run-s gql:gen compile:ts",
+    "compile": "run-s git:info gql:gen compile:ts",
     "compile:ts": "tsc --project .",
     "doc": "typedoc --mode modules --excludeExternals --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
+    "git:info": "atm-npm-tools git-info",
     "gql:gen": "atm-skill gql-generate",
     "lint": "run-p lint:eslint lint:prettier",
     "lint:eslint": "eslint --ext .ts .",
@@ -47,11 +48,12 @@
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\""
   },
   "dependencies": {
-    "@atomist/skill": "^0.10.1-main.25",
+    "@atomist/skill": "^0.10.1-main.29",
     "fs-extra": "^9.1.0",
     "word-wrap": "^1.2.3"
   },
   "devDependencies": {
+    "@atomist/npm-tools": "^0.1.1-main.0",
     "@google-cloud/functions-framework": "^1.7.1",
     "@types/fs-extra": "^9.0.11",
     "@types/mocha": "^8.2.2",
