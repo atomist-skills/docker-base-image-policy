@@ -133,7 +133,7 @@ export const handler: MappingEventHandler<
 							if (suggestedTag) {
 								tagSuggestions.push({
 									file,
-									ref: guid().slice(0, 20),
+									ref: `update-tag-${guid().split("-")[0]}`,
 									to: `${imageName(
 										fromLine.repository,
 									)}:${suggestedTag}`,

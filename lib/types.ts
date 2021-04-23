@@ -193,3 +193,13 @@ export interface ValidateLinking {
 		repository: subscription.datalog.DockerImage["repository"];
 	}>;
 }
+
+export interface UpdateFrom {
+	checkrun: { requestedActionId: string; sourceId: string };
+	commit: subscription.datalog.Commit;
+	update: {
+		path: string;
+		to: string;
+		from: string;
+	};
+}
