@@ -10,10 +10,10 @@ RUN npm ci --no-optional && \
     rm -rf node_modules .git
 
 # Set up runtime container
-FROM atomist/skill:node14@sha256:28e22889077734245ddad1207955b4e9f2923e4924fb3cc7d92b1da7e744ca7e
+FROM atomist/skill:node14@sha256:1f5574256296251d381a78d1987b83723534b419409d54a1a12b5595e23fb47f
 
 RUN apt-get update && \
-    apt-get install -y curl=7.68.0-1ubuntu4.3 && \
+    apt-get install -y curl=7.74.0-1ubuntu2 && \
     curl -LO https://storage.googleapis.com/container-diff/latest/container-diff-linux-amd64 && \
     chmod +x container-diff-linux-amd64 && \
     mv container-diff-linux-amd64 /usr/local/bin/container-diff && \
