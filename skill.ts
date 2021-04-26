@@ -137,7 +137,7 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 			required: false,
 			visibility: ParameterVisibility.Hidden,
 		},
-		repoFilter: parameter.repoFilter(),
+		repoFilter: parameter.repoFilter({ required: false }),
 	},
 
 	capabilities: {
