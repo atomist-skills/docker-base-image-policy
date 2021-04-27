@@ -16,4 +16,4 @@
 apiVersion: 1
 package:
   type: atomist/container-skill
-  command: npm run skill:download
+  command: atm-skill download
