@@ -41,11 +41,11 @@
     "skill": "run-s compile test skill:generate skill:upload",
     "skill:bundle": "atm-skill bundle",
     "skill:clean": "atm-skill clean",
+    "skill:download": "atm-skill download",
     "skill:generate": "atm-skill generate",
     "skill:package": "atm-skill package",
     "skill:register": "atm-skill register",
     "skill:upload": "atm-skill upload --workspace T29E48P34",
-    "skill:download": "atm-skill download",
     "start": "functions-framework --target=entryPoint --signature-type=event",
     "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\""
