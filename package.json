@@ -38,18 +38,20 @@
     "lint:fix": "run-p lint:eslint:fix lint:prettier:fix",
     "lint:prettier": "prettier --list-different \"**/*.{graphql,json,markdown,md,yaml,yml}\"",
     "lint:prettier:fix": "prettier --write \"**/*.{graphql,json,markdown,md,yaml,yml}\"",
-    "skill": "run-s compile test skill:generate skill:package",
+    "skill": "run-s compile test skill:generate skill:upload",
     "skill:bundle": "atm-skill bundle",
     "skill:clean": "atm-skill clean",
     "skill:generate": "atm-skill generate",
     "skill:package": "atm-skill package",
     "skill:register": "atm-skill register",
+    "skill:upload": "atm-skill upload",
+    "skill:download": "atm-skill download",
     "start": "functions-framework --target=entryPoint --signature-type=event",
     "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\""
   },
   "dependencies": {
-    "@atomist/skill": "^0.11.1-main.1",
+    "@atomist/skill": "^0.11.1-main.8",
     "fs-extra": "^9.1.0",
     "word-wrap": "^1.2.3"
   },

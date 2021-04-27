@@ -6,7 +6,7 @@ WORKDIR /usr/src
 COPY . ./
 
 RUN npm ci --no-optional && \
-    npm run compile && \
+    npm run skill && \
     rm -rf node_modules .git
 
 # Set up runtime container
