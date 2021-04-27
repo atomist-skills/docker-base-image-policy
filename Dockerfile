@@ -5,7 +5,7 @@ WORKDIR /usr/src
 
 COPY . ./
 
-RUN npm ci --no-optional && \
+RUN npm ci --no-optional --also=dev && \
     npm run skill && \
     rm -rf node_modules .git
 
