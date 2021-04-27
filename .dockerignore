@@ -15,7 +15,6 @@ doc/
 log/
 scripts/
 src/
-test/
 CO*.md
 **/*.log
 **/*.txt
