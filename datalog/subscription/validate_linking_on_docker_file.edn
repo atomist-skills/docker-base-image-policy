@@ -1,4 +1,5 @@
 [:find
+ (atomist/serialize-on ?tuple)
  (pull
    ?commit
    [:db/id
@@ -24,10 +25,13 @@
  :where
  (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
 
+ [?commit :git.commit/sha ?sha]
+ [(tuple ?sha "docker-image-policy/linked") ?tuple]
+
  ;; check linking is required
  (get-config-value "linkingRequired" false true)
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
- ;(repo-selected? ?repo)
+ (repo-selected? ?repo)
  ]

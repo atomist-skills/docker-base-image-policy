@@ -1,4 +1,5 @@
 [:find
+ (atomist/serialize-on ?tuple)
  ?docker-images
  (pull
    ?commit
@@ -31,6 +32,8 @@
  [?image :docker.image/sha ?sha]
  [?commit :git.commit/sha ?sha]
 
+ [(tuple ?sha "docker-image-policy/linked") ?tuple]
+ 
  ;; get all images on the commit
  [(q (quote [:find (pull ?docker-image [:db/id
                                         :schema/entity-type
