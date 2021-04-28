@@ -52,8 +52,7 @@
   },
   "dependencies": {
     "@atomist/skill": "^0.11.1-main.12",
-    "fs-extra": "^9.1.0",
-    "word-wrap": "^1.2.3"
+    "fs-extra": "^9.1.0"
   },
   "devDependencies": {
     "@atomist/npm-tools": "^0.1.1-main.0",
@@ -62,7 +61,6 @@
     "@types/mocha": "^8.2.2",
     "@types/power-assert": "^1.5.3",
     "@types/semver": "^7.3.5",
-    "@types/word-wrap": "^1.2.1",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.25.0",
