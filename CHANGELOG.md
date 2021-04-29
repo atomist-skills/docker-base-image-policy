@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.26...HEAD)
+## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.27...HEAD)
+
+## [0.1.27](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.26...0.1.27) - 2021-04-29
 
 ## [0.1.26](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.25...0.1.26) - 2021-04-28
 
