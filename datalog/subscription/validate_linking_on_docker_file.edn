@@ -4,6 +4,8 @@
    ?commit
    [:db/id
     :schema/entity-type
+    {(:git.ref/_commit :as :git.ref/refs) [:git.ref/name
+                                           :git.ref/type]}
     {:git.commit/repo [:git.repo/name
                        :git.repo/default-branch
                        {:git.repo/org [:github.org/installation-token
