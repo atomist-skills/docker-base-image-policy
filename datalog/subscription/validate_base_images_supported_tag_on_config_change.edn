@@ -63,16 +63,9 @@
  [?commit :git.commit/repo ?repo]
  (repo-selected? ?repo)
 
- ;; check policy hasn't already run
- [(q (quote [:find (distinct ?check)
-             :in $ ?commit
-             :where
-             [?check-suite :github.checksuite/commit ?commit]
-             [?check-run :github.checkrun/checksuite ?check-suite]
-             [?check-run :github.checkrun/name ?check]])
-    $ ?commit)
-  [[?checks]]]
- (not (array-contains? ?checks "docker-base-image-policy/tag"))
+ [?check-suite :github.checksuite/commit ?commit]
+ [?check-run :github.checkrun/checksuite ?check-suite]
+ (not [?check-run :github.checkrun/name "docker-base-image-policy/tag"])
 
  ;; resolve all images and manifest-list currently used in FROM lines
  [?other-docker-file :docker.file/commit ?commit]
