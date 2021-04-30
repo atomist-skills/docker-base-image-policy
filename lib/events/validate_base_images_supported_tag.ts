@@ -199,7 +199,7 @@ ${highlightTag(
 						}),
 					);
 					await ctx.datalog.transact([
-						editsEntities,
+						...editsEntities,
 						datalog.entity("base.image.from/update", {
 							sha: commit.sha,
 							edits: {
