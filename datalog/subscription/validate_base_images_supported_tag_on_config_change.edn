@@ -1,0 +1,38 @@
+[:find
+ (pull
+   ?commit
+   [:schema/entity-type
+    {:git.commit/repo [:git.repo/name
+                       :git.repo/default-branch
+                       ]}
+    :git.commit/sha
+    :git.commit/message
+    ])
+ :in $ $before-db %
+ :where
+ (tx-config ?parameter)
+
+ ;; check pinning is required
+ (get-config-value "supportedTagRequired" true true)
+
+ ;; head commits
+ [?ref :git.ref/commit ?commit]
+ (is-default-branch? ?ref)
+
+ ;; check repo filter
+ [?commit :git.commit/repo ?repo]
+ (repo-selected? ?repo)
+
+ [(q (quote [:find ?check
+             :in $ ?commit
+             :where
+             [?check-suite :github.checksuite/commit ?commit]
+             [?check-run :github.checkrun/checksuite ?check-suite]
+             [?check-run :github.checkrun/name ?check]])
+    $ ?commit)
+  [[?checks]]]
+
+  (not (array-contains? ?checks "docker-base-image-policy/tag"))
+
+ ]
+ 
