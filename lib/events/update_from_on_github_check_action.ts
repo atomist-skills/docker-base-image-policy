@@ -16,6 +16,7 @@
 
 import {
 	EventHandler,
+	git,
 	github,
 	handler as h,
 	pluralize,
@@ -56,6 +57,9 @@ export const handler: EventHandler = h.chain<
 
 	for (const path of Object.keys(editsByPath)) {
 		const edits = editsByPath[path];
+
+		// Reset to the current commit for each edit
+		await git.checkout(ctx.chain.project, commit.sha);
 
 		await github.persistChanges(
 			ctx,
