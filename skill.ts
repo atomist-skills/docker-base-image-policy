@@ -17,6 +17,7 @@
 import {
 	CapabilityScope,
 	Category,
+	env,
 	parameter,
 	ParameterType,
 	ParameterVisibility,
@@ -41,7 +42,7 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 	containers: {
 		docker: {
 			image: "gcr.io/atomist-container-skills/docker-base-image-policy",
-			env: [{ name: "ATOMIST_CONTAINER_MODE", value: "no-sidecar" }],
+			env: [env.noSideCar()],
 		},
 	},
 
