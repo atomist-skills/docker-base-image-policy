@@ -23,7 +23,7 @@
  [?commit :git.commit/repo ?repo]
  (repo-selected? ?repo)
 
- [(q (quote [:find ?check
+ [(q (quote [:find (distinct ?check)
              :in $ ?commit
              :where
              [?check-suite :github.checksuite/commit ?commit]
@@ -32,7 +32,7 @@
     $ ?commit)
   [[?checks]]]
 
-  (not (array-contains? ?checks "docker-base-image-policy/tag"))
+ (not (array-contains? ?checks "docker-base-image-policy/tag"))
 
  ]
  
