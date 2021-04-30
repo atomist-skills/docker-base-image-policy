@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.27...HEAD)
 
+### Changed
+
+-   Aggregate tag update into one Check action. [#176](https://github.com/atomist-skills/docker-base-image-policy/issues/176)
+
 ## [0.1.27](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.26...0.1.27) - 2021-04-29
 
 ## [0.1.26](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.25...0.1.26) - 2021-04-28
