@@ -25,9 +25,10 @@
  (pull
    ?from-update
    [:schema/entity-type
-    :base.image.from.update/path
-    :base.image.from.update/from
-    :base.image.from.update/to])
+    :base.image.from.update/sha
+    {:base.image.from.update/edits [:base.image.from.update.edit/path
+                                    :base.image.from.update.edit/to
+                                    :base.image.from.update.edit/from]}])
  :in
  $
  $before
@@ -39,11 +40,10 @@
   :github.checkrun.action/requested_action]
  [?check-run :github.checkrun/name "docker-base-image-policy/tag"]
  [?check-run :github.checkrun/checksuite ?check-suite]
- [?check-run :github.checkrun/requested-action-id ?ref]
+ [?check-run :github.checkrun/requested-action-id "update-tag"]
  [?check-suite :github.checksuite/commit ?commit]
  [?commit :git.commit/sha ?sha]
 
- [?from-update :base.image.from.update/ref ?ref]
  [?from-update :base.image.from.update/sha ?sha]
 
  ;; check repo filter

@@ -198,8 +198,11 @@ export interface UpdateFrom {
 	checkrun: { requestedActionId: string; sourceId: string };
 	commit: subscription.datalog.Commit;
 	update: {
-		path: string;
-		to: string;
-		from: string;
+		sha: string;
+		edits: Array<{
+			path: string;
+			from: string;
+			to: string;
+		}>;
 	};
 }

@@ -18,12 +18,15 @@ import {
 	EventHandler,
 	github,
 	handler as h,
+	pluralize,
 	project,
 	repository,
+	status,
 	truncate,
 } from "@atomist/skill";
 import { sourceLocationFromOffset } from "@atomist/skill/lib/util";
 import * as fs from "fs-extra";
+import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { UpdateFrom } from "../types";
@@ -48,55 +51,62 @@ export const handler: EventHandler = h.chain<
 		actions: [],
 	});
 
-	const dockerfile = (
-		await fs.readFile(project.path(update.path))
-	).toString();
+	// Group edits by path
+	const editsByPath = _.groupBy(update.edits, "path");
 
-	// Extract image:tag@digest
-	const imageNameMatch = /^\s*([\S]*).*$/.exec(update.from);
-	const imageName = imageNameMatch[1];
+	for (const path of Object.keys(editsByPath)) {
+		const edits = editsByPath[path];
 
-	// Replace the content
-	const newDockerfile = dockerfile.replace(
-		new RegExp(`^FROM\\s*${imageName}`, "gmi"),
-		`FROM ${update.to}`,
-	);
-
-	// Collect all the replaced FROM lines
-	const regexp = new RegExp(`^FROM\\s*${update.to}.*$`, "gmi");
-	const matches: RegExpExecArray[] = [];
-	let match;
-	do {
-		match = regexp.exec(newDockerfile);
-		if (match) {
-			matches.push(match);
-		}
-	} while (match);
-
-	await fs.writeFile(project.path(update.path), newDockerfile);
-
-	return github.persistChanges(
-		ctx,
-		project,
-		"pr",
-		{
-			branch: commit.refs?.[0]?.name,
-			defaultBranch: commit.repo.defaultBranch,
-			author: {
-				login: undefined,
-				name: undefined,
-				email: undefined,
+		await github.persistChanges(
+			ctx,
+			project,
+			"pr",
+			{
+				branch: commit.refs?.[0]?.name,
+				defaultBranch: commit.repo.defaultBranch,
+				author: {
+					login: undefined,
+					name: undefined,
+					email: undefined,
+				},
 			},
-		},
-		{
-			branch: `atomist/docker-base-image-tag/${update.path.toLowerCase()}`,
-			title: `Update to ${update.to} in ${update.path}`,
-			body: `This pull request updates the Docker base image \`${
-				update.to.split(":")[0]
-			}\` to supported tag \`${update.to.split(":")[1]}\` in ${linkFile(
-				update.path,
-				commit,
-			)}.
+			{
+				branch: `atomist/docker-base-image-tag/${path.toLowerCase()}`,
+				title: `Update ${pluralize(
+					"Docker base image tag",
+					edits,
+				)} in ${path}`,
+				body: `This pull request updates ${pluralize(
+					"Docker base image tag",
+					edits,
+					{ include: true, includeOne: true },
+				)} in ${linkFile(path, commit)}.`,
+				update: async () => {
+					// Collect all the replaced FROM lines
+					const dockerfile = (
+						await fs.readFile(project.path(path))
+					).toString();
+					const matches: RegExpExecArray[] = [];
+
+					for (const edit of edits) {
+						const regexp = new RegExp(
+							`^FROM\\s*${edit.to}.*$`,
+							"gmi",
+						);
+						let match;
+						do {
+							match = regexp.exec(dockerfile);
+							if (match) {
+								matches.push(match);
+							}
+						} while (match);
+					}
+					return {
+						body: `This pull request updates ${pluralize(
+							"Docker base image tag",
+							edits,
+							{ include: true, includeOne: true },
+						)} in ${linkFile(path, commit)}.
 ${matches
 	.map(
 		m => ` 			
@@ -105,12 +115,39 @@ ${sourceLocationFromOffset(m[0], m.index, m.input).startLine}: ${m[0]}
 \`\`\``,
 	)
 	.join("\n\n")}`,
-		},
-		{
-			message: `Update to ${truncate(update.to, 50 - "Update to".length, {
-				direction: "start",
-				separator: "...",
-			})}`,
-		},
+					};
+				},
+			},
+			{
+				editors: edits.map(e => async () => {
+					const dockerfile = (
+						await fs.readFile(project.path(e.path))
+					).toString();
+
+					// Extract image:tag@digest
+					const imageNameMatch = /^\s*([\S]*).*$/.exec(e.from);
+					const imageName = imageNameMatch[1];
+
+					// Replace the content
+					const newDockerfile = dockerfile.replace(
+						new RegExp(`^FROM\\s*${imageName}`, "gmi"),
+						`FROM ${e.to}`,
+					);
+
+					await fs.writeFile(project.path(e.path), newDockerfile);
+					return `Update to ${truncate(
+						e.to,
+						50 - "Update to".length,
+						{
+							direction: "start",
+							separator: "...",
+						},
+					)}`;
+				}),
+			},
+		);
+	}
+	return status.success(
+		`Updated ${pluralize("Docker image tag", update.edits)}`,
 	);
 });

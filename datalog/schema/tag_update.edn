@@ -13,16 +13,18 @@
 ;; limitations under the License.
 
 {:attributes
- {:base.image.from/update      {:db.entity/attrs [:base.image.from.update/sha :base.image.from.update/path]}
-  :base.image.from.update/sha  {:db/valueType   :db.type/string
-                                :db/cardinality :db.cardinality/one}
-  :base.image.from.update/path {:db/valueType   :db.type/string
-                                :db/cardinality :db.cardinality/one}
-  :base.image.from.update/ref  {:db/valueType   :db.type/string
-                                :db/cardinality :db.cardinality/one}
-  :base.image.from.update/from {:db/valueType   :db.type/string
-                                :db/cardinality :db.cardinality/one}
-  :base.image.from.update/to   {:db/valueType   :db.type/string
-                                :db/cardinality :db.cardinality/one}
+ {:base.image.from/update           {:db.entity/attrs [:base.image.from.update/sha]}
+  :base.image.from.update/edits     {:db/valueType   :db.type/ref
+                                     :db/cardinality :db.cardinality/many}
+  :base.image.from.update/sha       {:db/valueType   :db.type/string
+                                     :db/cardinality :db.cardinality/one}
+
+  :base.image.from.update/edit      {:db.entity/attrs [:schema/random-guid]}
+  :base.image.from.update.edit/path {:db/valueType   :db.type/string
+                                     :db/cardinality :db.cardinality/one}
+  :base.image.from.update.edit/from {:db/valueType   :db.type/string
+                                     :db/cardinality :db.cardinality/one}
+  :base.image.from.update.edit/to   {:db/valueType   :db.type/string
+                                     :db/cardinality :db.cardinality/one}
   }
  }

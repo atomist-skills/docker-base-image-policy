@@ -17,12 +17,11 @@
 import {
 	datalog,
 	github,
-	guid,
 	levenshteinSort,
 	MappingEventHandler,
+	pluralize,
 	policy,
 	status,
-	truncate,
 } from "@atomist/skill";
 import { wrapEventHandler } from "@atomist/skill/lib/map";
 import * as _ from "lodash";
@@ -87,7 +86,6 @@ export const handler: MappingEventHandler<
 					file: ValidateBaseImages["commit"]["dockerFiles"][0];
 					from: string;
 					to: string;
-					ref: string;
 				}> = [];
 				const commit = ctx.data.commit;
 				let linesByFile: Array<{
@@ -133,7 +131,6 @@ export const handler: MappingEventHandler<
 							if (suggestedTag) {
 								tagSuggestions.push({
 									file,
-									ref: `update-tag-${guid().split("-")[0]}`,
 									to: `${imageName(
 										fromLine.repository,
 									)}:${suggestedTag}`,
@@ -194,17 +191,22 @@ ${highlightTag(
 
 				// Transact tag suggestions
 				if (tagSuggestions.length > 0) {
-					await ctx.datalog.transact(
-						tagSuggestions.map(ts =>
-							datalog.entity("base.image.from/update", {
-								sha: commit.sha,
-								path: ts.file.path,
-								ref: ts.ref,
-								from: ts.from,
-								to: ts.to,
-							}),
-						),
+					const editsEntities = tagSuggestions.map(t =>
+						datalog.entity("base.image.from.update/edit", {
+							path: t.file.path,
+							from: t.from,
+							to: t.to,
+						}),
 					);
+					await ctx.datalog.transact([
+						editsEntities,
+						datalog.entity("base.image.from/update", {
+							sha: commit.sha,
+							edits: {
+								set: datalog.entityRefs(editsEntities),
+							},
+						}),
+					]);
 				}
 
 				linesByFile = _.sortBy(linesByFile, "path").filter(
@@ -306,18 +308,22 @@ ${f.supported}`,
 									})),
 								),
 						),
-						actions: tagSuggestions.slice(0, 3).map(ts => ({
-							label: `Use ${ts.to.split(":")[1]}`,
-							description: `Update to ${truncate(
-								ts.to,
-								40 - "Update to ".length,
-								{
-									direction: "start",
-									separator: "...",
-								},
-							)}`,
-							identifier: ts.ref,
-						})),
+						actions:
+							tagSuggestions.length > 0
+								? [
+										{
+											label: `Update ${pluralize(
+												"tag",
+												tagSuggestions,
+											)}`,
+											description: `Raise a pull request to update ${pluralize(
+												"tag",
+												tagSuggestions,
+											)}`,
+											identifier: "update-tag",
+										},
+								  ]
+								: undefined,
 					};
 				}
 			},
