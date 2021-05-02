@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.28...HEAD)
 
+### Added
+
+-   Hook up config change event handlers. [374d623](https://github.com/atomist-skills/docker-base-image-policy/commit/374d623a017a527310b73f0a1ca837f666ed2ee9)
+
 ## [0.1.28](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.27...0.1.28) - 2021-04-30
 
 ### Changed
