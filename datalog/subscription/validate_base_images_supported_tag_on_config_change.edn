@@ -1,5 +1,4 @@
 [:find
- ?parameter
  (pull ?image [:db/id
                :schema/entity-type
                {:docker.image/repository [:docker.repository/host
@@ -51,7 +50,7 @@
                                                                                                                                    :name)]}]}]}])
  :in $ $before-db %
  :where
- (tx-config ?parameter)
+ (tx-config-value "repoFilter" ?parameter)
 
  ;; check pinning is required
  (get-config-value "supportedTagRequired" true true)
