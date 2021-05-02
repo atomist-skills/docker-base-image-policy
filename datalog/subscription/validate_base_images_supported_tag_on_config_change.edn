@@ -1,5 +1,5 @@
 [:find
- (pull ?parameter [*])
+ ?parameter
  (pull ?image [:db/id
                :schema/entity-type
                {:docker.image/repository [:docker.repository/host
