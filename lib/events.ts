@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 /*
  * Copyright © 2021 Atomist, Inc.
  *
@@ -15,6 +14,7 @@
  * limitations under the License.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 export const pin_from_on_docker_file_on_config_change = require("./events/pin_from_on_docker_file")
 	.handler;
 
