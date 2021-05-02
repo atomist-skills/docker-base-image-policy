@@ -52,7 +52,7 @@
  :where
  (tx-config-value "repoFilter" ?parameter)
 
- ;; check pinning is required
+ ;; check supported tags are required
  (get-config-value "supportedTagRequired" true true)
 
  ;; head commits

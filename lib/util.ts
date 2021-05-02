@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { subscription } from "@atomist/skill";
+import { EventContext, subscription } from "@atomist/skill";
 import * as _ from "lodash";
 
+import { Configuration } from "./configuration";
 import { ValidateBaseImages } from "./types";
 
 export function replaceLastFrom(
@@ -130,4 +131,20 @@ export function printTag(
 	} else {
 		return "";
 	}
+}
+
+export function findTag(
+	ctx: EventContext<ValidateBaseImages, Configuration>,
+	repository: subscription.datalog.DockerImage["repository"],
+	digest: string,
+): string {
+	const image = ctx.data.image?.find(i => i.digest === digest);
+	if (image) {
+		return image.tags?.join(", ");
+	}
+	const manifestList = ctx.data.manifestList?.find(m => m.digest === digest);
+	if (manifestList) {
+		return manifestList.tags?.join(", ");
+	}
+	return undefined;
 }

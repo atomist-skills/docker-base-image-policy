@@ -28,12 +28,8 @@ import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages, ValidateBaseImagesRaw } from "../types";
-import { imageName, linkFile, printTag } from "../util";
-import {
-	CreateRepositoryIdFromCommit,
-	DockerfilesTransacted,
-	findTag,
-} from "./shared";
+import { findTag, imageName, linkFile, printTag } from "../util";
+import { CreateRepositoryIdFromCommit, DockerfilesTransacted } from "./shared";
 
 export const handler: MappingEventHandler<
 	ValidateBaseImages[],

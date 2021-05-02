@@ -50,10 +50,29 @@
                                                                                                                                    :name)]}]}]}])
  :in $ $before-db %
  :where
- (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
+ (tx-config-value "repoFilter" ?parameter)
 
- ;; check supported tags are required
- (get-config-value "supportedTagRequired" true true)
+ ;; check pinning is required
+ (get-config-value "pinningRequired" true true)
+
+ ;; head commits
+ [?ref :git.ref/commit ?commit]
+ (is-default-branch? ?ref)
+
+ ;; check repo filter
+ [?commit :git.commit/repo ?repo]
+ (repo-selected? ?repo)
+
+ ;; check policy hasn't already run
+ [(q (quote [:find (distinct ?check)
+             :in $ ?commit
+             :where
+             [?check-suite :github.checksuite/commit ?commit]
+             [?check-run :github.checkrun/checksuite ?check-suite]
+             [?check-run :github.checkrun/name ?check]])
+    $ ?commit)
+  [[?checks]]]
+ (not (array-contains? ?checks "docker-base-image-policy/pinned"))
 
  ;; resolve all images and manifest-list currently used in FROM lines
  [?other-docker-file :docker.file/commit ?commit]
@@ -69,8 +88,5 @@
    (and
      [(missing? $ ?other-from-line :docker.file.from/digest)]
      [(ground "scratch") ?image])
-   )
-
- ;; check repo filter
- [?commit :git.commit/repo ?repo]
- (repo-selected? ?repo)]
+   )]
+ 
