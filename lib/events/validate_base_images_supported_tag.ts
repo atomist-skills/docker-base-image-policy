@@ -280,9 +280,9 @@ ${f.supported}`,
 							? policy.result.ResultEntitySeverity.High
 							: undefined,
 						status: status.success(
-							`Docker base images \`${commit.repo.org.name}/${
-								commit.repo.name
-							}@${commit.sha.slice(
+							`Detected Docker base images \`${
+								commit.repo.org.name
+							}/${commit.repo.name}@${commit.sha.slice(
 								0,
 								7,
 							)}\` with unsupported tags`,
