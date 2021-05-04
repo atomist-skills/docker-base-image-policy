@@ -97,6 +97,7 @@ export const handler: MappingEventHandler<
 				repository.gitHub({
 					owner: commit.repo.org.name,
 					repo: commit.repo.name,
+					// sha: commit.sha,
 					credential: {
 						token: commit.repo.org.installationToken,
 						scopes: [],
