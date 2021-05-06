@@ -54,7 +54,9 @@
 
  ;; check supported tags are required
  (get-config-value "supportedTagRequired" true true)
-
+ ;; check that repositories have been selected
+ (config-value "repoFilter" _)
+ 
  ;; resolve all images and manifest-list currently used in FROM lines
  [?other-docker-file :docker.file/commit ?commit]
  [?other-from-line :docker.file.line/file ?other-docker-file]

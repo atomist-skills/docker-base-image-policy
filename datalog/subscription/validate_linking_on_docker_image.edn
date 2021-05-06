@@ -30,10 +30,11 @@
 
  ;; check linking is required
  (get-config-value "linkingRequired" false true)
+ ;; check that repositories have been selected
+ (config-value "repoFilter" _)
 
  [?image :docker.image/sha ?sha]
  [?commit :git.commit/sha ?sha]
-
  [(tuple ?sha "docker-image-policy/linked") ?tuple]
  
  ;; get all images on the commit

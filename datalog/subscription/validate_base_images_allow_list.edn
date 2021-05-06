@@ -40,7 +40,9 @@
 
  ;; check if allowlist is enabled
  (get-config-value "acceptRequired" false true)
-
+ ;; check that repositories have been selected
+ (config-value "repoFilter" _)
+ 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
  (repo-selected? ?repo)]

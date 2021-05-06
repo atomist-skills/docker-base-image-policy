@@ -27,11 +27,13 @@
  :where
  (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
 
- [?commit :git.commit/sha ?sha]
- [(tuple ?sha "docker-image-policy/linked") ?tuple]
-
  ;; check linking is required
  (get-config-value "linkingRequired" false true)
+ ;; check that repositories have been selected
+ (config-value "repoFilter" _)
+
+ [?commit :git.commit/sha ?sha]
+ [(tuple ?sha "docker-image-policy/linked") ?tuple]
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]

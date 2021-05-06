@@ -100,6 +100,8 @@
 
  ;; check pinning pull requests are enabled
  (get-config-value "pinningPullRequests" true true)
+ ;; check that repositories have been selected
+ (config-value "repoFilter" _)
 
  (or-join [?docker-registry]
    (capability-configuration
