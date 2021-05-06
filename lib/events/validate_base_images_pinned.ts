@@ -58,7 +58,10 @@ export const handler: MappingEventHandler<
 	},
 	handle: wrapEventHandler(
 		policy.handler<ValidateBaseImages, Configuration>({
-			when: DockerfilesTransacted,
+			when: policy.whenAll(
+				policy.whenParameter("pinningRequired"),
+				DockerfilesTransacted,
+			),
 			id: CreateRepositoryIdFromCommit,
 			details: ctx => ({
 				name: `${ctx.skill.name}/pinned`,

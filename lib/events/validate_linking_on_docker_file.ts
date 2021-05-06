@@ -37,6 +37,7 @@ export const handler: MappingEventHandler<
 		return mapped;
 	},
 	handle: policy.handler<ValidateLinking, Configuration>({
+		when: policy.whenParameter("linkingRequired"),
 		id: CreateRepositoryIdFromCommit,
 		details: () => ({
 			name: `docker-image-policy/linked`,

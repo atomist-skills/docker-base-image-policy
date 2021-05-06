@@ -66,7 +66,10 @@ export const handler: MappingEventHandler<
 	},
 	handle: wrapEventHandler(
 		policy.handler<ValidateBaseImages, Configuration>({
-			when: DockerfilesTransacted,
+			when: policy.whenAll(
+				policy.whenParameter("supportedTagRequired"),
+				DockerfilesTransacted,
+			),
 			id: CreateRepositoryIdFromCommit,
 			details: ctx => ({
 				name: `${ctx.skill.name}/tag`,

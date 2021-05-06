@@ -23,7 +23,10 @@ import { linkFile } from "../util";
 import { CreateRepositoryIdFromCommit, DockerfilesTransacted } from "./shared";
 
 export const handler = policy.handler<ValidateBaseImages, Configuration>({
-	when: DockerfilesTransacted,
+	when: policy.whenAll(
+		policy.whenParameter("acceptRequired"),
+		DockerfilesTransacted,
+	),
 	id: CreateRepositoryIdFromCommit,
 	details: ctx => ({
 		name: `${ctx.skill.name}/allow`,
