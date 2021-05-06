@@ -64,18 +64,20 @@
  (repo-selected? ?repo)
 
  ;; check policy hasn't already run
- [(q (quote [:find (distinct ?check)
-             :in $ ?commit
-             :where
-             (or-join [?commit ?check]
-               (and [?check-suite :github.checksuite/commit ?commit]
-                 [?check-run :github.checkrun/checksuite ?check-suite]
-                 [?check-run :github.checkrun/name ?check])
-               [(ground "") ?check]
-               )])
-    $ ?commit)
-  [[?checks]]]
- (not (array-contains? ?checks "docker-base-image-policy/tag"))
+ (or-join [?commit]
+   (and [(q (quote [:find (distinct ?check)
+                    :in $ ?commit
+                    :where
+                    [?check-suite :github.checksuite/commit ?commit]
+                    [?check-run :github.checkrun/checksuite ?check-suite]
+                    [?check-run :github.checkrun/name ?check]])
+           $ ?commit)
+         [[?checks]]]
+     (not (array-contains? ?checks "docker-base-image-policy/tag")))
+   (not [_ :github.checksuite/commit ?commit])
+   (and
+     [?check-suite :github.checksuite/commit ?commit]
+     (not [_ :github.checkrun/checksuite ?check-suite])))
 
  ;; resolve all images and manifest-list currently used in FROM lines
  [?other-docker-file :docker.file/commit ?commit]
