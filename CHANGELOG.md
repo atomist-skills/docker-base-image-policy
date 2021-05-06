@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.29...HEAD)
 
+### Fixed
+
+-   Fix config change subscription to allow for no checks. [ff79f2a](https://github.com/atomist-skills/docker-base-image-policy/commit/ff79f2adc56ec6f7016a8a64c91c641419eefabb)
+-   Ensure check is enabled by config. [883c242](https://github.com/atomist-skills/docker-base-image-policy/commit/883c2428b99a2b46917517aa0af91c592485fa14)
+-   Assert that repoFilter has selection. [dc2a96a](https://github.com/atomist-skills/docker-base-image-policy/commit/dc2a96a16acdfee5dafe8a9cd3e464302377053e)
+
 ## [0.1.29](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.28...0.1.29) - 2021-05-02
 
 ### Added
