@@ -89,6 +89,7 @@
     :docker.registry/username
     :docker.registry/server-url])
  :in $ $before-db %
+ :with ?parameter
  :where
  (tx-config-value "repoFilter" ?parameter)
 

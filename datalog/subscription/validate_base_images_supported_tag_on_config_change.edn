@@ -49,6 +49,7 @@
                                                                                                                                    :as
                                                                                                                                    :name)]}]}]}])
  :in $ $before-db %
+ :with ?parameter
  :where
  (tx-config-value "repoFilter" ?parameter)
 
@@ -93,5 +94,6 @@
    (and
      [(missing? $ ?other-from-line :docker.file.from/digest)]
      [(ground "scratch") ?image])
-   )]
+   )
+ ]
  

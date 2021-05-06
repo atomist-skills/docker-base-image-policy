@@ -49,6 +49,7 @@
                                                                                                                                    :as
                                                                                                                                    :name)]}]}]}])
  :in $ $before-db %
+ :with ?parameter
  :where
  (tx-config-value "repoFilter" ?parameter)
 
