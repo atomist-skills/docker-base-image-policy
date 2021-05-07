@@ -25,3 +25,11 @@ export const validate_base_images_pinned_on_config_change = require("./events/va
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 export const validate_base_images_supported_tag_on_config_change = require("./events/validate_base_images_supported_tag")
 	.handler;
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+export const validate_linking_on_docker_file_link = require("./events/validate_linking_on_docker_file")
+	.handler;
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+export const validate_linking_on_docker_image = require("./events/validate_linking_on_docker_file")
+	.handler;

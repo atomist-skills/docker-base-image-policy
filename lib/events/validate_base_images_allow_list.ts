@@ -117,7 +117,7 @@ export const handler = policy.handler<ValidateBaseImages, Configuration>({
 		}
 		if (errors.length === 0 && annotations.length === 0) {
 			return {
-				state: policy.result.ResultEntityState.Success,
+				conclusion: policy.Conclusion.Success,
 				status: status.success(
 					`All base images used on allowlist in \`${
 						commit.repo.org.name
@@ -149,8 +149,8 @@ ${e.error}
 ${errorsBody.join("\n\n---\n\n")}`;
 
 			return {
-				state: policy.result.ResultEntityState.Failure,
-				severity: policy.result.ResultEntitySeverity.High,
+				conclusion: policy.Conclusion.Failure,
+				severity: policy.Severity.High,
 				status: status.success(
 					`Detected not allowed base images in \`${
 						commit.repo.org.name

@@ -132,7 +132,7 @@ ${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
 
 				if (!linesByFile.some(l => l.unpinned)) {
 					return {
-						state: policy.result.ResultEntityState.Success,
+						conclusion: policy.Conclusion.Success,
 						status: status.success(
 							`All Docker base images pinned in \`${
 								commit.repo.org.name
@@ -177,11 +177,11 @@ ${f.pinned}`,
 							: ""
 					}`;
 					return {
-						state: cfg.pinningFailCheck
-							? policy.result.ResultEntityState.Failure
-							: policy.result.ResultEntityState.Neutral,
+						conclusion: cfg.pinningFailCheck
+							? policy.Conclusion.Failure
+							: policy.Conclusion.Neutral,
 						severity: cfg.pinningFailCheck
-							? policy.result.ResultEntitySeverity.High
+							? policy.Severity.High
 							: undefined,
 						status: status.success(
 							`Unpinned Docker base images \`${

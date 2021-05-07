@@ -216,7 +216,7 @@ ${highlightTag(
 					!linesByFile.some(l => l.supported)
 				) {
 					return {
-						state: policy.result.ResultEntityState.Neutral,
+						conclusion: policy.Conclusion.Neutral,
 						status: status.success(
 							`No official Docker base images in \`${
 								commit.repo.org.name
@@ -228,7 +228,7 @@ ${linesByFile.map(f => `${linkFile(f.path, commit)}`).join("\n\n---\n\n")}`,
 					};
 				} else if (!linesByFile.some(l => l.unsupported)) {
 					return {
-						state: policy.result.ResultEntityState.Success,
+						conclusion: policy.Conclusion.Success,
 						status: status.success(
 							`All Docker base images in \`${
 								commit.repo.org.name
@@ -276,11 +276,11 @@ ${f.supported}`,
 							: ""
 					}`;
 					return {
-						state: cfg.supportedTagFailCheck
-							? policy.result.ResultEntityState.Failure
-							: policy.result.ResultEntityState.Neutral,
+						conclusion: cfg.supportedTagFailCheck
+							? policy.Conclusion.Failure
+							: policy.Conclusion.Neutral,
 						severity: cfg.supportedTagFailCheck
-							? policy.result.ResultEntitySeverity.High
+							? policy.Severity.High
 							: undefined,
 						status: status.success(
 							`Detected Docker base images \`${

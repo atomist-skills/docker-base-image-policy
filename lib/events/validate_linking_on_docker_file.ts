@@ -116,7 +116,7 @@ ${imageName(l)}
 					parts.push(linkedBody);
 				}
 				return {
-					state: policy.result.ResultEntityState.Neutral,
+					conclusion: policy.Conclusion.Neutral,
 					body: parts.join("\n\n---\n\n"),
 					status: status.success(
 						`Not all Dockerfiles and images are linked on \`${
@@ -126,7 +126,7 @@ ${imageName(l)}
 				};
 			} else {
 				return {
-					state: policy.result.ResultEntityState.Success,
+					conclusion: policy.Conclusion.Success,
 					body: linkedBody,
 					status: status.success(
 						`All Dockerfiles and images are linked on \`${
