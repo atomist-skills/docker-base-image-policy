@@ -298,9 +298,10 @@ ${f.supported}`,
 									l.unsupportedLines.map(ul => ({
 										title: "Unsupported tag",
 										message: `${ul.tag} is not a supported tag for image ${ul.repository?.name}`,
-										annotationLevel: cfg.supportedTagFailCheck
-											? "failure"
-											: "notice",
+										annotationLevel:
+											cfg.supportedTagFailCheck
+												? "failure"
+												: "notice",
 										startLine: ul.number,
 										endLine: ul.number,
 										path: l.path,
@@ -335,27 +336,30 @@ async function supportedTags(
 	commit: ValidateBaseImages["commit"],
 ): Promise<{ supported: string[]; text: string }> {
 	const libraryFile = Buffer.from(
-		((
-			await github
-				.api({
-					credential: {
-						token: commit.repo.org.installationToken,
-						scopes: [],
-					},
-				})
-				.repos.getContent({
-					owner: "docker-library",
-					repo: "docs",
-					path: `${name}/README.md`,
-				})
-		).data as any).content,
+		(
+			(
+				await github
+					.api({
+						credential: {
+							token: commit.repo.org.installationToken,
+							scopes: [],
+						},
+					})
+					.repos.getContent({
+						owner: "docker-library",
+						repo: "docs",
+						path: `${name}/README.md`,
+					})
+			).data as any
+		).content,
 		"base64",
 	).toString();
 
 	const tagRegexp = /`([^,`]*)`/gm;
-	const tagsText = /# Supported tags and respective `Dockerfile` links([\s\S]*?)# Quick reference/gm.exec(
-		libraryFile,
-	);
+	const tagsText =
+		/# Supported tags and respective `Dockerfile` links([\s\S]*?)# Quick reference/gm.exec(
+			libraryFile,
+		);
 	const tags = [];
 	let match: RegExpExecArray;
 	do {
