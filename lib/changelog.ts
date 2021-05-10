@@ -85,10 +85,11 @@ export async function changelog(
 	let proposedDigest = fromLine.image?.digest;
 	let proposedPorts = fromLine.image?.ports || [];
 	let proposedEnv = fromLine.image?.env || [];
-	let platform: CommitAndDockerfile["file"]["lines"][0]["manifestList"]["images"][0]["platform"][0] = {
-		os: "linux",
-		architecture: "amd64",
-	};
+	let platform: CommitAndDockerfile["file"]["lines"][0]["manifestList"]["images"][0]["platform"][0] =
+		{
+			os: "linux",
+			architecture: "amd64",
+		};
 
 	let file: {
 		slug: string;

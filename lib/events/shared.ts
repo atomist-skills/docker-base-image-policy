@@ -22,8 +22,9 @@ import { ValidateBaseImages } from "../types";
 export const DockerfilesTransacted: (
 	ctx: EventContext<ValidateBaseImages, Configuration>,
 ) => HandlerStatus | undefined = ctx => {
-	const files = ctx.data.commit.files.filter(f => /Dockerfile/.test(f.path))
-		.length;
+	const files = ctx.data.commit.files.filter(f =>
+		/Dockerfile/.test(f.path),
+	).length;
 	const dockerFiles = ctx.data.commit.dockerFiles.length;
 	if (files !== dockerFiles) {
 		return status
