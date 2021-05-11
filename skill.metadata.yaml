@@ -13,16 +13,16 @@
 # limitations under the License.
 
 metatags:
-  title: Docker Base Image Policy | Atomist
-  description: Let's get cooking
+  title: Regain Control of Your Docker Builds | Atomist Catalog
+  description: Implement repeatable Docker builds by using digests. Learn how to set a policy to receive a pull request whenever a new base image is available.
   twitter:
-    title: Docker Base Image Policy | Atomist
-    description: It's a masterpiece.
-    image: https://via.placeholder.com/150.jpg
+    title: Regain Control of Your Docker Builds | Atomist Catalog
+    description: Implement repeatable Docker builds by using digests. Learn how to set a policy to receive a pull request whenever a new base image is available.
+    image: https://static.atomist.com/og/docker-base-image-policy.png
   og:
-    title: Docker Base Image Policy | Atomist
-    description: Mmm mmmm delicious.
-    image: https://via.placeholder.com/150.jpg
+    title: Regain Control of Your Docker Builds | Atomist Catalog
+    description: Implement repeatable Docker builds by using digests. Learn how to set a policy to receive a pull request whenever a new base image is available.
+    image: https://static.atomist.com/og/docker-base-image-policy.png
 
 configuration_description: This policy is active when there is a push to a repository containing a Docker file, or when a Docker tag you are using is updated in the Docker registry. Read more information on configuration and get step-by-step instructions.
 is_policy: true
