@@ -1,18 +1,20 @@
 [:find
- (pull ?image [:db/id
-               :schema/entity-type
-               {:docker.image/repository [:docker.repository/host
-                                          (:docker.repository/repository
-                                            :as
-                                            :name)]}
-               :docker.image/digest
-               :docker.image/tags
-               {:docker.manifest-list/repository [:docker.repository/host
-                                                  (:docker.repository/repository
-                                                    :as
-                                                    :name)]}
-               :docker.manifest-list/digest
-               :docker.manifest-list/tags])
+ (pull
+   ?image
+   [:db/id
+    :schema/entity-type
+    {:docker.image/repository [:docker.repository/host
+                               (:docker.repository/repository
+                                 :as
+                                 :name)]}
+    :docker.image/digest
+    :docker.image/tags
+    {:docker.manifest-list/repository [:docker.repository/host
+                                       (:docker.repository/repository
+                                         :as
+                                         :name)]}
+    :docker.manifest-list/digest
+    :docker.manifest-list/tags])
  (pull
    ?commit
    [:schema/entity-type
@@ -51,7 +53,9 @@
  :in $ $before-db %
  :with ?parameter
  :where
- (tx-config-value "repoFilter" ?parameter)
+ (or-join
+   (tx-config-value "repoFilter" ?parameter)
+   (tx-config-value "pinningRequired" ?parameter))
 
  ;; check pinning is required
  (get-config-value "pinningRequired" true true)

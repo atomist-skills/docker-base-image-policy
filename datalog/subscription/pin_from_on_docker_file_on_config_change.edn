@@ -1,27 +1,29 @@
 [:find
- (pull ?image [:db/id
-               :schema/entity-type
-               {:docker.image/repository [:docker.repository/host
-                                          (:docker.repository/repository
-                                            :as
-                                            :name)]}
-               :docker.image/digest
-               :docker.image/tags
-               :docker.image/ports
-               :docker.image/env
-               {:docker.manifest-list/repository [:docker.repository/host
-                                                  (:docker.repository/repository
-                                                    :as
-                                                    :name)]}
-               :docker.manifest-list/digest
-               :docker.manifest-list/tags
-               {:docker.manifest-list/images [:docker.image/digest
-                                              :docker.image/ports
-                                              :docker.image/env
-                                              :docker.image/tags
-                                              {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
-                                                                                                        :docker.platform/variant
-                                                                                                        :docker.platform/architecture]}]}])
+ (pull
+   ?image
+   [:db/id
+    :schema/entity-type
+    {:docker.image/repository [:docker.repository/host
+                               (:docker.repository/repository
+                                 :as
+                                 :name)]}
+    :docker.image/digest
+    :docker.image/tags
+    :docker.image/ports
+    :docker.image/env
+    {:docker.manifest-list/repository [:docker.repository/host
+                                       (:docker.repository/repository
+                                         :as
+                                         :name)]}
+    :docker.manifest-list/digest
+    :docker.manifest-list/tags
+    {:docker.manifest-list/images [:docker.image/digest
+                                   :docker.image/ports
+                                   :docker.image/env
+                                   :docker.image/tags
+                                   {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
+                                                                                             :docker.platform/variant
+                                                                                             :docker.platform/architecture]}]}])
  (pull
    ?commit
    [:schema/entity-type
@@ -40,46 +42,48 @@
                          {:git.user/emails [:email.email/address]}]}
     :git.commit/sha
     :git.commit/message])
- (pull ?docker-file [:schema/entity-type
-                     :docker.file/path
-                     {(:docker.file.line/_file :as :lines) [:docker.file.line/number
-                                                            :docker.file.line/instruction
-                                                            :docker.file.line/args-map
-                                                            :docker.file.line/args-array
-                                                            :docker.file.line/args-string
-                                                            :docker.file.from/tag
-                                                            :docker.file.from/digest
-                                                            {:docker.file.from/image [:docker.image/digest
-                                                                                      :docker.image/tags
-                                                                                      :docker.image/ports
-                                                                                      :docker.image/env
-                                                                                      {:docker.image/docker-file [:docker.file/path
-                                                                                                                  {:docker.file/commit [{:git.commit/repo [:git.repo/name
-                                                                                                                                                           :git.repo/default-branch
-                                                                                                                                                           {:git.repo/org [:github.org/installation-token
-                                                                                                                                                                           :git.org/name
-                                                                                                                                                                           (:git.org/provider-base-url
-                                                                                                                                                                             :as
-                                                                                                                                                                             :base-url)
-                                                                                                                                                                           :git.provider/url]}]}
-                                                                                                                                        {:git.commit/author [:git.user/name
-                                                                                                                                                             :git.user/login
-                                                                                                                                                             {:git.user/emails [:email.email/address]}]}
-                                                                                                                                        :git.commit/sha
-                                                                                                                                        :git.commit/message]}]}]}
-                                                            {:docker.file.from/manifest-list [:docker.manifest-list/digest
-                                                                                              :docker.manifest-list/tags
-                                                                                              {:docker.manifest-list/images [:docker.image/digest
-                                                                                                                             :docker.image/tags
-                                                                                                                             :docker.image/ports
-                                                                                                                             :docker.image/env
-                                                                                                                             {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
-                                                                                                                                                                                       :docker.platform/variant
-                                                                                                                                                                                       :docker.platform/architecture]}]}]}
-                                                            {:docker.file.from/repository [:docker.repository/host
-                                                                                           (:docker.repository/repository
-                                                                                             :as
-                                                                                             :name)]}]}])
+ (pull
+   ?docker-file
+   [:schema/entity-type
+    :docker.file/path
+    {(:docker.file.line/_file :as :lines) [:docker.file.line/number
+                                           :docker.file.line/instruction
+                                           :docker.file.line/args-map
+                                           :docker.file.line/args-array
+                                           :docker.file.line/args-string
+                                           :docker.file.from/tag
+                                           :docker.file.from/digest
+                                           {:docker.file.from/image [:docker.image/digest
+                                                                     :docker.image/tags
+                                                                     :docker.image/ports
+                                                                     :docker.image/env
+                                                                     {:docker.image/docker-file [:docker.file/path
+                                                                                                 {:docker.file/commit [{:git.commit/repo [:git.repo/name
+                                                                                                                                          :git.repo/default-branch
+                                                                                                                                          {:git.repo/org [:github.org/installation-token
+                                                                                                                                                          :git.org/name
+                                                                                                                                                          (:git.org/provider-base-url
+                                                                                                                                                            :as
+                                                                                                                                                            :base-url)
+                                                                                                                                                          :git.provider/url]}]}
+                                                                                                                       {:git.commit/author [:git.user/name
+                                                                                                                                            :git.user/login
+                                                                                                                                            {:git.user/emails [:email.email/address]}]}
+                                                                                                                       :git.commit/sha
+                                                                                                                       :git.commit/message]}]}]}
+                                           {:docker.file.from/manifest-list [:docker.manifest-list/digest
+                                                                             :docker.manifest-list/tags
+                                                                             {:docker.manifest-list/images [:docker.image/digest
+                                                                                                            :docker.image/tags
+                                                                                                            :docker.image/ports
+                                                                                                            :docker.image/env
+                                                                                                            {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
+                                                                                                                                                                      :docker.platform/variant
+                                                                                                                                                                      :docker.platform/architecture]}]}]}
+                                           {:docker.file.from/repository [:docker.repository/host
+                                                                          (:docker.repository/repository
+                                                                            :as
+                                                                            :name)]}]}])
  (pull
    ?docker-registry
    [:db/id
@@ -91,7 +95,9 @@
  :in $ $before-db %
  :with ?parameter
  :where
- (tx-config-value "repoFilter" ?parameter)
+ (or-join
+   (tx-config-value "repoFilter" ?parameter)
+   (tx-config-value "pinningPullRequests" ?parameter))
 
  ;; check pinning pull requests are enabled
  (get-config-value "pinningPullRequests" true true)

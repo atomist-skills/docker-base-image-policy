@@ -1,18 +1,20 @@
 [:find
- (pull ?image [:db/id
-               :schema/entity-type
-               {:docker.image/repository [:docker.repository/host
-                                          (:docker.repository/repository
-                                            :as
-                                            :name)]}
-               :docker.image/digest
-               :docker.image/tags
-               {:docker.manifest-list/repository [:docker.repository/host
-                                                  (:docker.repository/repository
-                                                    :as
-                                                    :name)]}
-               :docker.manifest-list/digest
-               :docker.manifest-list/tags])
+ (pull
+   ?image
+   [:db/id
+    :schema/entity-type
+    {:docker.image/repository [:docker.repository/host
+                               (:docker.repository/repository
+                                 :as
+                                 :name)]}
+    :docker.image/digest
+    :docker.image/tags
+    {:docker.manifest-list/repository [:docker.repository/host
+                                       (:docker.repository/repository
+                                         :as
+                                         :name)]}
+    :docker.manifest-list/digest
+    :docker.manifest-list/tags])
  (pull
    ?commit
    [:schema/entity-type
@@ -56,7 +58,7 @@
  (get-config-value "supportedTagRequired" true true)
  ;; check that repositories have been selected
  (config-value "repoFilter" _)
- 
+
  ;; resolve all images and manifest-list currently used in FROM lines
  [?other-docker-file :docker.file/commit ?commit]
  [?other-from-line :docker.file.line/file ?other-docker-file]
