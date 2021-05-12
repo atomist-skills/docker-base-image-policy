@@ -125,7 +125,7 @@
  [?docker-file :docker.file/commit ?commit]
 
  ;; head commits
- [?ref :git.ref/commit]
+ [?ref :git.ref/commit ?commit]
  (is-default-branch? ?ref)
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
