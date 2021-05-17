@@ -130,10 +130,7 @@ ${Footer}`,
 					if (sources.length === 0) {
 						return undefined;
 					}
-					const arch =
-						fl.image?.platform?.[0]?.architecture ||
-						fl.manifestList?.images?.[0]?.platform?.[0]
-							?.architecture;
+					const arch = architecture(fl);
 					const dockerfilePath = p.path(file.path);
 					const dockerfile = (
 						await fs.readFile(dockerfilePath)
@@ -165,3 +162,21 @@ ${pinnngResult.changes.map(c => `${c.name} > ${c.version}`)}`;
 			},
 		);
 	};
+
+function architecture(fromLine: PinAptPackages["file"]["lines"][0]): string {
+	if (fromLine.image?.platform?.[0]?.architecture) {
+		return fromLine.image?.platform?.[0]?.architecture;
+	} else if (fromLine.manifestList?.images?.length > 0) {
+		const imagesWithArch = fromLine.manifestList.images.filter(
+			i => i.platform?.[0]?.architecture,
+		);
+		if (
+			imagesWithArch.some(i => i.platform?.[0]?.architecture === "amd64")
+		) {
+			return "amd64";
+		} else {
+			return imagesWithArch.find(i => i.platform?.[0]?.architecture)
+				.platform?.[0]?.architecture;
+		}
+	}
+}
