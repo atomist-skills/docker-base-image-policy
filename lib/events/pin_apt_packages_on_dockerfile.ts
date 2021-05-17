@@ -28,8 +28,9 @@ import _ = require("lodash");
 import { Configuration } from "../configuration";
 import { pinAptPackagesToLatest } from "../package";
 import { PinAptPackages } from "../types";
+import { linkFile } from "../util";
 
-const Footer = `<!-- atomist:hide -->\nAtomist uses the APT package sources configured in the base image to determine latest available versions. Use a comment like \`# atomist:apt-source=deb https://deb.nodesource.com/node_14.x hirsute main\` to add additional APT sources. Disable pinning of packages by placing \`# atomist:apt-ignore\` as comment before a \`RUN\` instruction.\n<!-- atomist:show -->`;
+const Footer = `<!-- atomist:hide -->\nAtomist uses the APT package sources configured in the base image to determine latest available versions.\n\nUse a comment like \`# atomist:apt-source=deb https://deb.nodesource.com/node_14.x hirsute main\` to add additional APT sources.\n\nDisable pinning of packages by placing \`# atomist:apt-ignore\` as comment before a \`RUN\` instruction.\n<!-- atomist:show -->`;
 
 export const handler: EventHandler<PinAptPackages, Configuration> =
 	async ctx => {
@@ -112,6 +113,9 @@ export const handler: EventHandler<PinAptPackages, Configuration> =
 							"APT package",
 							allChanges,
 							{ include: true, includeOne: false },
+						)} in ${linkFile(
+							file.path,
+							commit,
 						)} to the latest available version.
 						
 ${allChanges.map(c => ` * \`${c.name}\` > \`${c.version}\``).join("\n")}
