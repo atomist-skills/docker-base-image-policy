@@ -43,7 +43,10 @@ export const handler: EventHandler<PinAptPackages, Configuration> =
 				.hidden();
 		}
 
-		const fromLines = file.lines.filter(l => l.instruction === "FROM");
+		const fromLines = _.sortBy(
+			file.lines.filter(l => l.instruction === "FROM"),
+			"number",
+		);
 		const aptFromLines = fromLines.filter(fl => {
 			if (fl.image?.packageManager?.type === "APT") {
 				return true;
@@ -120,8 +123,8 @@ ${Footer}`,
 			{
 				editors: aptFromLines.map(fl => async (p: project.Project) => {
 					const sources = _.uniq([
-						...(fl.image.packageManager?.sources || []),
-						_.flattenDeep(
+						...(fl.image?.packageManager?.sources || []),
+						..._.flattenDeep(
 							fl.manifestList?.images?.map(
 								i => i.packageManager?.sources || [],
 							),
@@ -154,7 +157,7 @@ ${Footer}`,
 							{ include: false, includeOne: false },
 						)}
 
-${pinnngResult.changes.map(c => `${c.name} > ${c.version}`)}`;
+${pinnngResult.changes.map(c => `${c.name} > ${c.version}`).join("\n")}`;
 					} else {
 						return undefined;
 					}
