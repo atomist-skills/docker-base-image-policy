@@ -206,3 +206,66 @@ export interface UpdateFrom {
 		}>;
 	};
 }
+
+export interface PinAptPackages {
+	commit: subscription.datalog.Commit;
+	file: {
+		path: string;
+		sha: string;
+		lines: Array<{
+			number: number;
+			instruction: string;
+			argsMap: Record<string, string>;
+			argsArray: string[];
+			argsString: string;
+			repository: {
+				host: string;
+				name: string;
+			};
+			tag: string;
+			digest: string;
+			image: {
+				digest: string;
+				tags: string[];
+				distro: {
+					name: string;
+					version: string;
+					id: string;
+					idLike: string[];
+				};
+				packageManager: {
+					type: string;
+					sources: string[];
+				};
+				platform: Array<{
+					os: string;
+					variant?: string;
+					architecture: string;
+				}>;
+			};
+			manifestList: {
+				digest: string;
+				tags: string[];
+				images: Array<{
+					digest: string;
+					tags: string[];
+					distro: {
+						name: string;
+						version: string;
+						id: string;
+						idLike: string[];
+					};
+					packageManager: {
+						type: string;
+						sources: string[];
+					};
+					platform: Array<{
+						os: string;
+						variant?: string;
+						architecture: string;
+					}>;
+				}>;
+			};
+		}>;
+	};
+}

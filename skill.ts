@@ -80,6 +80,14 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 			defaultValue: true,
 			visibility: ParameterVisibility.Hidden,
 		},
+		pinningAptPullRequests: {
+			type: ParameterType.Boolean,
+			displayName: "Raise pull requests",
+			description:
+				"Select to raise a pull request to pin packages to specific versions in `apt-get install` Dockerfile instructions.",
+			required: false,
+			defaultValue: true,
+		},
 		pinningLabels: {
 			type: ParameterType.StringArray,
 			displayName: "Pull request labels",

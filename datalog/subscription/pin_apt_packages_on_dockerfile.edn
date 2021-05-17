@@ -1,0 +1,111 @@
+[:find
+ (pull
+   ?commit
+   [:schema/entity-type
+    {(:git.ref/_commit :as :git.ref/refs) [:git.ref/name
+                                           :git.ref/type]}
+    {:git.commit/repo [:git.repo/name
+                       :git.repo/default-branch
+                       {:git.repo/org [:github.org/installation-token
+                                       :git.org/name
+                                       (:git.org/provider-base-url
+                                         :as
+                                         :base-url)
+                                       :git.provider/url]}]}
+    {:git.commit/author [:git.user/name
+                         :git.user/login
+                         {:git.user/emails [:email.email/address]}]}
+    :git.commit/sha
+    :git.commit/message])
+ (pull
+   ?docker-file
+   [:schema/entity-type
+    :docker.file/path
+    :docker.file/sha
+    {(:docker.file.line/_file :as :docker.file/lines) [:docker.file.line/number
+                                                       :docker.file.line/instruction
+                                                       :docker.file.line/args-map
+                                                       :docker.file.line/args-array
+                                                       :docker.file.line/args-string
+                                                       {:docker.file.from/image [:docker.image/digest
+                                                                                 :docker.image/tags
+                                                                                 {:docker.image/distro [:os.distro/name
+                                                                                                        :os.distro/version
+                                                                                                        (:os.distro/os-id :as :os.distro/id)
+                                                                                                        (:os.distro/os-id-like :as :os.distro/id-like)]}
+                                                                                 {:docker.image/package-manager [:os.package-manager/type
+                                                                                                                 :os.package-manager/sources]}
+                                                                                 {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
+                                                                                                                                           :docker.platform/variant
+                                                                                                                                           :docker.platform/architecture]}]}
+                                                       {:docker.file.from/manifest-list [:docker.manifest-list/digest
+                                                                                         :docker.manifest-list/tags
+                                                                                         {:docker.manifest-list/images [:docker.image/digest
+                                                                                                                        :docker.image/tags
+                                                                                                                        {:docker.image/distro [:os.distro/name
+                                                                                                                                               :os.distro/version
+                                                                                                                                               (:os.distro/os-id :as :os.distro/id)
+                                                                                                                                               (:os.distro/os-id-like :as :os.distro/id-like)]}
+                                                                                                                        {:docker.image/package-manager [:os.package-manager/type
+                                                                                                                                                        :os.package-manager/sources]}
+                                                                                                                        {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
+                                                                                                                                                                                  :docker.platform/variant
+                                                                                                                                                                                  :docker.platform/architecture]}]}]}
+                                                       {:docker.file.from/repository [:docker.repository/host
+                                                                                      (:docker.repository/repository
+                                                                                        :as
+                                                                                        :name)]}]}])
+ :in $ $before-db %
+ :where
+ (or-join [?from-line ?digest]
+   (and
+     (tx-entity-attr-value :docker.file.from/image ?from-line ?base-image)
+     [?base-image :docker.image/digest ?digest])
+   (and
+     (tx-entity-attr-value :docker.file.from/manifest-list ?from-line ?manifest-list)
+     [?manifest-list :docker.manifest-list/digest ?digest]))
+
+ ;; check pinning pull requests are enabled
+ (get-config-value "pinningAptPullRequests" true true)
+ ;; check that repositories have been selected
+ (config-value "repoFilter" _)
+
+ ;; get docker.file and git.commit
+ [?from-line :docker.file.line/file ?docker-file]
+ [?docker-file :docker.file/commit ?commit]
+
+ ;; head commits
+ [?ref :git.ref/commit ?commit]
+ (is-default-branch? ?ref)
+ ;; check repo filter
+ [?commit :git.commit/repo ?repo]
+ (repo-selected? ?repo)
+
+ ;; check that all from lines have images or manifest-list
+ [(q (quote [:find (count ?other-from-line)
+             :in $ ?docker-file
+             :where
+             [?other-from-line :docker.file.line/file ?docker-file]
+             [?other-from-line :docker.file.line/instruction "FROM"]
+             ])
+    $ ?docker-file)
+  [[?total-from-count]]]
+
+ [(q (quote [:find (count ?other-from-line)
+             :in $ ?docker-file
+             :where
+             [?other-from-line :docker.file.line/file ?docker-file]
+             [?other-from-line :docker.file.line/instruction "FROM"]
+             (or-join [?other-from-line]
+               [?other-from-line :docker.file.from/image _]
+               [?other-from-line :docker.file.from/manifest-list _]
+               [?other-from-line :docker.file.from/digest _]
+               (and
+                 [?other-from-line :docker.file.from/repository ?repository]
+                 [?repository :docker.repository/repository "scratch"]
+                 [?repository :docker.repository/host "hub.docker.com"]))
+             ])
+    $ ?docker-file)
+  [[?from-count]]]
+
+ [(= ?total-from-count ?from-count)]]

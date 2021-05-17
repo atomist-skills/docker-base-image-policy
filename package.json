@@ -52,6 +52,8 @@
   },
   "dependencies": {
     "@atomist/skill": "0.11.1-branch-transact-entities.4",
+    "apt-client": "^3.0.0",
+    "docker-file-parser": "^1.0.5",
     "fs-extra": "^9.1.0"
   },
   "devDependencies": {
