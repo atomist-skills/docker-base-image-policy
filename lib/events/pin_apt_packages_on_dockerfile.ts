@@ -179,4 +179,5 @@ function architecture(fromLine: PinAptPackages["file"]["lines"][0]): string {
 				.platform?.[0]?.architecture;
 		}
 	}
+	return undefined;
 }
