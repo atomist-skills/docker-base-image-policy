@@ -99,7 +99,6 @@
              (or-join [?other-from-line]
                [?other-from-line :docker.file.from/image _]
                [?other-from-line :docker.file.from/manifest-list _]
-               [?other-from-line :docker.file.from/digest _]
                (and
                  [?other-from-line :docker.file.from/repository ?repository]
                  [?repository :docker.repository/repository "scratch"]
