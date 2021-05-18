@@ -118,7 +118,9 @@ export const handler: EventHandler<PinAptPackages, Configuration> =
 							commit,
 						)} to the latest available version.
 						
-${allChanges.map(c => ` * \`${c.name}\` > \`${c.version}\``).join("\n")}
+${_.sortBy(allChanges, "name")
+	.map(c => ` * \`${c.name}\` > \`${c.version}\``)
+	.join("\n")}
 
 ${Footer}`,
 					};
