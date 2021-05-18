@@ -5,15 +5,15 @@ WORKDIR /usr/src
 
 COPY . ./
 
-RUN npm ci --no-optional --also=dev && \
-    npm run skill && \
-    rm -rf node_modules .git
+RUN npm ci --no-optional --also=dev \ 
+ && npm run skill \
+ && rm -rf node_modules .git
 
 # Set up runtime container
 FROM atomist/skill:node14@sha256:65a57cf7dda945084d461601e1ebc7650998aff8a68dd238b282e920e2ba49c8
 
 RUN apt-get update && \
-    apt-get install -y curl=7.74.0-1ubuntu2 && \
+    apt-get install -y curl && \
     curl -LO https://storage.googleapis.com/container-diff/latest/container-diff-linux-amd64 && \
     chmod +x container-diff-linux-amd64 && \
     mv container-diff-linux-amd64 /usr/local/bin/container-diff && \
@@ -27,7 +27,7 @@ WORKDIR "/skill"
 COPY package.json package-lock.json ./
 
 RUN npm ci --no-optional \
-    && rm -rf /root/.npm
+ && rm -rf /root/.npm
 
 COPY --from=build /usr/src/ .
 
