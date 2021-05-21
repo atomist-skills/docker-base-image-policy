@@ -22,7 +22,7 @@ import { ValidateBaseImages } from "../types";
 import { linkFile } from "../util";
 import { CreateRepositoryIdFromCommit, DockerfilesTransacted } from "./shared";
 
-export const handler = policy.handler<ValidateBaseImages, Configuration>({
+export const handler = policy.checkHandler<ValidateBaseImages, Configuration>({
 	when: policy.whenAll(
 		policy.whenParameter("acceptRequired"),
 		DockerfilesTransacted,

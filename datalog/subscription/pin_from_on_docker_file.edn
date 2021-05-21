@@ -11,6 +11,9 @@
     :docker.image/tags
     :docker.image/ports
     :docker.image/env
+    {:docker.analysis/vulnerabilities [:vulnerability.cve/source-id
+                                       :vulnerability.cve/severity
+                                       :vulnerability.cve/cvss-score]}
     {:docker.manifest-list/repository [:docker.repository/host
                                        (:docker.repository/repository
                                          :as
@@ -21,6 +24,9 @@
                                    :docker.image/ports
                                    :docker.image/env
                                    :docker.image/tags
+                                   {:docker.analysis/vulnerabilities [:vulnerability.cve/source-id
+                                                                      :vulnerability.cve/severity
+                                                                      :vulnerability.cve/cvss-score]}
                                    {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
                                                                                              :docker.platform/variant
                                                                                              :docker.platform/architecture]}]}])
@@ -57,6 +63,9 @@
                                                                      :docker.image/tags
                                                                      :docker.image/ports
                                                                      :docker.image/env
+                                                                     {:docker.analysis/vulnerabilities [:vulnerability.cve/source-id
+                                                                                                        :vulnerability.cve/severity
+                                                                                                        :vulnerability.cve/cvss-score]}
                                                                      {:docker.image/docker-file [:docker.file/path
                                                                                                  {:docker.file/commit [{:git.commit/repo [:git.repo/name
                                                                                                                                           :git.repo/default-branch
@@ -77,6 +86,9 @@
                                                                                                             :docker.image/tags
                                                                                                             :docker.image/ports
                                                                                                             :docker.image/env
+                                                                                                            {:docker.analysis/vulnerabilities [:vulnerability.cve/source-id
+                                                                                                                                               :vulnerability.cve/severity
+                                                                                                                                               :vulnerability.cve/cvss-score]}
                                                                                                             {(:docker.platform/_image :as :docker.platform/platform) [:docker.platform/os
                                                                                                                                                                       :docker.platform/variant
                                                                                                                                                                       :docker.platform/architecture]}]}]}

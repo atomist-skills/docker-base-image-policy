@@ -65,7 +65,7 @@ export const handler: MappingEventHandler<
 		}));
 	},
 	handle: wrapEventHandler(
-		policy.handler<ValidateBaseImages, Configuration>({
+		policy.checkHandler<ValidateBaseImages, Configuration>({
 			when: policy.whenAll(
 				policy.whenParameter("supportedTagRequired"),
 				DockerfilesTransacted,

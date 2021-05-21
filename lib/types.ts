@@ -41,6 +41,10 @@ export interface CommitAndDockerfile {
 					path: string;
 					commit: subscription.datalog.Commit;
 				};
+				vulnerabilities: Pick<
+					subscription.datalog.DockerImageVulnerability,
+					"sourceId" | "severity" | "cvssScore"
+				>[];
 			};
 			manifestList: {
 				digest: string;
@@ -55,6 +59,10 @@ export interface CommitAndDockerfile {
 						variant?: string;
 						architecture: string;
 					}>;
+					vulnerabilities: Pick<
+						subscription.datalog.DockerImageVulnerability,
+						"sourceId" | "severity" | "cvssScore"
+					>[];
 				}>;
 			};
 		}>;
@@ -68,6 +76,10 @@ export interface CommitAndDockerfile {
 			tags: string[];
 			env: Array<Array<string>>;
 			ports: Array<Array<string>>;
+			vulnerabilities: Pick<
+				subscription.datalog.DockerImageVulnerability,
+				"sourceId" | "severity" | "cvssScore"
+			>[];
 		}
 	>;
 	manifestList: Array<{
@@ -83,6 +95,10 @@ export interface CommitAndDockerfile {
 				variant?: string;
 				architecture: string;
 			}>;
+			vulnerabilities: Pick<
+				subscription.datalog.DockerImageVulnerability,
+				"sourceId" | "severity" | "cvssScore"
+			>[];
 		}>;
 	}>;
 }

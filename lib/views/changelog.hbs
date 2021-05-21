@@ -22,6 +22,34 @@ Comparing Docker image `{{imageName}}` at digests
 _Current_ `{{fromLine.digest}}` {{#if sizeDiff.current}}({{bytes sizeDiff.current}}){{/if}} and
 _Proposed_ `{{or fromLine.image.digest fromLine.manifestList.digest}}` {{#if sizeDiff.proposed}}({{bytes sizeDiff.proposed}}){{/if}}:
 
+#### Vulnerabilities
+
+{{#if vulSummary.count}}
+Detected {{vulSummary.msg}} {{plural "vulnerability" vulSummary.count false false}} in proposed image:
+
+{{#if vulAdditions}}
+##### New Vulnerabilities
+
+| CVE | Severity | CVSS Base Score |
+| --- | -------- | --------- |
+{{#each vulAdditions}}
+| [{{sourceId}}](https://nvd.nist.gov/vuln/detail/{{sourceId}}) | {{italic (replace (lower severity) "_" " " )}} | {{code cvssScore}}
+{{/each}}
+{{/if}}
+
+{{#if vulRemovals}}
+##### Fixed Vulnerabilities
+
+| CVE | Severity | CVSS Base Score |
+| --- | -------- | --------- |
+{{#each vulRemovals}}
+| [{{sourceId}}](https://nvd.nist.gov/vuln/detail/{{sourceId}}) | {{italic (replace (lower severity) "_" " " )}} | {{code cvssScore}}
+{{/each}}
+{{/if}}
+{{else}}
+No vulnerabilities detected
+{{/if}}
+
 #### Packages
 
 {{#if packageDiff}}

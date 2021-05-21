@@ -38,6 +38,7 @@ export const CreateRepositoryIdFromCommit: handler.CreateRepositoryId<
 	{
 		commit: {
 			sha: string;
+			refs: Array<{ name: string; type: string }>;
 			repo: {
 				name: string;
 				org: { name: string; installationToken: string };
@@ -49,6 +50,7 @@ export const CreateRepositoryIdFromCommit: handler.CreateRepositoryId<
 	sha: ctx.data.commit.sha,
 	owner: ctx.data.commit.repo.org.name,
 	repo: ctx.data.commit.repo.name,
+	branch: ctx.data.commit.refs?.find(r => r.type === "branch")?.name,
 	credential: {
 		token: ctx.data.commit.repo.org.installationToken,
 		scopes: [],

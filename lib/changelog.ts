@@ -31,6 +31,7 @@ import * as path from "path";
 
 import { Configuration } from "./configuration";
 import { CommitAndDockerfile } from "./types";
+import { formatAggregateDiffs, mapId, mapSeverity } from "./util";
 
 async function getLibraryFileCommit(
 	p: project.Project,
@@ -85,6 +86,7 @@ export async function changelog(
 	let proposedDigest = fromLine.image?.digest;
 	let proposedPorts = fromLine.image?.ports || [];
 	let proposedEnv = fromLine.image?.env || [];
+	let proposedVulnerabilities = fromLine.image?.vulnerabilities || [];
 	let platform: CommitAndDockerfile["file"]["lines"][0]["manifestList"]["images"][0]["platform"][0] =
 		{
 			os: "linux",
@@ -110,6 +112,7 @@ export async function changelog(
 		platform = proposedImage.platform[0];
 		proposedPorts = proposedImage.ports || [];
 		proposedEnv = proposedImage.env || [];
+		proposedVulnerabilities = proposedImage.vulnerabilities || [];
 	} else if (fromLine.image?.dockerFile?.commit) {
 		file = {
 			slug: `${fromLine.image.dockerFile.commit.repo?.org?.name}/${fromLine.image.dockerFile.commit.repo?.name}`,
@@ -127,6 +130,7 @@ export async function changelog(
 	let currentDigest = fromLine.digest;
 	let currentPorts = [];
 	let currentEnv = [];
+	let currentVulnerabilities = [];
 	if (manifests.some(m => m.digest === currentDigest)) {
 		const matchingImage = manifests
 			.find(m => m.digest === currentDigest)
@@ -142,6 +146,7 @@ export async function changelog(
 			currentDigest = matchingImage.digest;
 			currentPorts = matchingImage.ports || [];
 			currentEnv = matchingImage.env || [];
+			currentVulnerabilities = matchingImage.vulnerabilities || [];
 		}
 	} else if (images.some(i => i.digest === currentDigest)) {
 		const matchingImage = images.find(i => i.digest === currentDigest);
@@ -149,6 +154,7 @@ export async function changelog(
 			currentDigest = matchingImage.digest;
 			currentPorts = matchingImage.ports || [];
 			currentEnv = matchingImage.env || [];
+			currentVulnerabilities = matchingImage.vulnerabilities || [];
 		}
 	}
 
@@ -283,6 +289,28 @@ export async function changelog(
 
 	const sizeDiff = diff.find(d => d.DiffType === "Size")?.Diff?.[0];
 
+	const vulAdditions = _.orderBy(
+		proposedVulnerabilities.filter(
+			v => !currentVulnerabilities.some(c => c.sourceId === v.sourceId),
+		),
+		[v => mapSeverity(v.severity), v => mapId(v.sourceId)],
+		["asc", "desc"],
+	);
+
+	const vulRemovals = _.orderBy(
+		currentVulnerabilities.filter(
+			v => !proposedVulnerabilities.some(c => c.sourceId === v.sourceId),
+		),
+		[v => mapSeverity(v.severity), v => mapId(v.sourceId)],
+		["asc", "desc"],
+	);
+
+	const vulSummary = formatAggregateDiffs(
+		currentVulnerabilities,
+		proposedVulnerabilities,
+		true,
+	);
+
 	return template.render("changelog", {
 		imageName: `${imageName}${fromLine.tag ? `:${fromLine.tag}` : ""}`,
 		fromLine,
@@ -296,6 +324,9 @@ export async function changelog(
 		},
 		envDiff,
 		portsDiff,
+		vulSummary,
+		vulAdditions,
+		vulRemovals,
 	});
 }
 

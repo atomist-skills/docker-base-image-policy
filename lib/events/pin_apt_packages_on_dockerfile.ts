@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-import {
-	EventHandler,
-	github,
-	pluralize,
-	project,
-	repository,
-	status,
-} from "@atomist/skill";
-import * as fs from "fs-extra";
-import _ = require("lodash");
+import { pluralize, policy, status } from "@atomist/skill";
+import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { pinAptPackagesToLatest } from "../package";
 import { PinAptPackages } from "../types";
 import { linkFile } from "../util";
+import { CreateRepositoryIdFromCommit } from "./shared";
 
 const Footer = `<!-- atomist:hide -->\nAtomist uses the APT package sources configured in the base image to determine latest available versions. Use a comment like \`# atomist:apt-source=deb https://deb.nodesource.com/node_14.x hirsute main\` to add additional APT sources. Disable pinning of packages by placing \`# atomist:apt-ignore\` as comment before a \`RUN\` instruction.\n<!-- atomist:show -->`;
 
-export const handler: EventHandler<PinAptPackages, Configuration> =
-	async ctx => {
-		const cfg = ctx.configuration.parameters;
-		const commit = ctx.data.commit;
-		const file = ctx.data.file;
-
-		if (!cfg.pinningAptPullRequests) {
+export const handler = policy.pullRequestHandler<
+	PinAptPackages,
+	Configuration,
+	{ name: string; version: string }
+>({
+	when: ctx => {
+		if (!ctx.configuration.parameters.pinningAptPullRequests) {
 			return status
 				.success(`Pin apt packages policy not configured`)
 				.hidden();
 		}
+		return undefined;
+	},
+	id: CreateRepositoryIdFromCommit,
+	execute: async ctx => {
+		const cfg = ctx.configuration.parameters;
+		const commit = ctx.data.commit;
+		const file = ctx.data.file;
 
 		const fromLines = _.sortBy(
 			file.lines.filter(l => l.instruction === "FROM"),
@@ -69,65 +69,12 @@ export const handler: EventHandler<PinAptPackages, Configuration> =
 					),
 			)
 		) {
-			return status.success(`No apt sources detected`).hidden();
+			// return status.success(`No apt sources detected`).hidden();
 		}
 
-		const project = await ctx.project.clone(
-			repository.gitHub({
-				owner: commit.repo.org.name,
-				repo: commit.repo.name,
-				// sha: commit.sha,
-				credential: {
-					token: commit.repo.org.installationToken,
-					scopes: [],
-				},
-			}),
-		);
-
-		const allChanges = [];
-		return github.persistChanges(
-			ctx,
-			project,
-			"pr",
-			{
-				branch: commit.repo.defaultBranch,
-				author: {
-					login: undefined,
-					name: undefined,
-					email: undefined,
-				},
-				defaultBranch: commit.repo.defaultBranch,
-			},
-			{
-				branch: `atomist/pin-apt-packages/${file.path.toLowerCase()}`,
-				assignReviewer: !!cfg.pinningAssignReviewers,
-				reviewers: cfg.pinningAssignReviewers
-					? [commit.author.login]
-					: undefined,
-				labels: cfg.pinningLabels,
-				title: "Pin APT packages",
-				body: `This pull requests pins APT packages`,
-				update: async () => {
-					return {
-						body: `This pull request pins ${pluralize(
-							"APT package",
-							allChanges,
-							{ include: true, includeOne: false },
-						)} in ${linkFile(
-							file.path,
-							commit,
-						)} to the latest available version.
-						
-${_.sortBy(allChanges, "name")
-	.map(c => ` * \`${c.name}\` > \`${c.version}\``)
-	.join("\n")}
-
-${Footer}`,
-					};
-				},
-			},
-			{
-				editors: aptFromLines.map(fl => async (p: project.Project) => {
+		return {
+			commit: {
+				editors: aptFromLines.map(fl => async (read, write) => {
 					const sources = _.uniq([
 						...(fl.image?.packageManager?.sources || []),
 						..._.flattenDeep(
@@ -140,37 +87,64 @@ ${Footer}`,
 						return undefined;
 					}
 					const arch = architecture(fl);
-					const dockerfilePath = p.path(file.path);
-					const dockerfile = (
-						await fs.readFile(dockerfilePath)
-					).toString();
+					const dockerfile = await read(file.path);
 					const layer = fromLines.indexOf(fl);
 					const pinnngResult = await pinAptPackagesToLatest(
 						layer,
-						dockerfile,
+						dockerfile.content,
 						sources,
 						arch,
 					);
 					if (pinnngResult.changes.length > 0) {
-						await fs.writeFile(
-							dockerfilePath,
-							pinnngResult.dockerfile,
-						);
-						allChanges.push(...pinnngResult.changes);
-						return `Pin APT ${pluralize(
-							"package",
-							pinnngResult.changes,
-							{ include: false, includeOne: false },
-						)}
+						write(file.path, pinnngResult.dockerfile);
+						return {
+							commit: {
+								message: `Pin APT ${pluralize(
+									"package",
+									pinnngResult.changes,
+									{ include: false, includeOne: false },
+								)}
 
-${pinnngResult.changes.map(c => `${c.name} > ${c.version}`).join("\n")}`;
+${pinnngResult.changes.map(c => `${c.name} > ${c.version}`).join("\n")}`,
+							},
+							detail: pinnngResult.changes,
+						};
 					} else {
 						return undefined;
 					}
 				}),
+				branch: `atomist/pin-apt-packages/${file.path.toLowerCase()}`,
 			},
-		);
-	};
+			pullRequest: async (ctx, changes) => {
+				return {
+					assignReviewer: !!cfg.pinningAssignReviewers,
+					reviewers: cfg.pinningAssignReviewers
+						? [commit.author.login]
+						: undefined,
+					labels: cfg.pinningLabels,
+					title: `Pin ${pluralize("APT package", changes, {
+						include: true,
+						includeOne: false,
+					})}`,
+					body: `This pull request pins ${pluralize(
+						"APT package",
+						changes,
+						{ include: true, includeOne: false },
+					)} in ${linkFile(
+						file.path,
+						commit,
+					)} to the latest available version.
+						
+${_.sortBy(changes, "name")
+	.map(c => ` * \`${c.name}\` > \`${c.version}\``)
+	.join("\n")}
+
+${Footer}`,
+				};
+			},
+		};
+	},
+});
 
 function architecture(fromLine: PinAptPackages["file"]["lines"][0]): string {
 	if (fromLine.image?.platform?.[0]?.architecture) {

@@ -36,7 +36,7 @@ export const handler: MappingEventHandler<
 		});
 		return mapped;
 	},
-	handle: policy.handler<ValidateLinking, Configuration>({
+	handle: policy.checkHandler<ValidateLinking, Configuration>({
 		when: policy.whenParameter("linkingRequired"),
 		id: CreateRepositoryIdFromCommit,
 		details: () => ({

@@ -148,3 +148,151 @@ export function findTag(
 	}
 	return undefined;
 }
+
+export function mapSeverity(
+	severity: subscription.datalog.DockerImageVulnerabilitySeverity,
+): number {
+	switch (severity) {
+		case subscription.datalog.DockerImageVulnerabilitySeverity.Critical:
+			return 0;
+		case subscription.datalog.DockerImageVulnerabilitySeverity.High:
+			return 1;
+		case subscription.datalog.DockerImageVulnerabilitySeverity.Medium:
+			return 2;
+		case subscription.datalog.DockerImageVulnerabilitySeverity.Low:
+			return 3;
+		case subscription.datalog.DockerImageVulnerabilitySeverity.Minimal:
+			return 4;
+		default:
+			return 5;
+	}
+}
+
+/**
+ * Sort helper for CVE ids in form of CVE-yyyy-counter
+ */
+export function mapId(id: string): number {
+	const parts = id.split("-");
+	return +`${parts[1]}${_.padStart(parts[2], 8, "0")}`;
+}
+
+export function formatAggregateDiffs(
+	before: Pick<
+		subscription.datalog.BaseDockerVulnerability,
+		"sourceId" | "severity"
+	>[],
+	after: Pick<
+		subscription.datalog.BaseDockerVulnerability,
+		"sourceId" | "severity"
+	>[],
+	baselineSet: boolean,
+): { msg: string; count: number } {
+	const parts = [];
+	let count = 0;
+
+	const countFn = (
+		before: Pick<
+			subscription.datalog.BaseDockerVulnerability,
+			"sourceId" | "severity"
+		>[],
+		after: Pick<
+			subscription.datalog.BaseDockerVulnerability,
+			"sourceId" | "severity"
+		>[],
+		severity: subscription.datalog.DockerImageVulnerabilitySeverity,
+	) => {
+		const fBefore = before.filter(b => b.severity === severity);
+		const fAfter = after.filter(a => a.severity === severity);
+		const added = fAfter.filter(
+			a => !fBefore.some(b => b.sourceId === a.sourceId),
+		);
+		const removed = fBefore.filter(
+			b => !fAfter.some(a => a.sourceId === b.sourceId),
+		);
+		return {
+			count: fAfter.length,
+			baselineCount: fBefore.length,
+			added: added.length,
+			removed: removed.length,
+		};
+	};
+	const formatFn = (
+		counts: {
+			count: number;
+			baselineCount: number;
+			added: number;
+			removed: number;
+		},
+		label: string,
+	) => {
+		if (counts.count > 0 || counts.baselineCount > 0) {
+			if (baselineSet) {
+				parts.push(
+					`${counts.count} (${
+						counts.added > 0 ? "+" + counts.added : ""
+					}${counts.added > 0 && counts.removed > 0 ? "|" : ""}${
+						counts.removed > 0 ? "-" + counts.removed : ""
+					}${
+						counts.removed === 0 && counts.added === 0 ? "±0" : ""
+					}) ${label}`,
+				);
+			} else {
+				parts.push(`${counts.count} ${label}`);
+			}
+			count += counts.count;
+		}
+	};
+
+	formatFn(
+		countFn(
+			before,
+			after,
+			subscription.datalog.DockerImageVulnerabilitySeverity.Critical,
+		),
+		"critical",
+	);
+	formatFn(
+		countFn(
+			before,
+			after,
+			subscription.datalog.DockerImageVulnerabilitySeverity.High,
+		),
+		"high",
+	);
+	formatFn(
+		countFn(
+			before,
+			after,
+			subscription.datalog.DockerImageVulnerabilitySeverity.Medium,
+		),
+		"medium",
+	);
+	formatFn(
+		countFn(
+			before,
+			after,
+			subscription.datalog.DockerImageVulnerabilitySeverity.Low,
+		),
+		"low",
+	);
+	formatFn(
+		countFn(
+			before,
+			after,
+			subscription.datalog.DockerImageVulnerabilitySeverity.Minimal,
+		),
+		"minimal",
+	);
+	formatFn(
+		countFn(
+			before,
+			after,
+			subscription.datalog.DockerImageVulnerabilitySeverity.Unspecified,
+		),
+		"unspecified",
+	);
+	return {
+		msg: `${parts.join(", ").replace(/, ([^,]*)$/, " and $1")}`,
+		count,
+	};
+}
