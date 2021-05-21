@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { MappingEventHandler, policy, status } from "@atomist/skill";
-import { wrapEventHandler } from "@atomist/skill/lib/map";
+import { handle, MappingEventHandler, policy, status } from "@atomist/skill";
 import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
@@ -56,7 +55,7 @@ export const handler: MappingEventHandler<
 			manifestList: _.uniqBy(r.manifestList, "id"),
 		}));
 	},
-	handle: wrapEventHandler(
+	handle: handle.wrapEventHandler(
 		policy.checkHandler<ValidateBaseImages, Configuration>({
 			when: policy.whenAll(
 				policy.whenParameter("pinningRequired"),

@@ -69,7 +69,7 @@ export const handler = policy.pullRequestHandler<
 					),
 			)
 		) {
-			// return status.success(`No apt sources detected`).hidden();
+			return status.success(`No apt sources detected`).hidden();
 		}
 
 		return {

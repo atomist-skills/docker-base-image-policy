@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { EventContext, handler, HandlerStatus, status } from "@atomist/skill";
+import { EventContext, handle, HandlerStatus, status } from "@atomist/skill";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages } from "../types";
@@ -34,7 +34,7 @@ export const DockerfilesTransacted: (
 	return undefined;
 };
 
-export const CreateRepositoryIdFromCommit: handler.CreateRepositoryId<
+export const CreateRepositoryIdFromCommit: handle.CreateRepositoryId<
 	{
 		commit: {
 			sha: string;

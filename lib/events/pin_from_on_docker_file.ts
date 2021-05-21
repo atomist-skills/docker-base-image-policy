@@ -17,6 +17,7 @@
 import {
 	EventContext,
 	github,
+	handle,
 	handleError,
 	log,
 	MappingEventHandler,
@@ -26,7 +27,6 @@ import {
 	subscription,
 	truncate,
 } from "@atomist/skill";
-import { wrapEventHandler } from "@atomist/skill/lib/map";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 
@@ -81,7 +81,7 @@ export const handler: MappingEventHandler<
 			manifestList: _.uniqBy(r.manifestList, "id"),
 		}));
 	},
-	handle: wrapEventHandler(
+	handle: handle.wrapEventHandler(
 		async (ctx: EventContext<CommitAndDockerfile, Configuration>) => {
 			const cfg = ctx.configuration.parameters;
 			const commit = ctx.data.commit;
