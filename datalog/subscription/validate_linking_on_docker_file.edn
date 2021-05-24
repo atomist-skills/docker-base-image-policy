@@ -33,7 +33,7 @@
  (config-value "repoFilter" _)
 
  [?commit :git.commit/sha ?sha]
- [(tuple ?sha "docker-image-policy/linked") ?tuple]
+ [(tuple ?sha "docker-image-base-policy/linked") ?tuple]
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
