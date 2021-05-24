@@ -23,6 +23,7 @@ import {
 	project,
 	subscription,
 	template,
+	toArray,
 } from "@atomist/skill";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
@@ -206,8 +207,12 @@ export async function changelog(
 				.map(p =>
 					p.Diff.InfoDiff.map(id => ({
 						package: id.Package,
-						current: id.Info1.Version,
-						proposed: id.Info2.Version,
+						current: toArray(id.Info1)
+							.map(i => i.Version)
+							.join(", "),
+						proposed: toArray(id.Info2)
+							.map(i => i.Version)
+							.join(", "),
 						type: p.DiffType,
 					})),
 				),
