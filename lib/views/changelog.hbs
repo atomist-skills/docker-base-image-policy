@@ -25,9 +25,7 @@ _Proposed_ `{{or fromLine.image.digest fromLine.manifestList.digest}}` {{#if siz
 #### Vulnerabilities
 
 {{#if vulScanned}}
-Detected {{vulSummary.msg}} {{plural "vulnerability" vulSummary.count false false}} in proposed image.
-
-{{#unless vulAdditions}}{{#unless vulRemovals}}{{/unless}}No vulnerability changes detected{{/unless}}{{#if vulAdditions}}
+{{#if vulSummary.count}}Detected {{vulSummary.msg}} {{plural "vulnerability" vulSummary.count false false}} in proposed image.{{/if}}{{#unless vulAdditions}}{{#unless vulRemovals}}No vulnerability changes detected{{/unless}}{{/unless}}{{#if vulAdditions}}
 ##### New Vulnerabilities
 
 | CVE | Severity | CVSS Base Score |
@@ -72,7 +70,7 @@ The following file modifications were detected:
 | Name | Current | Proposed | Diff |
 | ---- | ------- | -------- | ---- |
 {{#each fileDiff}}
-| `{{path}}` {{#if children}}({{plural "file" children true true}} changed){{/if}} | {{#if current}}{{code (bytes current)}}{{/if}} | {{#unless current}}`+`{{else}}{{#unless proposed}}`-`{{else}}{{code (bytes proposed)}}{{/unless}}{{/unless}} | {{code (bytes diff)}} |
+| `{{path}}` {{#if children}}({{plural "file" children true true}} changed){{/if}} | {{#if current}}{{#if proposed}}{{code (bytes current)}}{{/if}}{{/if}} | {{#unless current}}`+`{{else}}{{#unless proposed}}`-`{{else}}{{code (bytes proposed)}}{{/unless}}{{/unless}} | {{code (bytes diff)}} |
 {{/each}}
 {{else}}
 No file modifications detected

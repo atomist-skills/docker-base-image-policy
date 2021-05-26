@@ -240,9 +240,9 @@ export async function changelog(
 						})),
 						...(d.Diff.Dels || []).map(d => ({
 							path: d.Name,
-							current: d.Size,
+							current: 0,
 							proposed: undefined,
-							diff: -1 * d.Size,
+							diff: 0,
 						})),
 						...(d.Diff.Mods || []).map(m => ({
 							path: m.Name,
