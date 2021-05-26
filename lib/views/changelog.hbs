@@ -69,10 +69,10 @@ No package differences detected
 {{#if fileDiff}}
 The following file modifications were detected:
 
-| Name | Current | Proposed |
-| ---- | ------- | -------- |
+| Name | Current | Proposed | Diff |
+| ---- | ------- | -------- | ---- |
 {{#each fileDiff}}
-| `{{file}}` | {{code (bytes current)}} | {{code (bytes proposed)}} |
+| `{{path}}` {{#if children}}({{plural "file" children true true}} changed){{/if}} | {{#if current}}{{code (bytes current)}}{{/if}} | {{#unless current}}`+`{{else}}{{#unless proposed}}`-`{{else}}{{code (bytes proposed)}}{{/unless}}{{/unless}} | {{code (bytes diff)}} |
 {{/each}}
 {{else}}
 No file modifications detected

@@ -31,6 +31,7 @@ import * as os from "os";
 import * as path from "path";
 
 import { Configuration } from "./configuration";
+import { diffFiles } from "./file";
 import { CommitAndDockerfile } from "./types";
 import { formatAggregateDiffs, mapId, mapSeverity } from "./util";
 import { retrieveVulnerabilities } from "./vulnerability";
@@ -225,27 +226,34 @@ export async function changelog(
 		"package",
 	);
 
-	const fileDiff = _.sortBy(
-		_.flattenDeep(
-			diff
-				.filter(d => d.DiffType === "File")
-				.map(d => [
-					...(d.Diff.Adds || []).map(a => ({
-						file: a.Name,
-						proposed: "+",
-					})),
-					...(d.Diff.Dels || []).map(d => ({
-						file: d.Name,
-						proposed: "-",
-					})),
-					...(d.Diff.Mods || []).map(m => ({
-						file: m.Name,
-						current: m.Size1,
-						proposed: m.Size2,
-					})),
-				]),
+	const fileDiff = diffFiles(
+		_.sortBy(
+			_.flattenDeep(
+				diff
+					.filter(d => d.DiffType === "File")
+					.map(d => [
+						...(d.Diff.Adds || []).map(a => ({
+							path: a.Name,
+							current: undefined,
+							proposed: a.Size,
+							diff: a.Size,
+						})),
+						...(d.Diff.Dels || []).map(d => ({
+							path: d.Name,
+							current: d.Size,
+							proposed: undefined,
+							diff: -1 * d.Size,
+						})),
+						...(d.Diff.Mods || []).map(m => ({
+							path: m.Name,
+							current: m.Size1,
+							proposed: m.Size2,
+							diff: m.Size2 - m.Size1,
+						})),
+					]),
+			),
+			"path",
 		),
-		"file",
 	);
 
 	const historyDiff = _.sortBy(
