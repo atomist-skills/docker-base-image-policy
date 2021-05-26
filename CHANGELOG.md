@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.33...HEAD)
 
+### Changed
+
+-   Improve file diff in changelog. [#217](https://github.com/atomist-skills/docker-base-image-policy/issues/217)
+
 ### Fixed
 
--   Pinning PR body gets truncated for lots of changes. [#213](https://github.com/atomist-skills/docker-base-image-policy/issues/213)
+*   Pinning PR body gets truncated for lots of changes. [#213](https://github.com/atomist-skills/docker-base-image-policy/issues/213)
 
 ## [0.1.33](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.32...0.1.33) - 2021-05-12
 
