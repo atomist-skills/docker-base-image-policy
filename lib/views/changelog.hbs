@@ -24,7 +24,7 @@ _Proposed_ `{{or fromLine.image.digest fromLine.manifestList.digest}}` {{#if siz
 
 #### Vulnerabilities
 
-{{#if vulSummary.count}}
+{{#if vulScanned}}
 Detected {{vulSummary.msg}} {{plural "vulnerability" vulSummary.count false false}} in proposed image.
 
 {{#unless vulAdditions}}{{#unless vulRemovals}}{{/unless}}No vulnerability changes detected{{/unless}}{{#if vulAdditions}}

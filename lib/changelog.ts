@@ -160,10 +160,14 @@ export async function changelog(
 		return undefined;
 	}
 
-	const proposedVulnerabilities =
-		(await retrieveVulnerabilities(proposedDigest, ctx)) || [];
-	const currentVulnerabilities =
-		(await retrieveVulnerabilities(currentDigest, ctx)) || [];
+	const proposedVulnerabilities = await retrieveVulnerabilities(
+		proposedDigest,
+		ctx,
+	);
+	const currentVulnerabilities = await retrieveVulnerabilities(
+		currentDigest,
+		ctx,
+	);
 
 	if (dryRun) {
 		return template.render("changelog_pending", {
@@ -296,24 +300,30 @@ export async function changelog(
 	const sizeDiff = diff.find(d => d.DiffType === "Size")?.Diff?.[0];
 
 	const vulAdditions = _.orderBy(
-		proposedVulnerabilities.filter(
-			v => !currentVulnerabilities.some(c => c.sourceId === v.sourceId),
+		(proposedVulnerabilities?.vulnerabilities || []).filter(
+			v =>
+				!(currentVulnerabilities?.vulnerabilities || []).some(
+					c => c.sourceId === v.sourceId,
+				),
 		),
 		[v => mapSeverity(v.severity), v => mapId(v.sourceId)],
 		["asc", "desc"],
 	);
 
 	const vulRemovals = _.orderBy(
-		currentVulnerabilities.filter(
-			v => !proposedVulnerabilities.some(c => c.sourceId === v.sourceId),
+		(currentVulnerabilities?.vulnerabilities || []).filter(
+			v =>
+				!(proposedVulnerabilities?.vulnerabilities || []).some(
+					c => c.sourceId === v.sourceId,
+				),
 		),
 		[v => mapSeverity(v.severity), v => mapId(v.sourceId)],
 		["asc", "desc"],
 	);
 
 	const vulSummary = formatAggregateDiffs(
-		currentVulnerabilities,
-		proposedVulnerabilities,
+		currentVulnerabilities?.vulnerabilities || [],
+		proposedVulnerabilities?.vulnerabilities || [],
 		true,
 	);
 
@@ -330,6 +340,9 @@ export async function changelog(
 		},
 		envDiff,
 		portsDiff,
+		vulScanned:
+			!!proposedVulnerabilities?.discovery &&
+			!!currentVulnerabilities?.discovery,
 		vulSummary,
 		vulAdditions,
 		vulRemovals,
