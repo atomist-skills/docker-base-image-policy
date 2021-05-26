@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
--   Improve file diff in changelog. [#217](https://github.com/atomist-skills/docker-base-image-policy/issues/217)
+*   Improve file diff in changelog. [#217](https://github.com/atomist-skills/docker-base-image-policy/issues/217)
+
+### Removed
+
+-   Remove Update Tag check run action. [#216](https://github.com/atomist-skills/docker-base-image-policy/issues/216)
 
 ### Fixed
 
