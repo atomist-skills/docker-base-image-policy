@@ -15,12 +15,9 @@
  */
 
 import {
-	datalog,
 	github,
 	handle,
-	levenshteinSort,
 	MappingEventHandler,
-	pluralize,
 	policy,
 	status,
 } from "@atomist/skill";
@@ -28,7 +25,7 @@ import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages, ValidateBaseImagesRaw } from "../types";
-import { findTag, imageName, linkFile, printTag } from "../util";
+import { findTag, linkFile, printTag } from "../util";
 import { CreateRepositoryIdFromCommit, DockerfilesTransacted } from "./shared";
 
 export const handler: MappingEventHandler<
@@ -81,11 +78,6 @@ export const handler: MappingEventHandler<
 			execute: async ctx => {
 				const cfg = ctx.configuration.parameters;
 				const mSupportedTags = _.memoize(supportedTags);
-				const tagSuggestions: Array<{
-					file: ValidateBaseImages["commit"]["dockerFiles"][0];
-					from: string;
-					to: string;
-				}> = [];
 				const commit = ctx.data.commit;
 				let linesByFile: Array<{
 					path: string;
@@ -123,19 +115,6 @@ export const handler: MappingEventHandler<
 						if (tags.supported.includes(fromLine.tag)) {
 							supportedLines.push(fromLine);
 						} else {
-							const suggestedTag = suggestTag(
-								fromLine.tag,
-								tags.supported,
-							);
-							if (suggestedTag) {
-								tagSuggestions.push({
-									file,
-									to: `${imageName(
-										fromLine.repository,
-									)}:${suggestedTag}`,
-									from: fromLine.argsString,
-								});
-							}
 							unSupportedLines.push(fromLine);
 						}
 					}
@@ -188,26 +167,6 @@ ${highlightTag(
 					});
 				}
 
-				// Transact tag suggestions
-				if (tagSuggestions.length > 0) {
-					const editsEntities = tagSuggestions.map(t =>
-						datalog.entity("base.image.from.update/edit", {
-							path: t.file.path,
-							from: t.from,
-							to: t.to,
-						}),
-					);
-					await ctx.datalog.transact([
-						...editsEntities,
-						datalog.entity("base.image.from/update", {
-							sha: commit.sha,
-							edits: {
-								set: datalog.entityRefs(editsEntities),
-							},
-						}),
-					]);
-				}
-
 				linesByFile = _.sortBy(linesByFile, "path").filter(
 					l => l.supported || l.unsupported,
 				);
@@ -237,7 +196,7 @@ ${linesByFile.map(f => `${linkFile(f.path, commit)}`).join("\n\n---\n\n")}`,
 								7,
 							)}\` use supported tags`,
 						),
-						body: `All Docker base images use supported tags
+						body: `The following Docker base images use tags that are no longer supported by the authors:
 
 ${linesByFile
 	.map(
@@ -248,7 +207,7 @@ ${f.supported}`,
 	.join("\n\n---\n\n")}`,
 					};
 				} else {
-					const body = `The following Docker base images use unsupported tags:
+					const body = `The following Docker base images use tags that are no longer supported by the authors:
 
 ${linesByFile
 	.filter(l => l.unsupported)
@@ -308,22 +267,6 @@ ${f.supported}`,
 									})),
 								),
 						),
-						actions:
-							tagSuggestions.length > 0
-								? [
-										{
-											label: `Update ${pluralize(
-												"tag",
-												tagSuggestions,
-											)}`,
-											description: `Raise a pull request to update ${pluralize(
-												"tag",
-												tagSuggestions,
-											)}`,
-											identifier: "update-tag",
-										},
-								  ]
-								: undefined,
 					};
 				}
 			},
@@ -388,14 +331,7 @@ function highlightTag(
 			`<ins>**${formattedTag}**</ins>`,
 		)
 		.replace(/##/gm, "####");
-	const suggested = suggestTag(tag, tags);
-	return `${
-		suggested !== tag
-			? `Based on current tag \`${tag}\` in use, the closest supported tag appears to be \`${suggested}\`.
-
-`
-			: ""
-	}<details>
+	return `<details>
 <summary>Supported tags and respective <code>Dockerfile</code> links for <code>${name}</code></summary>
 
 <p>
@@ -404,8 +340,4 @@ ${highlightedText}
 
 </p>
 </details>`;
-}
-
-export function suggestTag(current: string, tags: string[]): string {
-	return levenshteinSort(current, tags)[0];
 }
