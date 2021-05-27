@@ -10,10 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 *   Improve file diff in changelog. [#217](https://github.com/atomist-skills/docker-base-image-policy/issues/217)
+-   Polish changelogs in pinning PRs. [3e788c9](https://github.com/atomist-skills/docker-base-image-policy/commit/3e788c9c2b4dcbdea27a1cac1ecf3234c98b4e77)
 
 ### Removed
 
--   Remove Update Tag check run action. [#216](https://github.com/atomist-skills/docker-base-image-policy/issues/216)
+*   Remove Update Tag check run action. [#216](https://github.com/atomist-skills/docker-base-image-policy/issues/216)
 
 ### Fixed
 
