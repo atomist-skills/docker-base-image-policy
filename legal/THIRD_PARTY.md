@@ -20,7 +20,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | [GPL-3.0](#gpl-30)              | 1     |
 | [ISC](#isc)                     | 43    |
 | [MIT AND Zlib](#mit-and-zlib)   | 1     |
-| [MIT](#mit)                     | 586   |
+| [MIT](#mit)                     | 587   |
 | [Public Domain](#public-domain) | 1     |
 | [Python-2.0](#python-20)        | 1     |
 | [UNKNOWN](#unknown)             | 1     |
@@ -43,7 +43,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | Name                                  | Version           | Publisher             | Repository                                                                                                                       |
 | ------------------------------------- | ----------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `@atomist/skill-logging`              | `1.0.7`           | Atomist, Inc.         | [https://github.com/atomist-skills/skill-logging](https://github.com/atomist-skills/skill-logging)                               |
-| `@atomist/skill`                      | `0.11.1-main.110` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
+| `@atomist/skill`                      | `0.11.1-main.114` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
 | `@atomist/slack-messages`             | `1.2.2`           | Atomist               | [https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)                                           |
 | `@google-cloud/common`                | `3.6.0`           | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                       |
 | `@google-cloud/logging`               | `8.2.0`           | Google Inc.           | [https://github.com/googleapis/nodejs-logging](https://github.com/googleapis/nodejs-logging)                                     |
@@ -792,6 +792,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `valid-url`                                          | `1.0.9`         |                                | [https://github.com/ogt/valid-url](https://github.com/ogt/valid-url)                                                                                                                                 |
 | `value-or-promise`                                   | `1.0.6`         |                                | [https://github.com/yaacovCR/value-or-promise](https://github.com/yaacovCR/value-or-promise)                                                                                                         |
 | `whatwg-fetch`                                       | `3.6.2`         |                                | [https://github.com/github/fetch](https://github.com/github/fetch)                                                                                                                                   |
+| `word-wrap`                                          | `1.2.3`         | Jon Schlinkert                 | [https://github.com/jonschlinkert/word-wrap](https://github.com/jonschlinkert/word-wrap)                                                                                                             |
 | `wordwrap`                                           | `1.0.0`         | James Halliday                 | [https://github.com/substack/node-wordwrap](https://github.com/substack/node-wordwrap)                                                                                                               |
 | `wrap-ansi`                                          | `3.0.1`         | Sindre Sorhus                  | [https://github.com/chalk/wrap-ansi](https://github.com/chalk/wrap-ansi)                                                                                                                             |
 | `wrap-ansi`                                          | `6.2.0`         | Sindre Sorhus                  | [https://github.com/chalk/wrap-ansi](https://github.com/chalk/wrap-ansi)                                                                                                                             |
