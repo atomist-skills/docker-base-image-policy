@@ -28,20 +28,20 @@ _Proposed_ `{{or fromLine.image.digest fromLine.manifestList.digest}}` {{#if siz
 {{#if vulSummary.count}}Detected {{vulSummary.msg}} {{plural "vulnerability" vulSummary.count false false}} in proposed image.{{/if}}{{#unless vulAdditions}}{{#unless vulRemovals}}No vulnerability changes detected{{/unless}}{{/unless}}{{#if vulAdditions}}
 ##### New Vulnerabilities
 
-| CVE | Severity | CVSS Base Score |
-| --- | -------- | --------- |
+| CVE | Severity | CVSS Base Score | Affected | Fix |
+| --- | :------: | --------------- | -------- | :---: |
 {{#each vulAdditions}}
-| [{{sourceId}}](https://nvd.nist.gov/vuln/detail/{{sourceId}}) | {{italic (replace (lower severity) "_" " " )}} | {{#if cvssScore}}{{code cvssScore}}{{else}}`n/a`{{/if}} |
+| [{{sourceId}}](https://nvd.nist.gov/vuln/detail/{{sourceId}}) | {{italic (replace (lower severity) "_" " " )}} | {{#if cvssScore}}{{code cvssScore}}{{else}}`n/a`{{/if}} | {{wrap affected 50}} | {{#if fixAvailable}}x{{/if}} |
 {{/each}}
 {{/if}}
 
 {{#if vulRemovals}}
 ##### Fixed Vulnerabilities
 
-| CVE | Severity | CVSS Base Score |
-| --- | -------- | --------- |
+| CVE | Severity | CVSS Base Score | Affected |
+| --- | :------: | --------------- | -------- |
 {{#each vulRemovals}}
-| [{{sourceId}}](https://nvd.nist.gov/vuln/detail/{{sourceId}}) | {{italic (replace (lower severity) "_" " " )}} | {{#if cvssScore}}{{code cvssScore}}{{else}}`n/a`{{/if}} |
+| [{{sourceId}}](https://nvd.nist.gov/vuln/detail/{{sourceId}}) | {{italic (replace (lower severity) "_" " " )}} | {{#if cvssScore}}{{code cvssScore}}{{else}}`n/a`{{/if}} | {{wrap affected 50}} |
 {{/each}}
 {{/if}}
 {{else}}
@@ -79,15 +79,13 @@ No file modifications detected
 #### History
 
 {{#if historyDiff}}
-The following differences in `docker inspect` were detected:
+The following differences in [`docker history`](https://docs.docker.com/engine/reference/commandline/history/) were detected:
 
-```
-{{#each historyDiff}}
-{{type}} {{text}}
-{{/each}}
+```diff
+{{historyDiff}}
 ```
 {{else}}
-No differences in `docker inspect` detected
+No differences in [`docker history`](https://docs.docker.com/engine/reference/commandline/history/) detected
 {{/if}}
 
 #### Ports
@@ -95,9 +93,9 @@ No differences in `docker inspect` detected
 {{#if portsDiff}}
 The following different exposed ports were detected:
 
-```
+```diff
 {{#each portsDiff}}
-{{type}} {{text}}
+{{type}}{{text}}
 {{/each}}
 ```
 {{else}}
@@ -109,9 +107,9 @@ No different exposed ports detected
 {{#if envDiff}}
 The following different environment variables were detected:
 
-```
+```diff
 {{#each envDiff}}
-{{type}} {{text}}
+{{type}}{{text}}
 {{/each}}
 ```
 {{else}}

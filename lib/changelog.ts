@@ -15,6 +15,7 @@
  */
 
 import {
+	after,
 	childProcess,
 	EventContext,
 	github,
@@ -63,7 +64,9 @@ async function getLibraryFileCommit(
 	return undefined;
 }
 
-export async function changelog(
+export const changelog = after(_changelog, removeCredentials);
+
+async function _changelog(
 	ctx: EventContext<any, Configuration>,
 	p: project.Project,
 	fromLine: CommitAndDockerfile["file"]["lines"][0],
@@ -181,11 +184,12 @@ export async function changelog(
 	await prepareCredentials(registries, repository);
 
 	const outputFile = path.join(os.tmpdir(), guid());
-	const args = [
+	const currentHistoryOutputFile = path.join(os.tmpdir(), guid());
+	const proposedHistoryOutputFile = path.join(os.tmpdir(), guid());
+	let result = await childProcess.spawnPromise("container-diff", [
 		"diff",
 		`${imageName}@${currentDigest}`,
 		`${imageName}@${proposedDigest}`,
-		"--type=history",
 		"--type=apt",
 		"--type=node",
 		"--type=file",
@@ -195,11 +199,34 @@ export async function changelog(
 		"--json",
 		"--quiet",
 		`--output=${outputFile}`,
-	];
-	const result = await childProcess.spawnPromise("container-diff", args);
-	await removeCredentials();
+	]);
+	// await removeCredentials();
 	if (result.status !== 0) {
 		log.warn(`Failed to diff container images`);
+		return undefined;
+	}
+	result = await childProcess.spawnPromise("container-diff", [
+		"analyze",
+		`${imageName}@${currentDigest}`,
+		"--type=history",
+		"--json",
+		"--quiet",
+		`--output=${currentHistoryOutputFile}`,
+	]);
+	if (result.status !== 0) {
+		log.warn(`Failed to analyze container image`);
+		return undefined;
+	}
+	result = await childProcess.spawnPromise("container-diff", [
+		"analyze",
+		`${imageName}@${proposedDigest}`,
+		"--type=history",
+		"--json",
+		"--quiet",
+		`--output=${proposedHistoryOutputFile}`,
+	]);
+	if (result.status !== 0) {
+		log.warn(`Failed to analyze container image`);
 		return undefined;
 	}
 
@@ -256,17 +283,9 @@ export async function changelog(
 		),
 	);
 
-	const historyDiff = _.sortBy(
-		_.flattenDeep(
-			diff
-				.filter(d => d.DiffType === "History")
-				.map(d => [
-					...(d.Diff.Adds || []).map(a => ({ type: "+", text: a })),
-					...(d.Diff.Dels || []).map(r => ({ type: "-", text: r })),
-				]),
-		),
-		["text", "type"],
-		["asc", "desc"],
+	const historyDiff = await prepareHistoryDiff(
+		currentHistoryOutputFile,
+		proposedHistoryOutputFile,
 	);
 
 	const arrayDiff = (a1: string[][], a2: string[][]) => {
@@ -408,4 +427,32 @@ async function prepareCredentials(
 
 async function removeCredentials(): Promise<void> {
 	await fs.remove(path.join(os.homedir(), ".docker", "config.json"));
+}
+
+async function prepareHistoryDiff(
+	current: string,
+	proposed: string,
+): Promise<string> {
+	const currentHistoryFile = await fs.readJson(current);
+	const currentHistory = currentHistoryFile.find(
+		h => h.AnalyzeType === "History",
+	).Analysis;
+	await fs.writeFile(current, currentHistory.join("\n") + "\n");
+	const proposedHistoryFile = await fs.readJson(proposed);
+	const proposedHistory = proposedHistoryFile.find(
+		h => h.AnalyzeType === "History",
+	).Analysis;
+	await fs.writeFile(proposed, proposedHistory.join("\n") + "\n");
+	const capturelog = childProcess.captureLog();
+	const result = await childProcess.spawnPromise(
+		"git",
+		["diff", `--no-color`, current, proposed],
+		{ log: capturelog, logCommand: false },
+	);
+	if (result.status !== 0) {
+		const output = capturelog.log;
+		return output.split(/^@@.*@@$/gm)[1].trim();
+	} else {
+		return undefined;
+	}
 }
