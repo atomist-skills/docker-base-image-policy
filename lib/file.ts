@@ -25,7 +25,7 @@ type File = {
 	diff?: number;
 };
 
-export function diffFiles(files: File[], limit = 200): File[] {
+export function diffFiles(files: File[], limit = 100): File[] {
 	const newFiles = diffFilesRecursive(files, limit);
 	newFiles
 		.filter(f => f.children === 1)
