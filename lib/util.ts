@@ -18,7 +18,7 @@ import { EventContext, subscription } from "@atomist/skill";
 import * as _ from "lodash";
 
 import { Configuration } from "./configuration";
-import { ValidateBaseImages } from "./types";
+import { CommitAndDockerfile, ValidateBaseImages } from "./types";
 
 export function replaceLastFrom(
 	dockerfile: string,
@@ -295,4 +295,26 @@ export function formatAggregateDiffs(
 		msg: `${parts.join(", ").replace(/, ([^,]*)$/, " and $1")}`,
 		count,
 	};
+}
+
+export function addStartLineNo(
+	entries: Array<
+		Pick<
+			CommitAndDockerfile["file"]["lines"][0],
+			"instruction" | "number" | "startNumber"
+		>
+	>,
+	dockerfile: string,
+): void {
+	const dockerfileLines = dockerfile.split("\n");
+	for (const entry of entries) {
+		let ix = entry.number - 1;
+		while (ix >= 0) {
+			if (dockerfileLines[ix].startsWith(entry.instruction)) {
+				entry.startNumber = ix + 1;
+				break;
+			}
+			ix = ix - 1;
+		}
+	}
 }

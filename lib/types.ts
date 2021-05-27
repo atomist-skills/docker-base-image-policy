@@ -21,6 +21,7 @@ export interface CommitAndDockerfile {
 	file: {
 		path: string;
 		lines: Array<{
+			startNumber?: number;
 			number: number;
 			instruction: string;
 			argsMap: Record<string, string>;
@@ -126,6 +127,7 @@ export interface ValidateBaseImages {
 			path: string;
 			sha: string;
 			lines: Array<{
+				startNumber?: number;
 				number: number;
 				instruction: string;
 				argsMap: Record<string, string>;

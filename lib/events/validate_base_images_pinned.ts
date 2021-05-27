@@ -15,11 +15,12 @@
  */
 
 import { handle, MappingEventHandler, policy, status } from "@atomist/skill";
+import * as fs from "fs-extra";
 import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages, ValidateBaseImagesRaw } from "../types";
-import { findTag, imageName, linkFile, printTag } from "../util";
+import { addStartLineNo, findTag, imageName, linkFile } from "../util";
 import { CreateRepositoryIdFromCommit, DockerfilesTransacted } from "./shared";
 
 export const handler: MappingEventHandler<
@@ -62,6 +63,7 @@ export const handler: MappingEventHandler<
 				DockerfilesTransacted,
 			),
 			id: CreateRepositoryIdFromCommit,
+			clone: ctx => ctx.data.commit.dockerFiles.map(df => df.path),
 			details: ctx => ({
 				name: `${ctx.skill.name}/pinned`,
 				title: "Pinned Docker base image policy",
@@ -82,6 +84,12 @@ export const handler: MappingEventHandler<
 					const fromLines = _.orderBy(file.lines, "number").filter(
 						l => l.instruction === "FROM",
 					);
+					addStartLineNo(
+						fromLines,
+						(
+							await fs.readFile(ctx.chain.project.path(file.path))
+						).toString(),
+					);
 					const unpinnedFromLines = fromLines.filter(l => !l.digest);
 					const pinnedFromLines = fromLines.filter(l => l.digest);
 					for (const pinnedFromLine of pinnedFromLines) {
@@ -95,29 +103,15 @@ export const handler: MappingEventHandler<
 						}
 					}
 
-					const maxLength = _.maxBy(
-						fromLines,
-						"number",
-					).number.toString().length;
-
 					const pinnedFromLinesBody = pinnedFromLines
 						.map(l => {
-							const from = `${_.padStart(
-								l.number.toString(),
-								maxLength,
-							)}: FROM ${l.argsString}`;
-							return `\`\`\`
-${from}${printTag(from, l)}
-\`\`\``;
+							return `https://github.com/${commit.repo.org.name}/${commit.repo.name}/blob/${commit.sha}/${file.path}#L${l.startNumber}-L${l.number}`;
 						})
 						.join("\n\n");
 					const unpinnedFromLinesBody = unpinnedFromLines
-						.map(
-							l => `
-\`\`\`
-${_.padStart(l.number.toString(), maxLength)}: FROM ${l.argsString}
-\`\`\``,
-						)
+						.map(l => {
+							return `https://github.com/${commit.repo.org.name}/${commit.repo.name}/blob/${commit.sha}/${file.path}#L${l.startNumber}-L${l.number}`;
+						})
 						.join("\n\n");
 					linesByFile.push({
 						path: file.path,
