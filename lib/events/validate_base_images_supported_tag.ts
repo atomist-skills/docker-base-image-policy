@@ -71,9 +71,9 @@ export const handler: MappingEventHandler<
 			details: ctx => ({
 				name: `${ctx.skill.name}/tag`,
 				title: "Supported Docker base image tag policy",
-				body: `Checking if Docker base images in ${ctx.data.commit.dockerFiles
+				body: `Checking if [Official Images](https://docs.docker.com/docker-hub/official_images/) in ${ctx.data.commit.dockerFiles
 					.map(f => `\`${f.path}\``)
-					.join(", ")} use supported tags`,
+					.join(", ")} use tags that are supported by their authors`,
 			}),
 			execute: async ctx => {
 				const cfg = ctx.configuration.parameters;
@@ -181,7 +181,7 @@ ${highlightTag(
 								commit.repo.org.name
 							}/${commit.repo.name}@${commit.sha.slice(0, 7)}\``,
 						),
-						body: `No official Docker base images being used in any of the Dockerfiles
+						body: `No [Official Images](https://docs.docker.com/docker-hub/official_images/) used in any of the Dockerfiles
 
 ${linesByFile.map(f => `${linkFile(f.path, commit)}`).join("\n\n---\n\n")}`,
 					};
@@ -196,7 +196,7 @@ ${linesByFile.map(f => `${linkFile(f.path, commit)}`).join("\n\n---\n\n")}`,
 								7,
 							)}\` use supported tags`,
 						),
-						body: `The following Docker base images use tags that are no longer supported by the authors:
+						body: `The following [Official Images](https://docs.docker.com/docker-hub/official_images/) use tags that are no longer supported by the authors:
 
 ${linesByFile
 	.map(
@@ -207,7 +207,7 @@ ${f.supported}`,
 	.join("\n\n---\n\n")}`,
 					};
 				} else {
-					const body = `The following Docker base images use tags that are no longer supported by the authors:
+					const body = `The following [Official Images](https://docs.docker.com/docker-hub/official_images/) use tags that are no longer supported by the authors:
 
 ${linesByFile
 	.filter(l => l.unsupported)
@@ -222,7 +222,7 @@ ${f.unsupported}`,
 
 ---
 
-The following Docker base images use supported tags:
+The following [Official Images](https://docs.docker.com/docker-hub/official_images/) use supported tags:
 													  
 ${linesByFile
 	.filter(l => l.supported)
