@@ -196,7 +196,7 @@ ${linesByFile.map(f => `${linkFile(f.path, commit)}`).join("\n\n---\n\n")}`,
 								7,
 							)}\` use supported tags`,
 						),
-						body: `The following [Official Images](https://docs.docker.com/docker-hub/official_images/) use tags that are no longer supported by the authors:
+						body: `The following [Official Images](https://docs.docker.com/docker-hub/official_images/) use tags that are supported by the authors:
 
 ${linesByFile
 	.map(
@@ -222,7 +222,7 @@ ${f.unsupported}`,
 
 ---
 
-The following [Official Images](https://docs.docker.com/docker-hub/official_images/) use supported tags:
+The following [Official Images](https://docs.docker.com/docker-hub/official_images/) use tags that are supported by the authors:
 													  
 ${linesByFile
 	.filter(l => l.supported)
