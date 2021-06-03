@@ -11,7 +11,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | License                         | Count |
 | ------------------------------- | ----- |
 | [0BSD](#0bsd)                   | 4     |
-| [Apache-2.0](#apache-20)        | 36    |
+| [Apache-2.0](#apache-20)        | 37    |
 | [BSD-2-Clause](#bsd-2-clause)   | 9     |
 | [BSD-3-Clause](#bsd-3-clause)   | 26    |
 | [CC-BY-4.0](#cc-by-40)          | 1     |
@@ -77,6 +77,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | `remedial`                            | `1.0.8`           | AJ ONeal              |                                                                                                                                  |
 | `rxjs`                                | `6.6.7`           | Ben Lesh              | [https://github.com/reactivex/rxjs](https://github.com/reactivex/rxjs)                                                           |
 | `teeny-request`                       | `7.1.0`           | fhinkel               | [https://github.com/googleapis/teeny-request](https://github.com/googleapis/teeny-request)                                       |
+| `typescript`                          | `4.3.2`           | Microsoft Corp.       | [https://github.com/Microsoft/TypeScript](https://github.com/Microsoft/TypeScript)                                               |
 | `yaml-ast-parser`                     | `0.0.43`          |                       | [https://github.com/mulesoft-labs/yaml-ast-parser](https://github.com/mulesoft-labs/yaml-ast-parser)                             |
 
 #### BSD-2-Clause
