@@ -17,7 +17,6 @@
 import {
 	CapabilityScope,
 	Category,
-	env,
 	parameter,
 	ParameterType,
 	ParameterVisibility,
@@ -42,7 +41,6 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 	containers: {
 		docker: {
 			image: "gcr.io/atomist-container-skills/docker-base-image-policy",
-			env: [env.noSideCar()],
 		},
 	},
 
@@ -70,15 +68,6 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 				"Select to raise a pull request when you have an unpinned Docker file, or when the tag in use is updated.",
 			required: false,
 			defaultValue: true,
-		},
-		pinningIncludeTag: {
-			type: ParameterType.Boolean,
-			displayName: "Preserve Docker tag",
-			description:
-				"Keep the Docker tag in the `FROM` image when pinning.",
-			required: false,
-			defaultValue: true,
-			visibility: ParameterVisibility.Hidden,
 		},
 		pinningAptPullRequests: {
 			type: ParameterType.Boolean,

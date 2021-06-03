@@ -21,11 +21,12 @@ import {
 	policy,
 	status,
 } from "@atomist/skill";
+import * as fs from "fs-extra";
 import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages, ValidateBaseImagesRaw } from "../types";
-import { findTag, linkFile, printTag } from "../util";
+import { addStartLineNo, findTag, linkFile } from "../util";
 import { CreateRepositoryIdFromCommit, DockerfilesTransacted } from "./shared";
 
 export const handler: MappingEventHandler<
@@ -68,6 +69,7 @@ export const handler: MappingEventHandler<
 				DockerfilesTransacted,
 			),
 			id: CreateRepositoryIdFromCommit,
+			clone: ctx => ctx.data.commit.dockerFiles.map(df => df.path),
 			details: ctx => ({
 				name: `${ctx.skill.name}/tag`,
 				title: "Supported Docker base image tag policy",
@@ -90,6 +92,13 @@ export const handler: MappingEventHandler<
 						.filter(l => l.instruction === "FROM")
 						.filter(l => l.repository.host === "hub.docker.com")
 						.filter(l => !l.repository.name.includes("/"));
+					addStartLineNo(
+						fromLines,
+						(
+							await fs.readFile(ctx.chain.project.path(file.path))
+						).toString(),
+					);
+
 					for (const fromLine of fromLines) {
 						if (!fromLine.tag) {
 							// attempt to load the missing tag
@@ -119,19 +128,13 @@ export const handler: MappingEventHandler<
 						}
 					}
 
-					const maxLength =
-						_.maxBy(fromLines, "number")?.number?.toString()
-							.length || 0;
-
 					const supportedLinesBody = supportedLines
 						.map(l => {
-							const from = `${_.padStart(
-								l.number.toString(),
-								maxLength,
-							)}: FROM ${l.argsString}`;
-							return `\`\`\`
-${from}${printTag(from, l)}
-\`\`\`
+							return `https://github.com/${
+								commit.repo.org.name
+							}/${commit.repo.name}/blob/${commit.sha}/${
+								file.path
+							}#L${l.startNumber}-L${l.number}
 
 ${highlightTag(
 	l.tag,
@@ -143,13 +146,11 @@ ${highlightTag(
 						.join("\n\n");
 					const unSupportedLinesBody = unSupportedLines
 						.map(l => {
-							const from = `${_.padStart(
-								l.number.toString(),
-								maxLength,
-							)}: FROM ${l.argsString}`;
-							return `\`\`\`
-${from}${printTag(from, l)} 
-\`\`\`
+							return `https://github.com/${
+								commit.repo.org.name
+							}/${commit.repo.name}/blob/${commit.sha}/${
+								file.path
+							}#L${l.startNumber}-L${l.number} 
 
 ${highlightTag(
 	l.tag,
@@ -250,23 +251,6 @@ ${f.supported}`,
 							)}\` with unsupported tags`,
 						),
 						body,
-						annotations: _.flattenDeep(
-							linesByFile
-								.filter(l => l.unsupportedLines.length > 0)
-								.map(l =>
-									l.unsupportedLines.map(ul => ({
-										title: "Unsupported tag",
-										message: `${ul.tag} is not a supported tag for image ${ul.repository?.name}`,
-										annotationLevel:
-											cfg.supportedTagFailCheck
-												? "failure"
-												: "notice",
-										startLine: ul.number,
-										endLine: ul.number,
-										path: l.path,
-									})),
-								),
-						),
 					};
 				}
 			},

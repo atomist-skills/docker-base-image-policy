@@ -33,7 +33,7 @@ import * as _ from "lodash";
 import { changelog } from "../changelog";
 import { Configuration } from "../configuration";
 import { CommitAndDockerfile } from "../types";
-import { replaceFroms } from "../util";
+import { addStartLineNo, replaceFroms } from "../util";
 
 const Footer = `<!-- atomist:hide -->\nPinning \`FROM\` lines to digests makes your builds repeatable. Atomist will raise new pull requests whenever the tag moves, so that you know when the base image has been updated. You can follow a new tag at any time. Just replace the digest with the new tag you want to follow. Atomist, will switch to following this new tag.\n<!-- atomist:show -->`;
 
@@ -105,13 +105,17 @@ export const handler: MappingEventHandler<
 				}),
 			);
 
+			addStartLineNo(
+				file.lines,
+				(await fs.readFile(project.path(file.path))).toString(),
+			);
+
 			const fromLines = _.orderBy(file.lines, "number")
 				.filter(l => l.instruction === "FROM")
 				.map(l => {
 					const digest =
 						l.manifestList?.digest || l.image?.digest || l.digest;
-					const tag =
-						cfg.pinningIncludeTag && l.tag ? `:${l.tag}` : "";
+					const tag = l.tag ? `:${l.tag}` : "";
 					const imageName = `${
 						l.repository.host !== "hub.docker.com"
 							? `${l.repository.host}/${l.repository.name}`
@@ -119,6 +123,7 @@ export const handler: MappingEventHandler<
 					}${tag}@${digest}`;
 					return {
 						line: l.number,
+						startLine: l.startNumber,
 						currentImageName: l.argsString.split(" ")[0],
 						imageName,
 						changed: l.digest !== digest,
@@ -150,8 +155,6 @@ export const handler: MappingEventHandler<
 					);
 				}
 			}
-			const maxLength = _.maxBy(changedFromLines, "line").line.toString()
-				.length;
 			const isRepin = !changedFromLines.some(f => !f.digest);
 
 			return await github.persistChanges(
@@ -190,7 +193,7 @@ export const handler: MappingEventHandler<
 									changedFromLines[0].imageName.split("@")[0]
 							  }\` in \`${file.path}\` to the current digest.
 
-${fromLine(changedFromLines[0], maxLength, cfg.pinningIncludeTag)}
+${fromLine(changedFromLines[0], commit, file)}
 
 ${Footer}`
 							: `This pull request ${
@@ -199,9 +202,7 @@ ${Footer}`
 									file.path
 							  }\` to their current digests.
 					
-${changedFromLines
-	.map(l => fromLine(l, maxLength, cfg.pinningIncludeTag))
-	.join("\n\n")}
+${changedFromLines.map(l => fromLine(l, commit, file)).join("\n\n")}
 
 ${Footer}`,
 					update: async () => {
@@ -243,7 +244,7 @@ ${Footer}`,
 											file.path
 									  }\` to the current digest.
 
-${fromLine(changedFromLines[0], maxLength, cfg.pinningIncludeTag)}
+${fromLine(changedFromLines[0], commit, file)}
 
 ${Footer}`
 									: `This pull request ${
@@ -252,9 +253,7 @@ ${Footer}`
 											file.path
 									  }\` to their current digests.
 					
-${changedFromLines
-	.map(l => fromLine(l, maxLength, cfg.pinningIncludeTag))
-	.join("\n\n")}
+${changedFromLines.map(l => fromLine(l, commit, file)).join("\n\n")}
 
 ${Footer}`,
 						};
@@ -298,18 +297,19 @@ ${l.imageName}`;
 };
 
 function fromLine(
-	l: { line: number; imageName: string; tag: string; changelog: string },
-	maxLength: number,
-	tagIncluded: boolean,
+	l: {
+		line: number;
+		startLine: number;
+		imageName: string;
+		tag: string;
+		changelog: string;
+	},
+	commit: CommitAndDockerfile["commit"],
+	file: CommitAndDockerfile["file"],
 ): string {
-	const from = `${_.padStart(l.line.toString(), maxLength)}: FROM ${
-		l.imageName
+	return `https://github.com/${commit.repo.org.name}/${
+		commit.repo.name
+	}/blob/${commit.sha}/${file.path}#L${l.startLine}-L${l.line}${
+		l.changelog ? `\n\n${l.changelog}` : ""
 	}`;
-	return `\`\`\`
-${from}${
-		!tagIncluded && l.tag
-			? `\n${_.padStart("", from.split("@sha")[0].length)}\`--> ${l.tag}`
-			: ""
-	} 
-\`\`\`${l.changelog ? `\n\n${l.changelog}` : ""}`;
 }

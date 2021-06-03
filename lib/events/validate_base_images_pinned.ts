@@ -20,7 +20,7 @@ import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
 import { ValidateBaseImages, ValidateBaseImagesRaw } from "../types";
-import { addStartLineNo, findTag, imageName, linkFile } from "../util";
+import { addStartLineNo, findTag, linkFile } from "../util";
 import { CreateRepositoryIdFromCommit, DockerfilesTransacted } from "./shared";
 
 export const handler: MappingEventHandler<
@@ -182,27 +182,6 @@ ${f.pinned}`,
 							}/${commit.repo.name}@${commit.sha.slice(0, 7)}\``,
 						),
 						body,
-						annotations: _.flattenDeep(
-							linesByFile
-								.filter(l => l.unpinnedLines.length > 0)
-								.map(l =>
-									l.unpinnedLines.map(ul => ({
-										title: "Pinned base image",
-										message: `${
-											imageName(ul.repository) ||
-											ul.argsString
-												.split("@")[0]
-												.split(":")[0]
-										} is not pinned`,
-										annotationLevel: cfg.pinningFailCheck
-											? "failure"
-											: "notice",
-										startLine: ul.number,
-										endLine: ul.number,
-										path: l.path,
-									})),
-								),
-						),
 					};
 				}
 			},
