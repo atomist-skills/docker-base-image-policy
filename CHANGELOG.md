@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 *   Improve file diff in changelog. [#217](https://github.com/atomist-skills/docker-base-image-policy/issues/217)
 *   Polish changelogs in pinning PRs. [3e788c9](https://github.com/atomist-skills/docker-base-image-policy/commit/3e788c9c2b4dcbdea27a1cac1ecf3234c98b4e77)
--   Remove check run annotations. [06b8855](https://github.com/atomist-skills/docker-base-image-policy/commit/06b885511b0c0d5fdaa55d9e4cb7bfc851eda9e5)
+*   Remove check run annotations. [06b8855](https://github.com/atomist-skills/docker-base-image-policy/commit/06b885511b0c0d5fdaa55d9e4cb7bfc851eda9e5)
 
 ### Removed
 
