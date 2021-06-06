@@ -51,7 +51,7 @@
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\""
   },
   "dependencies": {
-    "@atomist/skill": "^0.11.1-main.127",
+    "@atomist/skill": "^0.11.1-main.129",
     "apt-client": "^3.0.0",
     "docker-file-parser": "^1.0.5",
     "fs-extra": "^9.1.0"
@@ -78,7 +78,7 @@
     "mocha": "^8.4.0",
     "npm-run-all": "^4.1.5",
     "power-assert": "^1.6.1",
-    "prettier": "^2.3.0",
+    "prettier": "^2.3.1",
     "rimraf": "^3.0.2",
     "supervisor": "^0.12.0",
     "ts-node": "^10.0.0",
