@@ -25,7 +25,7 @@ _Proposed_ `{{or fromLine.image.digest fromLine.manifestList.digest}}` {{#if siz
 #### Vulnerabilities
 
 {{#if vulScanned}}
-{{#if vulSummary.count}}Detected {{vulSummary.msg}} {{plural "vulnerability" vulSummary.count false false}} in proposed image.{{/if}}{{#unless vulAdditions}}{{#unless vulRemovals}}No vulnerability changes detected{{/unless}}{{/unless}}{{#if vulAdditions}}
+{{#if vulSummary.count}}Detected {{vulSummary.msg}} {{plural "vulnerability" vulSummary.count false false}} in proposed image. {{/if}}{{#unless vulAdditions}}{{#unless vulRemovals}}No vulnerability changes detected{{/unless}}{{/unless}}{{#if vulAdditions}}
 ##### New Vulnerabilities
 
 | CVE | Severity | CVSS Base Score | Affected | Fix |
