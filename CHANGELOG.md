@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 *   Fix changelog formatting. [14b7421](https://github.com/atomist-skills/docker-base-image-policy/commit/14b7421cc0a692897744808fbd0e639886eeb626)
+*   Fix commit sha in pinning PR body. [e2193ad](https://github.com/atomist-skills/docker-base-image-policy/commit/e2193adb095b85bbce0ab36b6a3dc649fb507d1a)
 
 ## [0.1.34](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.33...0.1.34) - 2021-06-04
 
