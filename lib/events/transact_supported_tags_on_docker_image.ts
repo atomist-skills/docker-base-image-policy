@@ -22,12 +22,12 @@ import { TransactSupportedTags } from "../types";
 
 export const handler: EventHandler<TransactSupportedTags, Configuration> =
 	async ctx => {
-		const name = ctx.data.name;
+		const name = ctx.data.repository.name;
 		const tags = await supportedTags(name, ctx);
 		await ctx.datalog.transact([
 			datalog.entity("docker/repository", {
-				host: ctx.data.host,
-				repository: ctx.data.name,
+				host: ctx.data.repository.host,
+				repository: ctx.data.repository.name,
 				supportedTags: {
 					set: tags,
 				},

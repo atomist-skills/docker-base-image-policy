@@ -273,6 +273,8 @@ export interface PinAptPackages {
 }
 
 export interface TransactSupportedTags {
-	host: string;
-	name: string;
+	repository: {
+		host: string;
+		name: string;
+	};
 }
