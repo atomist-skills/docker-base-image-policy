@@ -26,5 +26,9 @@
                                      :db/cardinality :db.cardinality/one}
   :base.image.from.update.edit/to   {:db/valueType   :db.type/string
                                      :db/cardinality :db.cardinality/one}
+
+  :docker.repository/supported-tags {:db/valueType   :db.type/string
+                                     :db/cardinality :db.cardinality/many}
+
   }
  }

@@ -271,3 +271,8 @@ export interface PinAptPackages {
 		}>;
 	};
 }
+
+export interface TransactSupportedTags {
+	host: string;
+	name: string;
+}
