@@ -193,7 +193,7 @@ export const handler: MappingEventHandler<
 									changedFromLines[0].imageName.split("@")[0]
 							  }\` in \`${file.path}\` to the current digest.
 
-${fromLine(changedFromLines[0], commit, file)}
+${fromLine(changedFromLines[0], commit, file, commit.sha)}
 
 ${Footer}`
 							: `This pull request ${
@@ -202,10 +202,10 @@ ${Footer}`
 									file.path
 							  }\` to their current digests.
 					
-${changedFromLines.map(l => fromLine(l, commit, file)).join("\n\n")}
+${changedFromLines.map(l => fromLine(l, commit, file, commit.sha)).join("\n\n")}
 
 ${Footer}`,
-					update: async () => {
+					update: async sha => {
 						for (const changedFromLine of _.orderBy(
 							file.lines,
 							"number",
@@ -244,7 +244,7 @@ ${Footer}`,
 											file.path
 									  }\` to the current digest.
 
-${fromLine(changedFromLines[0], commit, file)}
+${fromLine(changedFromLines[0], commit, file, sha)}
 
 ${Footer}`
 									: `This pull request ${
@@ -253,7 +253,7 @@ ${Footer}`
 											file.path
 									  }\` to their current digests.
 					
-${changedFromLines.map(l => fromLine(l, commit, file)).join("\n\n")}
+${changedFromLines.map(l => fromLine(l, commit, file, sha)).join("\n\n")}
 
 ${Footer}`,
 						};
@@ -306,10 +306,11 @@ function fromLine(
 	},
 	commit: CommitAndDockerfile["commit"],
 	file: CommitAndDockerfile["file"],
+	sha: string,
 ): string {
 	return `https://github.com/${commit.repo.org.name}/${
 		commit.repo.name
-	}/blob/${commit.sha}/${file.path}#L${l.startLine}-L${l.line}${
+	}/blob/${sha}/${file.path}#L${l.startLine}-L${l.line}${
 		l.changelog ? `\n\n${l.changelog}` : ""
 	}`;
 }
