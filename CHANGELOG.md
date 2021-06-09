@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.35...HEAD)
 
+### Fixed
+
+*   Fix issue with checks when Dockerfiles are nested in dirs. [9b8547c](https://github.com/atomist-skills/docker-base-image-policy/commit/9b8547c0399d569f104f6d0f8fe4948f839d80c2)
+
 ## [0.1.35](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.34...0.1.35) - 2021-06-08
 
 ### Added
