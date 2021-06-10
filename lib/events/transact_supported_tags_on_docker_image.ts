@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Contextual, datalog, EventHandler } from "@atomist/skill";
+import { Contextual, datalog, EventHandler, status } from "@atomist/skill";
 import * as _ from "lodash";
 
 import { Configuration } from "../configuration";
@@ -33,6 +33,7 @@ export const handler: EventHandler<TransactSupportedTags, Configuration> =
 				},
 			}),
 		]);
+		return status.success(`Transacted supported tags for \`${name}\``);
 	};
 
 const supportedTags = _.memoize(_supportedTags);
