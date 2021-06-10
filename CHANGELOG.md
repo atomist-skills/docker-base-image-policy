@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.36...HEAD)
 
+### Added
+
+*   Backfill supported tags. [#251](https://github.com/atomist-skills/docker-base-image-policy/issues/251)
+
 ## [0.1.36](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.35...0.1.36) - 2021-06-09
 
 ### Fixed
