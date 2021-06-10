@@ -140,7 +140,6 @@ ${highlightTag(
 	l.tag,
 	usedTags.get(l.repository.name).text,
 	l.repository.name,
-	usedTags.get(l.repository.name).supported,
 )}`;
 						})
 						.join("\n\n");
@@ -156,7 +155,6 @@ ${highlightTag(
 	l.tag,
 	usedTags.get(l.repository.name).text,
 	l.repository.name,
-	usedTags.get(l.repository.name).supported,
 )}`;
 						})
 						.join("\n\n");
@@ -302,12 +300,7 @@ async function supportedTags(
 	};
 }
 
-function highlightTag(
-	tag: string,
-	text: string,
-	name: string,
-	tags: string[],
-): string {
+function highlightTag(tag: string, text: string, name: string): string {
 	const formattedTag = `\`${tag}\``;
 	const highlightedText = text
 		.replace(
