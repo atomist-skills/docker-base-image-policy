@@ -145,7 +145,7 @@ export const Skill = skill<
 			description:
 				"Transact supported tags from all Official Docker images",
 			required: false,
-			defaultValue: "0 * * * *",
+			defaultValue: "0 3 * * *",
 			visibility: ParameterVisibility.Advanced,
 		},
 	},
