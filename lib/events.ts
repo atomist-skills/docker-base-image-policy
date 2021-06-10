@@ -33,3 +33,7 @@ export const validate_linking_on_docker_file_link =
 export const validate_linking_on_docker_image =
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	require("./events/validate_linking_on_docker_file").handler;
+
+export const transact_supported_tags_on_schedule =
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	require("./events/transact_supported_tags_on_docker_image").handler;

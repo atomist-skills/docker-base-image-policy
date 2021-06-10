@@ -35,7 +35,9 @@ export const handler: EventHandler<TransactSupportedTags, Configuration> =
 		]);
 	};
 
-async function supportedTags(
+const supportedTags = _.memoize(_supportedTags);
+
+async function _supportedTags(
 	name: string,
 	ctx: Contextual<any, any>,
 ): Promise<string[]> {

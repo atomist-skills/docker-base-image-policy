@@ -26,7 +26,9 @@ import {
 
 import { Configuration } from "./lib/configuration";
 
-export const Skill = skill<Configuration & { repoFilter: any }>({
+export const Skill = skill<
+	Configuration & { repoFilter: any; transactSupportedTagsSchedule: any }
+>({
 	displayName: "Docker Base Image Policy",
 	description:
 		"Set a policy to receive a pull request whenever a new base image is available",
@@ -137,6 +139,15 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 			visibility: ParameterVisibility.Hidden,
 		},
 		repoFilter: parameter.repoFilter({ required: false }),
+		transactSupportedTagsSchedule: {
+			type: ParameterType.Schedule,
+			displayName: "Transact supported tags",
+			description:
+				"Transact supported tags from all Official Docker images",
+			required: false,
+			defaultValue: "0 * * * *",
+			visibility: ParameterVisibility.Advanced,
+		},
 	},
 
 	capabilities: {
