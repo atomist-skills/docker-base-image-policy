@@ -267,7 +267,7 @@ async function _changelog(
 						})),
 						...(d.Diff.Dels || []).map(d => ({
 							path: d.Name,
-							current: 0,
+							current: d.Size || 0,
 							proposed: undefined,
 							diff: 0,
 						})),

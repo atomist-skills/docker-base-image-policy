@@ -69,7 +69,8 @@ export function diffFilesRecursive(files: File[], limit = 100): File[] {
 				aggregates[file.path] = {
 					path: file.path,
 					children: file.children,
-					diff: file.diff || file.proposed - file.current,
+					diff:
+						file.diff || (file.proposed || 0) - (file.current || 0),
 					current: file.current,
 					proposed: file.proposed,
 				};
