@@ -451,7 +451,7 @@ async function prepareHistoryDiff(
 	);
 	if (result.status !== 0) {
 		const output = capturelog.log;
-		return output.split(/^@@.*@@$/gm)[1].trim();
+		return output.split(/^@@.*@@$/gm)[1].slice(1);
 	} else {
 		return undefined;
 	}
