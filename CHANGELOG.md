@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.39...HEAD)
 
+### Fixed
+
+*   Fix indentation on history diff. [75d4605](https://github.com/atomist-skills/docker-base-image-policy/commit/75d46056f37fd651b59a50563d17d21b01a74f1c)
+
 ## [0.1.39](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.38...0.1.39) - 2021-06-10
 
 ### Fixed
