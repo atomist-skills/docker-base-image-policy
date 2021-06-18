@@ -1,5 +1,5 @@
 # Set up build
-FROM node:lts@sha256:af9879e7473d347048c5d5919aa9775f27c33d92e4d58058ffdc08247f4bd902 AS build
+FROM node:lts@sha256:52fe2e3604ca3d7d0bc017c0d60df5baaf54c3e261bab8334b0657f923092523 AS build
 
 WORKDIR /usr/src
 
@@ -10,7 +10,7 @@ RUN npm ci --no-optional --also=dev \
  && rm -rf node_modules .git
 
 # Set up runtime container
-FROM atomist/skill:node14@sha256:fb31d48ed680312b471db2a2dda5e0f5bc661c591f1c12d8f5d27ba10d085003
+FROM atomist/skill:node14@sha256:3e2d6fee4b26213eeb7caf3c8910b2b0a98bbc50c5997851d979c92c6af9458a
 
 RUN apt-get update && apt-get install -y \
     curl=7.74.0-1ubuntu2 \
