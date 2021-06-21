@@ -10,7 +10,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 
 | License                         | Count |
 | ------------------------------- | ----- |
-| [0BSD](#0bsd)                   | 4     |
+| [0BSD](#0bsd)                   | 5     |
 | [Apache-2.0](#apache-20)        | 36    |
 | [BSD-2-Clause](#bsd-2-clause)   | 9     |
 | [BSD-3-Clause](#bsd-3-clause)   | 26    |
@@ -20,7 +20,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | [GPL-3.0](#gpl-30)              | 1     |
 | [ISC](#isc)                     | 42    |
 | [MIT AND Zlib](#mit-and-zlib)   | 1     |
-| [MIT](#mit)                     | 595   |
+| [MIT](#mit)                     | 594   |
 | [Public Domain](#public-domain) | 1     |
 | [Python-2.0](#python-20)        | 1     |
 | [UNKNOWN](#unknown)             | 1     |
@@ -35,6 +35,7 @@ BSD Zero Clause License - [http://landley.net/toybox/license.html](http://landle
 | `tslib` | `2.0.3`  | Microsoft Corp. | [https://github.com/Microsoft/tslib](https://github.com/Microsoft/tslib) |
 | `tslib` | `2.1.0`  | Microsoft Corp. | [https://github.com/Microsoft/tslib](https://github.com/Microsoft/tslib) |
 | `tslib` | `2.2.0`  | Microsoft Corp. | [https://github.com/Microsoft/tslib](https://github.com/Microsoft/tslib) |
+| `tslib` | `2.3.0`  | Microsoft Corp. | [https://github.com/Microsoft/tslib](https://github.com/Microsoft/tslib) |
 
 #### Apache-2.0
 
@@ -43,7 +44,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | Name                                  | Version           | Publisher             | Repository                                                                                                                       |
 | ------------------------------------- | ----------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `@atomist/skill-logging`              | `1.0.8-main.8`    | Atomist, Inc.         | [https://github.com/atomist-skills/skill-logging](https://github.com/atomist-skills/skill-logging)                               |
-| `@atomist/skill`                      | `0.11.1-main.156` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
+| `@atomist/skill`                      | `0.11.1-main.158` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
 | `@atomist/slack-messages`             | `1.2.2`           | Atomist               | [https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)                                           |
 | `@google-cloud/common`                | `3.6.0`           | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                       |
 | `@google-cloud/logging`               | `8.2.0`           | Google Inc.           | [https://github.com/googleapis/nodejs-logging](https://github.com/googleapis/nodejs-logging)                                     |
@@ -281,9 +282,9 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `@graphql-codegen/cli`                               | `1.21.5`       | Dotan Simha                    | [https://github.com/dotansimha/graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)                                                                                         |
 | `@graphql-codegen/core`                              | `1.17.10`      | Dotan Simha                    | [https://github.com/dotansimha/graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)                                                                                         |
 | `@graphql-codegen/plugin-helpers`                    | `1.18.7`       |                                | [https://github.com/dotansimha/graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)                                                                                         |
-| `@graphql-codegen/typescript-operations`             | `1.18.0`       |                                | [https://github.com/dotansimha/graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)                                                                                         |
-| `@graphql-codegen/typescript`                        | `1.22.1`       |                                | [https://github.com/dotansimha/graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)                                                                                         |
-| `@graphql-codegen/visitor-plugin-common`             | `1.21.0`       |                                | [https://github.com/dotansimha/graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)                                                                                         |
+| `@graphql-codegen/typescript-operations`             | `1.18.1`       |                                | [https://github.com/dotansimha/graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)                                                                                         |
+| `@graphql-codegen/typescript`                        | `1.22.2`       |                                | [https://github.com/dotansimha/graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)                                                                                         |
+| `@graphql-codegen/visitor-plugin-common`             | `1.21.1`       |                                | [https://github.com/dotansimha/graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)                                                                                         |
 | `@graphql-tools/apollo-engine-loader`                | `6.2.5`        | Dotan Simha                    | [https://github.com/ardatan/graphql-tools](https://github.com/ardatan/graphql-tools)                                                                                                                 |
 | `@graphql-tools/batch-execute`                       | `7.1.2`        |                                | [https://github.com/ardatan/graphql-tools](https://github.com/ardatan/graphql-tools)                                                                                                                 |
 | `@graphql-tools/code-file-loader`                    | `6.3.1`        | Dotan Simha                    | [https://github.com/ardatan/graphql-tools](https://github.com/ardatan/graphql-tools)                                                                                                                 |
@@ -509,7 +510,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `graphql-request`                                    | `3.4.0`        | Prisma Labs Team               | [https://github.com/prisma/graphql-request](https://github.com/prisma/graphql-request)                                                                                                               |
 | `graphql-tag`                                        | `2.12.4`       |                                | [https://github.com/apollographql/graphql-tag](https://github.com/apollographql/graphql-tag)                                                                                                         |
 | `graphql-ws`                                         | `4.9.0`        |                                | [https://github.com/enisdenjo/graphql-ws](https://github.com/enisdenjo/graphql-ws)                                                                                                                   |
-| `graphql`                                            | `15.5.0`       |                                | [https://github.com/graphql/graphql-js](https://github.com/graphql/graphql-js)                                                                                                                       |
+| `graphql`                                            | `15.5.1`       |                                | [https://github.com/graphql/graphql-js](https://github.com/graphql/graphql-js)                                                                                                                       |
 | `gtoken`                                             | `5.3.0`        | Google, LLC                    | [https://github.com/google/node-gtoken](https://github.com/google/node-gtoken)                                                                                                                       |
 | `handlebars`                                         | `4.7.7`        | Yehuda Katz                    | [https://github.com/wycats/handlebars.js](https://github.com/wycats/handlebars.js)                                                                                                                   |
 | `has-ansi`                                           | `2.0.0`        | Sindre Sorhus                  | [https://github.com/sindresorhus/has-ansi](https://github.com/sindresorhus/has-ansi)                                                                                                                 |
@@ -804,7 +805,6 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `wrap-ansi`                                          | `6.2.0`        | Sindre Sorhus                  | [https://github.com/chalk/wrap-ansi](https://github.com/chalk/wrap-ansi)                                                                                                                             |
 | `wrap-ansi`                                          | `7.0.0`        | Sindre Sorhus                  | [https://github.com/chalk/wrap-ansi](https://github.com/chalk/wrap-ansi)                                                                                                                             |
 | `ws`                                                 | `7.4.5`        | Einar Otto Stangvik            | [https://github.com/websockets/ws](https://github.com/websockets/ws)                                                                                                                                 |
-| `ws`                                                 | `7.5.0`        | Einar Otto Stangvik            | [https://github.com/websockets/ws](https://github.com/websockets/ws)                                                                                                                                 |
 | `xdg-basedir`                                        | `4.0.0`        | Sindre Sorhus                  | [https://github.com/sindresorhus/xdg-basedir](https://github.com/sindresorhus/xdg-basedir)                                                                                                           |
 | `yargs`                                              | `15.4.1`       |                                | [https://github.com/yargs/yargs](https://github.com/yargs/yargs)                                                                                                                                     |
 | `yargs`                                              | `16.2.0`       |                                | [https://github.com/yargs/yargs](https://github.com/yargs/yargs)                                                                                                                                     |
