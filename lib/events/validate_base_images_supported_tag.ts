@@ -182,7 +182,9 @@ ${highlightTag(
 						),
 						body: `No [Official Images](https://docs.docker.com/docker-hub/official_images/) used in any of the Dockerfiles
 
-${linesByFile.map(f => `${linkFile(f.path, commit)}`).join("\n\n---\n\n")}`,
+${linesByFile
+	.map(f => `#### Path: ${linkFile(f.path, commit)}`)
+	.join("\n\n---\n\n")}`,
 					};
 				} else if (!linesByFile.some(l => l.unsupported)) {
 					return {
@@ -199,7 +201,7 @@ ${linesByFile.map(f => `${linkFile(f.path, commit)}`).join("\n\n---\n\n")}`,
 
 ${linesByFile
 	.map(
-		f => `${linkFile(f.path, commit)}
+		f => `#### Path: ${linkFile(f.path, commit)}
 
 ${f.supported}`,
 	)
@@ -211,7 +213,7 @@ ${f.supported}`,
 ${linesByFile
 	.filter(l => l.unsupported)
 	.map(
-		f => `${linkFile(f.path, commit)}
+		f => `#### Path: ${linkFile(f.path, commit)}
 
 ${f.unsupported}`,
 	)
@@ -226,7 +228,7 @@ The following [Official Images](https://docs.docker.com/docker-hub/official_imag
 ${linesByFile
 	.filter(l => l.supported)
 	.map(
-		f => `${linkFile(f.path, commit)}
+		f => `#### Path: ${linkFile(f.path, commit)}
 
 ${f.supported}`,
 	)

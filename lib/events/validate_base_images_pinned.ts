@@ -135,7 +135,7 @@ export const handler: MappingEventHandler<
 
 ${linesByFile
 	.map(
-		f => `${linkFile(f.path, commit)}
+		f => `#### Path: ${linkFile(f.path, commit)}
 
 ${f.pinned}`,
 	)
@@ -147,7 +147,7 @@ ${f.pinned}`,
 ${linesByFile
 	.filter(l => l.unpinned)
 	.map(
-		f => `${linkFile(f.path, commit)}
+		f => `#### Path: ${linkFile(f.path, commit)}
 
 ${f.unpinned}`,
 	)
@@ -162,7 +162,7 @@ The following Docker base images are pinned:
 ${linesByFile
 	.filter(l => l.pinned)
 	.map(
-		f => `${linkFile(f.path, commit)}
+		f => `#### Path: ${linkFile(f.path, commit)}
 
 ${f.pinned}`,
 	)
