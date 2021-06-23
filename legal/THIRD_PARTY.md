@@ -20,7 +20,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | [GPL-3.0](#gpl-30)              | 1     |
 | [ISC](#isc)                     | 42    |
 | [MIT AND Zlib](#mit-and-zlib)   | 1     |
-| [MIT](#mit)                     | 595   |
+| [MIT](#mit)                     | 594   |
 | [Public Domain](#public-domain) | 1     |
 | [Python-2.0](#python-20)        | 1     |
 | [UNKNOWN](#unknown)             | 1     |
@@ -44,7 +44,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | Name                                  | Version           | Publisher             | Repository                                                                                                                       |
 | ------------------------------------- | ----------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `@atomist/skill-logging`              | `1.0.8-main.8`    | Atomist, Inc.         | [https://github.com/atomist-skills/skill-logging](https://github.com/atomist-skills/skill-logging)                               |
-| `@atomist/skill`                      | `0.11.1-main.162` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
+| `@atomist/skill`                      | `0.11.1-main.164` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
 | `@atomist/slack-messages`             | `1.2.2`           | Atomist               | [https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)                                           |
 | `@google-cloud/common`                | `3.6.0`           | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                       |
 | `@google-cloud/logging`               | `8.2.0`           | Google Inc.           | [https://github.com/googleapis/nodejs-logging](https://github.com/googleapis/nodejs-logging)                                     |
@@ -52,14 +52,14 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | `@google-cloud/precise-date`          | `2.0.3`           | Google Inc.           | [https://github.com/googleapis/nodejs-precise-date](https://github.com/googleapis/nodejs-precise-date)                           |
 | `@google-cloud/projectify`            | `2.1.0`           | Google Inc.           | [https://github.com/googleapis/nodejs-projectify](https://github.com/googleapis/nodejs-projectify)                               |
 | `@google-cloud/promisify`             | `2.0.3`           | Google Inc.           | [https://github.com/googleapis/nodejs-promisify](https://github.com/googleapis/nodejs-promisify)                                 |
-| `@google-cloud/pubsub`                | `2.14.0`          | Google Inc.           | [https://github.com/googleapis/nodejs-pubsub](https://github.com/googleapis/nodejs-pubsub)                                       |
+| `@google-cloud/pubsub`                | `2.15.1`          | Google Inc.           | [https://github.com/googleapis/nodejs-pubsub](https://github.com/googleapis/nodejs-pubsub)                                       |
 | `@google-cloud/storage`               | `5.8.5`           | Google Inc.           | [https://github.com/googleapis/nodejs-storage](https://github.com/googleapis/nodejs-storage)                                     |
 | `@grpc/grpc-js`                       | `1.3.3`           | Google Inc.           | [https://github.com/grpc/grpc-node/tree/master/packages/grpc-js](https://github.com/grpc/grpc-node/tree/master/packages/grpc-js) |
 | `@grpc/proto-loader`                  | `0.6.2`           | Google Inc.           | [https://github.com/grpc/grpc-node](https://github.com/grpc/grpc-node)                                                           |
 | `@opencensus/core`                    | `0.0.22`          | Google Inc.           | [https://github.com/census-instrumentation/opencensus-node](https://github.com/census-instrumentation/opencensus-node)           |
 | `@opencensus/propagation-stackdriver` | `0.0.22`          | OpenCensus Authors    | [https://github.com/census-instrumentation/opencensus-node](https://github.com/census-instrumentation/opencensus-node)           |
-| `@opentelemetry/api`                  | `0.20.0`          | OpenTelemetry Authors | [https://github.com/open-telemetry/opentelemetry-js-api](https://github.com/open-telemetry/opentelemetry-js-api)                 |
-| `@opentelemetry/semantic-conventions` | `0.20.0`          | OpenTelemetry Authors | [https://github.com/open-telemetry/opentelemetry-js](https://github.com/open-telemetry/opentelemetry-js)                         |
+| `@opentelemetry/api`                  | `1.0.0`           | OpenTelemetry Authors | [https://github.com/open-telemetry/opentelemetry-js-api](https://github.com/open-telemetry/opentelemetry-js-api)                 |
+| `@opentelemetry/semantic-conventions` | `0.22.0`          | OpenTelemetry Authors | [https://github.com/open-telemetry/opentelemetry-js](https://github.com/open-telemetry/opentelemetry-js)                         |
 | `before-after-hook`                   | `2.2.2`           | Gregor Martynus       | [https://github.com/gr2m/before-after-hook](https://github.com/gr2m/before-after-hook)                                           |
 | `bser`                                | `2.1.1`           | Wez Furlong           | [https://github.com/facebook/watchman](https://github.com/facebook/watchman)                                                     |
 | `ecdsa-sig-formatter`                 | `1.0.11`          | D2L Corporation       | [https://github.com/Brightspace/node-ecdsa-sig-formatter](https://github.com/Brightspace/node-ecdsa-sig-formatter)               |
@@ -70,7 +70,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | `gcp-metadata`                        | `4.3.0`           | Stephen Sawchuk       | [https://github.com/googleapis/gcp-metadata](https://github.com/googleapis/gcp-metadata)                                         |
 | `google-auth-library`                 | `6.1.6`           | Google Inc.           | [https://github.com/googleapis/google-auth-library-nodejs](https://github.com/googleapis/google-auth-library-nodejs)             |
 | `google-auth-library`                 | `7.1.2`           | Google Inc.           | [https://github.com/googleapis/google-auth-library-nodejs](https://github.com/googleapis/google-auth-library-nodejs)             |
-| `google-gax`                          | `2.15.1`          | Google API Authors    | [https://github.com/googleapis/gax-nodejs](https://github.com/googleapis/gax-nodejs)                                             |
+| `google-gax`                          | `2.16.0`          | Google API Authors    | [https://github.com/googleapis/gax-nodejs](https://github.com/googleapis/gax-nodejs)                                             |
 | `hex2dec`                             | `1.1.2`           |                       | [https://github.com/donmccurdy/hex2dec](https://github.com/donmccurdy/hex2dec)                                                   |
 | `json-to-pretty-yaml`                 | `1.2.2`           |                       | [https://github.com/alexcrist/json-to-pretty-yaml](https://github.com/alexcrist/json-to-pretty-yaml)                             |
 | `long`                                | `4.0.0`           | Daniel Wirtz          | [https://github.com/dcodeIO/long.js](https://github.com/dcodeIO/long.js)                                                         |
@@ -175,7 +175,7 @@ ISC License - [https://www.isc.org/downloads/software-support-policy/isc-license
 | `cliui`                     | `6.0.0`   | Ben Coe            | [https://github.com/yargs/cliui](https://github.com/yargs/cliui)                                             |
 | `cliui`                     | `7.0.4`   | Ben Coe            | [https://github.com/yargs/cliui](https://github.com/yargs/cliui)                                             |
 | `deprecation`               | `2.3.1`   |                    | [https://github.com/gr2m/deprecation](https://github.com/gr2m/deprecation)                                   |
-| `electron-to-chromium`      | `1.3.754` | Kilian Valkhof     | [https://github.com/kilian/electron-to-chromium](https://github.com/kilian/electron-to-chromium)             |
+| `electron-to-chromium`      | `1.3.755` | Kilian Valkhof     | [https://github.com/kilian/electron-to-chromium](https://github.com/kilian/electron-to-chromium)             |
 | `fastq`                     | `1.11.0`  | Matteo Collina     | [https://github.com/mcollina/fastq](https://github.com/mcollina/fastq)                                       |
 | `fs.realpath`               | `1.0.0`   | Isaac Z. Schlueter | [https://github.com/isaacs/fs.realpath](https://github.com/isaacs/fs.realpath)                               |
 | `get-caller-file`           | `2.0.5`   | Stefan Penner      | [https://github.com/stefanpenner/get-caller-file](https://github.com/stefanpenner/get-caller-file)           |
@@ -805,7 +805,6 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `wrap-ansi`                                          | `6.2.0`        | Sindre Sorhus                  | [https://github.com/chalk/wrap-ansi](https://github.com/chalk/wrap-ansi)                                                                                                                             |
 | `wrap-ansi`                                          | `7.0.0`        | Sindre Sorhus                  | [https://github.com/chalk/wrap-ansi](https://github.com/chalk/wrap-ansi)                                                                                                                             |
 | `ws`                                                 | `7.4.5`        | Einar Otto Stangvik            | [https://github.com/websockets/ws](https://github.com/websockets/ws)                                                                                                                                 |
-| `ws`                                                 | `7.5.0`        | Einar Otto Stangvik            | [https://github.com/websockets/ws](https://github.com/websockets/ws)                                                                                                                                 |
 | `xdg-basedir`                                        | `4.0.0`        | Sindre Sorhus                  | [https://github.com/sindresorhus/xdg-basedir](https://github.com/sindresorhus/xdg-basedir)                                                                                                           |
 | `yargs`                                              | `15.4.1`       |                                | [https://github.com/yargs/yargs](https://github.com/yargs/yargs)                                                                                                                                     |
 | `yargs`                                              | `16.2.0`       |                                | [https://github.com/yargs/yargs](https://github.com/yargs/yargs)                                                                                                                                     |
