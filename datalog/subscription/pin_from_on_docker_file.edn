@@ -92,23 +92,23 @@
     :docker.registry/secret
     :docker.registry/username
     :docker.registry/server-url])
- :in $ $before-db %
+ :in $ $before-db % ?ctx
  :where
  (or-join [?from-line ?digest]
    (and
-     (tx-entity-attr-value :docker.file.from/image ?from-line ?base-image)
+     (attributes-tx ?ctx :docker.file.from/image ?from-line ?base-image)
      [?base-image :docker.image/digest ?digest])
    (and
-     (tx-entity-attr-value :docker.file.from/manifest-list ?from-line ?manifest-list)
+     (attributes-tx ?ctx :docker.file.from/manifest-list ?from-line ?manifest-list)
      [?manifest-list :docker.manifest-list/digest ?digest]))
 
  ;; check pinning pull requests are enabled
- (get-config-value "pinningPullRequests" true true)
+ (get-skill-config-value ?ctx "pinningPullRequests" true true)
  ;; check that repositories have been selected
- (config-value "repoFilter" _)
+ (skill-config-value ?ctx "repoFilter" _)
 
  (or-join [?docker-registry]
-   (capability-configuration
+   (skill-capability-configuration ?ctx
      "atomist"
      "DockerRegistry"
      "analysis"
@@ -129,7 +129,7 @@
  (is-default-branch? ?ref)
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
- (repo-selected? ?repo)
+ (skill-repo-selected? ?ctx ?repo)
 
  ;; check that all from lines have images or manifest-list
  [(q (quote [:find (count ?other-from-line)

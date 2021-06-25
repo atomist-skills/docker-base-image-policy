@@ -50,15 +50,15 @@
                                                                                                                                  (:docker.repository/repository
                                                                                                                                    :as
                                                                                                                                    :name)]}]}]}])
- :in $ $before-db %
+ :in $ $before-db % ?ctx
  :with ?parameter
  :where
  (or-join [?parameter]
-   (tx-config-value "repoFilter" ?parameter)
-   (tx-config-value "pinningRequired" ?parameter))
+   (config-value-tx ?ctx "repoFilter" ?parameter)
+   (config-value-tx ?ctx "pinningRequired" ?parameter))
 
  ;; check pinning is required
- (get-config-value "pinningRequired" true true)
+ (get-skill-config-value ?ctx "pinningRequired" true true)
 
  ;; head commits
  [?ref :git.ref/commit ?commit]
@@ -66,7 +66,7 @@
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
- (repo-selected? ?repo)
+ (skill-repo-selected? ?ctx ?repo)
 
  ;; check policy hasn't already run
  (or-join [?commit]

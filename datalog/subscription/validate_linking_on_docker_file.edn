@@ -23,19 +23,19 @@
                                                :git.file/path]}
     {(:docker.file/_commit :as :docker.file/docker-files) [:db/id
                                                            :docker.file/path]}])
- :in $ $before-db %
+ :in $ $before-db % ?ctx
  :where
- (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
+ (attributes-tx ?ctx :docker.file/commit ?docker-file ?commit)
 
  ;; check linking is required
- (get-config-value "linkingRequired" false true)
+ (get-skill-config-value ?ctx "linkingRequired" false true)
  ;; check that repositories have been selected
- (config-value "repoFilter" _)
+ (skill-config-value ?ctx "repoFilter" _)
 
  [?commit :git.commit/sha ?sha]
  [(tuple ?sha "docker-image-base-policy/linked") ?tuple]
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
- (repo-selected? ?repo)
+ (skill-repo-selected? ?ctx ?repo)
  ]

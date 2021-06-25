@@ -50,14 +50,14 @@
                                                                                                                                  (:docker.repository/repository
                                                                                                                                    :as
                                                                                                                                    :name)]}]}]}])
- :in $ $before-db %
+ :in $ $before-db % ?ctx
  :where
- (tx-entity-attr-value :docker.file/commit ?docker-file ?commit)
+ (attributes-tx ?ctx :docker.file/commit ?docker-file ?commit)
 
  ;; check pinning is required
- (get-config-value "pinningRequired" true true)
+ (get-skill-config-value ?ctx "pinningRequired" true true)
  ;; check that repositories have been selected
- (config-value "repoFilter" _)
+ (skill-config-value ?ctx "repoFilter" _)
 
  ;; resolve all images and manifest-list currently used in FROM lines
  [?other-docker-file :docker.file/commit ?commit]
@@ -77,4 +77,4 @@
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
- (repo-selected? ?repo)]
+ (skill-repo-selected? ?ctx ?repo)]

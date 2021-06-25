@@ -92,18 +92,18 @@
     :docker.registry/secret
     :docker.registry/username
     :docker.registry/server-url])
- :in $ $before-db %
+ :in $ $before-db % ?ctx
  :with ?parameter
  :where
  (or-join [?parameter]
-   (tx-config-value "repoFilter" ?parameter)
-   (tx-config-value "pinningPullRequests" ?parameter))
+   (config-value-tx ?ctx "repoFilter" ?parameter)
+   (config-value-tx ?ctx "pinningPullRequests" ?parameter))
 
  ;; check pinning pull requests are enabled
- (get-config-value "pinningPullRequests" true true)
+ (get-skill-config-value ?ctx "pinningPullRequests" true true)
 
  (or-join [?docker-registry]
-   (capability-configuration
+   (skill-capability-configuration ?ctx
      "atomist"
      "DockerRegistry"
      "analysis"
@@ -116,7 +116,7 @@
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
- (repo-selected? ?repo)
+ (skill-repo-selected? ?ctx ?repo)
 
  ;; get docker.file and git.commit
  [?docker-file :docker.file/commit ?commit]

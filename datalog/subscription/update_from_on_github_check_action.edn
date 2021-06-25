@@ -29,12 +29,9 @@
     {:base.image.from.update/edits [:base.image.from.update.edit/path
                                     :base.image.from.update.edit/to
                                     :base.image.from.update.edit/from]}])
- :in
- $
- $before
- %
+ :in $ $before % ?ctx
  :where
- (tx-entity-attr-value :github.checkrun/action ?check-run _)
+ (attributes-tx ?ctx :github.checkrun/action ?check-run _)
  [?check-run
   :github.checkrun/action
   :github.checkrun.action/requested_action]
@@ -48,5 +45,5 @@
 
  ;; check repo filter
  [?commit :git.commit/repo ?repo]
- (repo-selected? ?repo)
+ (skill-repo-selected? ?ctx ?repo)
  ]

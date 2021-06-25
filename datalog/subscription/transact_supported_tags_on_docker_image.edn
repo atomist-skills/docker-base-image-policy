@@ -4,9 +4,9 @@
    [:schema/entity-type
     :docker.repository/host
     (:docker.repository/repository :as :docker.repository/name)])
- :in $ $before-db %
+ :in $ $before-db % ?ctx
  :where
- (tx-entity-attr-value :docker.image/digest ?image _)
+ (attributes-tx ?ctx :docker.image/digest ?image _)
  [?image :docker.image/repository ?repository]
  [?repository :docker.repository/host "hub.docker.com"]
  [?repository :docker.repository/repository ?name]

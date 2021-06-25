@@ -4,9 +4,9 @@
    [:schema/entity-type
     :docker.repository/host
     (:docker.repository/repository :as :docker.repository/name)])
- :in $ $before-db %
+ :in $ $before-db % ?ctx
  :where
- (tx-schedule "transactSupportedTagsSchedule" _)
+ (schedule-tx ?ctx "transactSupportedTagsSchedule" _)
  [?repository :docker.repository/host "hub.docker.com"]
  [?repository :docker.repository/repository ?name]
  (not (string-match ?name "\\/" _))
