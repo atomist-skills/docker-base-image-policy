@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.41...HEAD)
 
+### Fixed
+
+*   Bind ?ctx. [055e245](https://github.com/atomist-skills/docker-base-image-policy/commit/055e2459a6407201b4ee5e08468d2efe1366f154)
+
 ## [0.1.41](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.40...0.1.41) - 2021-06-25
 
 ### Fixed
