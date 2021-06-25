@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 *   Polish file header. [4d364e8](https://github.com/atomist-skills/docker-base-image-policy/commit/4d364e88b65e54b1a5f2c9c7d5c364511f7cfa8e)
+*   Switch to safe datomic rules. [83dd707](https://github.com/atomist-skills/docker-base-image-policy/commit/83dd707fed7bfb2a9919f325dc14cd1b6444a1c0)
 
 ### Fixed
 
