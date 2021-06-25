@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.40...HEAD)
 
+### Fixed
+
+*   Fix argument order for attributes-tx. [4169e02](https://github.com/atomist-skills/docker-base-image-policy/commit/4169e020cd0cdf186c86a4d7b5fd5defc57b6f24)
+
 ## [0.1.40](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.39...0.1.40) - 2021-06-25
 
 ### Changed
