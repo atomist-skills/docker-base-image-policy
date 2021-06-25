@@ -6,7 +6,7 @@
     (:docker.repository/repository :as :docker.repository/name)])
  :in $ $before-db % ?ctx
  :where
- (attributes-tx ?ctx :docker.image/digest ?image _)
+ (attributes-tx ?ctx ?image :docker.image/digest _)
  [?image :docker.image/repository ?repository]
  [?repository :docker.repository/host "hub.docker.com"]
  [?repository :docker.repository/repository ?name]

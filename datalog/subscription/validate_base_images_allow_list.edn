@@ -36,7 +36,7 @@
                                                                                                                                    :name)]}]}]}])
  :in $ $before-db % ?ctx
  :where
- (attributes-tx ?ctx :docker.file/commit ?docker-file ?commit)
+ (attributes-tx ?ctx ?docker-file :docker.file/commit ?commit)
 
  ;; check if allowlist is enabled
  (get-skill-config-value ?ctx "acceptRequired" false true)

@@ -96,10 +96,10 @@
  :where
  (or-join [?from-line ?digest]
    (and
-     (attributes-tx ?ctx :docker.file.from/image ?from-line ?base-image)
+     (attributes-tx ?ctx ?from-line :docker.file.from/image ?base-image)
      [?base-image :docker.image/digest ?digest])
    (and
-     (attributes-tx ?ctx :docker.file.from/manifest-list ?from-line ?manifest-list)
+     (attributes-tx ?ctx ?from-line :docker.file.from/manifest-list ?manifest-list)
      [?manifest-list :docker.manifest-list/digest ?digest]))
 
  ;; check pinning pull requests are enabled

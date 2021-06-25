@@ -31,7 +31,7 @@
                                     :base.image.from.update.edit/from]}])
  :in $ $before % ?ctx
  :where
- (attributes-tx ?ctx :github.checkrun/action ?check-run _)
+ (attributes-tx ?ctx ?check-run :github.checkrun/action _)
  [?check-run
   :github.checkrun/action
   :github.checkrun.action/requested_action]

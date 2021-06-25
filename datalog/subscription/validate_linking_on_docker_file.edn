@@ -25,7 +25,7 @@
                                                            :docker.file/path]}])
  :in $ $before-db % ?ctx
  :where
- (attributes-tx ?ctx :docker.file/commit ?docker-file ?commit)
+ (attributes-tx ?ctx ?docker-file :docker.file/commit ?commit)
 
  ;; check linking is required
  (get-skill-config-value ?ctx "linkingRequired" false true)

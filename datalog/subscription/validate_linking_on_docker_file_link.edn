@@ -26,7 +26,7 @@
                                                            :docker.file/path]}])
  :in $ $before-db % ?ctx
  :where
- (attributes-tx ?ctx :docker.image/docker-file ?image _)
+ (attributes-tx ?ctx ?image :docker.image/docker-file _)
 
  ;; check linking is required
  (get-skill-config-value ?ctx "linkingRequired" false true)

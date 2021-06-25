@@ -52,7 +52,7 @@
                                                                                                                                    :name)]}]}]}])
  :in $ $before-db % ?ctx
  :where
- (attributes-tx ?ctx :docker.file/commit ?docker-file ?commit)
+ (attributes-tx ?ctx ?docker-file :docker.file/commit ?commit)
 
  ;; check pinning is required
  (get-skill-config-value ?ctx "pinningRequired" true true)
