@@ -107,7 +107,7 @@
  ;; check that repositories have been selected
  (skill-config-value ?ctx "repoFilter" _)
 
- (or-join [?docker-registry]
+ (or-join [?docker-registry ?ctx]
    (skill-capability-configuration ?ctx
      "atomist"
      "DockerRegistry"

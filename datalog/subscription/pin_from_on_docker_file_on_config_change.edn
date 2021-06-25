@@ -102,7 +102,7 @@
  ;; check pinning pull requests are enabled
  (get-skill-config-value ?ctx "pinningPullRequests" true true)
 
- (or-join [?docker-registry]
+ (or-join [?docker-registry ?ctx]
    (skill-capability-configuration ?ctx
      "atomist"
      "DockerRegistry"
