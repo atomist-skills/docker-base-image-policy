@@ -57,7 +57,7 @@
                                                                                         :name)]}]}])
  :in $ $before-db % ?ctx
  :where
- (or-join [?from-line ?digest]
+ (or-join [?from-line ?digest ?ctx]
    (and
      (attributes-tx ?ctx ?from-line :docker.file.from/image ?base-image)
      [?base-image :docker.image/digest ?digest])
