@@ -139,15 +139,6 @@ export const Skill = skill<
 			visibility: ParameterVisibility.Hidden,
 		},
 		repoFilter: parameter.repoFilter({ required: false }),
-		transactSupportedTagsSchedule: {
-			type: ParameterType.Schedule,
-			displayName: "Transact supported tags",
-			description:
-				"Transact supported tags from all Official Docker images",
-			required: false,
-			defaultValue: "0 3 * * *",
-			visibility: ParameterVisibility.Advanced,
-		},
 	},
 
 	capabilities: {
