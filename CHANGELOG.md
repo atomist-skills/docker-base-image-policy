@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.43...HEAD)
 
+### Removed
+
+*   Remove unused checkrun action subscription. [a83e8ed](https://github.com/atomist-skills/docker-base-image-policy/commit/a83e8eda661717250cae48249b94c423230f10de)
+
 ## [0.1.43](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.42...0.1.43) - 2021-06-25
 
 ### Fixed
