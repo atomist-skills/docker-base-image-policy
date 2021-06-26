@@ -26,9 +26,7 @@ import {
 
 import { Configuration } from "./lib/configuration";
 
-export const Skill = skill<
-	Configuration & { repoFilter: any; transactSupportedTagsSchedule: any }
->({
+export const Skill = skill<Configuration & { repoFilter: any }>({
 	displayName: "Docker Base Image Policy",
 	description:
 		"Set a policy to receive a pull request whenever a new base image is available",
