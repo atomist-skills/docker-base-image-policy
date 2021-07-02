@@ -66,7 +66,9 @@ export async function pinAptPackagesToLatest(
 			}
 
 			const runInstruction = instructions[ii];
-			const parts = (runInstruction.args as string).split("&&");
+			const parts = (runInstruction.args as string)
+				.split("&&")
+				.filter(i => !(i.includes("apt-get") && i.includes("update")));
 			let changed = false;
 			for (let i = 0; i < parts.length; i++) {
 				const part = parts[i];
@@ -113,7 +115,6 @@ export async function pinAptPackagesToLatest(
 					lines[ix] = "# <delete>";
 				}
 				lines[runInstruction.startLineNo - 1] = `RUN ${parts
-					.slice(1)
 					.map(p => p.trim())
 					.join(" \\\n && ")}`;
 			}
