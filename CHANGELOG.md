@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.44...HEAD)
 
+### Fixed
+
+*   Fix duplicate apt-get update in pinning PR. [36a312b](https://github.com/atomist-skills/docker-base-image-policy/commit/36a312b4401e4ae97e0d9e0c71e066c2bf9ae4aa)
+
 ## [0.1.44](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.43...0.1.44) - 2021-06-26
 
 ### Removed
