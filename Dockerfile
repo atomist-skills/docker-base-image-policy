@@ -10,7 +10,7 @@ RUN npm ci --no-optional --also=dev \
  && rm -rf node_modules .git
 
 # Set up runtime container
-FROM atomist/skill:node14@sha256:5f09d637edb69bfb46101d4d34208fc1a7a2d427c7dd752fbc17705ccd3f05c3
+FROM atomist/skill:node14@sha256:aa725e4ab84660a1a4ca100aadc9afcae577804561fc440e34ace9030b4f3971
 
 RUN apt-get update && apt-get install -y \
     curl=7.74.0-1ubuntu2 \
