@@ -51,7 +51,7 @@
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\""
   },
   "dependencies": {
-    "@atomist/skill": "^0.11.1-main.196",
+    "@atomist/skill": "^0.11.1-main.198",
     "apt-client": "^3.0.2",
     "docker-file-parser": "^1.0.5",
     "fs-extra": "^9.1.0"
@@ -61,7 +61,7 @@
     "@google-cloud/functions-framework": "^1.9.0",
     "@types/fs-extra": "^9.0.12",
     "@types/mocha": "^8.2.3",
-    "@types/power-assert": "^1.5.3",
+    "@types/power-assert": "^1.5.4",
     "@types/semver": "^7.3.7",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
