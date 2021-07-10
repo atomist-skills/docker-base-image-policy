@@ -1,4 +1,5 @@
 [:find
+ (atomist/serialize-on ?tuple)
  (pull
    ?image
    [:db/id
@@ -173,4 +174,8 @@
    (and
      [(missing? $ ?other-from-line :docker.file.from/digest)]
      [(ground "scratch") ?image])
-   )]
+   )
+ 
+ [?commit :git.commit/sha ?sha]
+ [?docker-file :docker.file/path ?path]
+ [(tuple ?sha ?path) ?tuple]]

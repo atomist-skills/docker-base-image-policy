@@ -1,4 +1,5 @@
 [:find
+ (atomist/serialize-on ?tuple)
  (pull
    ?commit
    [:schema/entity-type
@@ -107,4 +108,8 @@
     $ ?docker-file)
   [[?from-count]]]
 
- [(= ?total-from-count ?from-count)]]
+ [(= ?total-from-count ?from-count)]
+
+ [?commit :git.commit/sha ?sha]
+ [?docker-file :docker.file/path ?path]
+ [(tuple ?sha ?path) ?tuple]]
