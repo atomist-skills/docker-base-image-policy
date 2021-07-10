@@ -11,7 +11,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | License                         | Count |
 | ------------------------------- | ----- |
 | [0BSD](#0bsd)                   | 5     |
-| [Apache-2.0](#apache-20)        | 39    |
+| [Apache-2.0](#apache-20)        | 40    |
 | [BSD-2-Clause](#bsd-2-clause)   | 10    |
 | [BSD-3-Clause](#bsd-3-clause)   | 27    |
 | [CC-BY-3.0](#cc-by-30)          | 1     |
@@ -45,7 +45,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | Name                                  | Version           | Publisher             | Repository                                                                                                                             |
 | ------------------------------------- | ----------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `@atomist/skill-logging`              | `1.0.8-main.15`   | Atomist, Inc.         | [https://github.com/atomist-skills/skill-logging](https://github.com/atomist-skills/skill-logging)                                     |
-| `@atomist/skill`                      | `0.11.1-main.218` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                                     |
+| `@atomist/skill`                      | `0.11.1-main.219` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                                     |
 | `@atomist/slack-messages`             | `1.2.2`           | Atomist               | [https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)                                                 |
 | `@google-cloud/common`                | `3.6.0`           | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                             |
 | `@google-cloud/functions-framework`   | `1.9.0`           | Google Inc.           | [https://github.com/GoogleCloudPlatform/functions-framework-nodejs](https://github.com/GoogleCloudPlatform/functions-framework-nodejs) |
@@ -81,6 +81,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | `rxjs`                                | `6.6.7`           | Ben Lesh              | [https://github.com/reactivex/rxjs](https://github.com/reactivex/rxjs)                                                                 |
 | `spdx-correct`                        | `3.1.1`           | Kyle E. Mitchell      | [https://github.com/jslicense/spdx-correct.js](https://github.com/jslicense/spdx-correct.js)                                           |
 | `teeny-request`                       | `7.1.1`           | fhinkel               | [https://github.com/googleapis/teeny-request](https://github.com/googleapis/teeny-request)                                             |
+| `typescript`                          | `4.3.5`           | Microsoft Corp.       | [https://github.com/Microsoft/TypeScript](https://github.com/Microsoft/TypeScript)                                                     |
 | `validate-npm-package-license`        | `3.0.4`           | Kyle E. Mitchell      | [https://github.com/kemitchell/validate-npm-package-license.js](https://github.com/kemitchell/validate-npm-package-license.js)         |
 | `yaml-ast-parser`                     | `0.0.43`          |                       | [https://github.com/mulesoft-labs/yaml-ast-parser](https://github.com/mulesoft-labs/yaml-ast-parser)                                   |
 
