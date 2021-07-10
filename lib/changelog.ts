@@ -19,11 +19,11 @@ import {
 	childProcess,
 	EventContext,
 	github,
-	guid,
 	log,
 	project,
 	subscription,
 	template,
+	tmpFs,
 	toArray,
 } from "@atomist/skill";
 import * as fs from "fs-extra";
@@ -183,48 +183,64 @@ async function _changelog(
 
 	await prepareCredentials(registries, repository);
 
-	const outputFile = path.join(os.tmpdir(), guid());
-	const currentHistoryOutputFile = path.join(os.tmpdir(), guid());
-	const proposedHistoryOutputFile = path.join(os.tmpdir(), guid());
-	let result = await childProcess.spawnPromise("container-diff", [
-		"diff",
-		`${imageName}@${currentDigest}`,
-		`${imageName}@${proposedDigest}`,
-		"--type=apt",
-		"--type=node",
-		"--type=file",
-		"--type=size",
-		"--type=pip",
-		"--type=rpm",
-		"--json",
-		"--quiet",
-		`--output=${outputFile}`,
-	]);
+	const env = {
+		...process.env,
+		CONTAINER_DIFF_CACHEDIR: await tmpFs.createDir(ctx),
+	};
+	const outputFile = await tmpFs.createFilePath(ctx);
+	const currentHistoryOutputFile = await tmpFs.createFilePath(ctx);
+	const proposedHistoryOutputFile = await tmpFs.createFilePath(ctx);
+	let result = await childProcess.spawnPromise(
+		"container-diff",
+		[
+			"diff",
+			`${imageName}@${currentDigest}`,
+			`${imageName}@${proposedDigest}`,
+			"--type=apt",
+			"--type=node",
+			"--type=file",
+			"--type=size",
+			"--type=pip",
+			"--type=rpm",
+			"--json",
+			"--quiet",
+			`--output=${outputFile}`,
+		],
+		{ env },
+	);
 	// await removeCredentials();
 	if (result.status !== 0) {
 		log.warn(`Failed to diff container images`);
 		return undefined;
 	}
-	result = await childProcess.spawnPromise("container-diff", [
-		"analyze",
-		`${imageName}@${currentDigest}`,
-		"--type=history",
-		"--json",
-		"--quiet",
-		`--output=${currentHistoryOutputFile}`,
-	]);
+	result = await childProcess.spawnPromise(
+		"container-diff",
+		[
+			"analyze",
+			`${imageName}@${currentDigest}`,
+			"--type=history",
+			"--json",
+			"--quiet",
+			`--output=${currentHistoryOutputFile}`,
+		],
+		{ env },
+	);
 	if (result.status !== 0) {
 		log.warn(`Failed to analyze container image`);
 		return undefined;
 	}
-	result = await childProcess.spawnPromise("container-diff", [
-		"analyze",
-		`${imageName}@${proposedDigest}`,
-		"--type=history",
-		"--json",
-		"--quiet",
-		`--output=${proposedHistoryOutputFile}`,
-	]);
+	result = await childProcess.spawnPromise(
+		"container-diff",
+		[
+			"analyze",
+			`${imageName}@${proposedDigest}`,
+			"--type=history",
+			"--json",
+			"--quiet",
+			`--output=${proposedHistoryOutputFile}`,
+		],
+		{ env },
+	);
 	if (result.status !== 0) {
 		log.warn(`Failed to analyze container image`);
 		return undefined;
