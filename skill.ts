@@ -44,7 +44,7 @@ export const Skill = skill<Configuration & { repoFilter: any }>({
 			resources: {
 				limit: {
 					cpu: 2,
-					memory: 4000,
+					memory: 8000,
 				},
 			},
 		},
