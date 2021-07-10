@@ -31,7 +31,5 @@ RUN npm ci --no-optional \
 
 COPY --from=build /usr/src/ .
 
-WORKDIR "/atm/home"
-
 ENTRYPOINT ["node", "--no-deprecation", "--no-warnings", "--expose_gc", "--optimize_for_size", "--always_compact", "--max_old_space_size=512", "/skill/node_modules/.bin/atm-skill"]
 CMD ["run"]
