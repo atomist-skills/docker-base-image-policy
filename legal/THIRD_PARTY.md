@@ -21,7 +21,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | [GPL-3.0](#gpl-30)              | 1     |
 | [ISC](#isc)                     | 45    |
 | [MIT AND Zlib](#mit-and-zlib)   | 1     |
-| [MIT](#mit)                     | 650   |
+| [MIT](#mit)                     | 649   |
 | [Public Domain](#public-domain) | 1     |
 | [Python-2.0](#python-20)        | 1     |
 | [UNKNOWN](#unknown)             | 1     |
@@ -45,7 +45,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | Name                                  | Version           | Publisher             | Repository                                                                                                                             |
 | ------------------------------------- | ----------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `@atomist/skill-logging`              | `1.0.8-main.15`   | Atomist, Inc.         | [https://github.com/atomist-skills/skill-logging](https://github.com/atomist-skills/skill-logging)                                     |
-| `@atomist/skill`                      | `0.11.1-main.215` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                                     |
+| `@atomist/skill`                      | `0.11.1-main.218` | Atomist, Inc.         | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                                     |
 | `@atomist/slack-messages`             | `1.2.2`           | Atomist               | [https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)                                                 |
 | `@google-cloud/common`                | `3.6.0`           | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                             |
 | `@google-cloud/functions-framework`   | `1.9.0`           | Google Inc.           | [https://github.com/GoogleCloudPlatform/functions-framework-nodejs](https://github.com/GoogleCloudPlatform/functions-framework-nodejs) |
@@ -72,7 +72,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | `gcp-metadata`                        | `4.3.0`           | Stephen Sawchuk       | [https://github.com/googleapis/gcp-metadata](https://github.com/googleapis/gcp-metadata)                                               |
 | `google-auth-library`                 | `6.1.6`           | Google Inc.           | [https://github.com/googleapis/google-auth-library-nodejs](https://github.com/googleapis/google-auth-library-nodejs)                   |
 | `google-auth-library`                 | `7.3.0`           | Google Inc.           | [https://github.com/googleapis/google-auth-library-nodejs](https://github.com/googleapis/google-auth-library-nodejs)                   |
-| `google-gax`                          | `2.17.0`          | Google API Authors    | [https://github.com/googleapis/gax-nodejs](https://github.com/googleapis/gax-nodejs)                                                   |
+| `google-gax`                          | `2.17.1`          | Google API Authors    | [https://github.com/googleapis/gax-nodejs](https://github.com/googleapis/gax-nodejs)                                                   |
 | `hex2dec`                             | `1.1.2`           |                       | [https://github.com/donmccurdy/hex2dec](https://github.com/donmccurdy/hex2dec)                                                         |
 | `json-to-pretty-yaml`                 | `1.2.2`           |                       | [https://github.com/alexcrist/json-to-pretty-yaml](https://github.com/alexcrist/json-to-pretty-yaml)                                   |
 | `long`                                | `4.0.0`           | Daniel Wirtz          | [https://github.com/dcodeIO/long.js](https://github.com/dcodeIO/long.js)                                                               |
@@ -192,7 +192,7 @@ ISC License - [https://www.isc.org/downloads/software-support-policy/isc-license
 | `cliui`                     | `6.0.0`   | Ben Coe            | [https://github.com/yargs/cliui](https://github.com/yargs/cliui)                                             |
 | `cliui`                     | `7.0.4`   | Ben Coe            | [https://github.com/yargs/cliui](https://github.com/yargs/cliui)                                             |
 | `deprecation`               | `2.3.1`   |                    | [https://github.com/gr2m/deprecation](https://github.com/gr2m/deprecation)                                   |
-| `electron-to-chromium`      | `1.3.771` | Kilian Valkhof     | [https://github.com/kilian/electron-to-chromium](https://github.com/kilian/electron-to-chromium)             |
+| `electron-to-chromium`      | `1.3.772` | Kilian Valkhof     | [https://github.com/kilian/electron-to-chromium](https://github.com/kilian/electron-to-chromium)             |
 | `fastq`                     | `1.11.0`  | Matteo Collina     | [https://github.com/mcollina/fastq](https://github.com/mcollina/fastq)                                       |
 | `fs.realpath`               | `1.0.0`   | Isaac Z. Schlueter | [https://github.com/isaacs/fs.realpath](https://github.com/isaacs/fs.realpath)                               |
 | `get-caller-file`           | `2.0.5`   | Stefan Penner      | [https://github.com/stefanpenner/get-caller-file](https://github.com/stefanpenner/get-caller-file)           |
@@ -780,7 +780,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `responselike`                                       | `1.0.2`        | lukechilds                     | [https://github.com/lukechilds/responselike](https://github.com/lukechilds/responselike)                                                                                                             |
 | `restore-cursor`                                     | `2.0.0`        | Sindre Sorhus                  | [https://github.com/sindresorhus/restore-cursor](https://github.com/sindresorhus/restore-cursor)                                                                                                     |
 | `restore-cursor`                                     | `3.1.0`        | Sindre Sorhus                  | [https://github.com/sindresorhus/restore-cursor](https://github.com/sindresorhus/restore-cursor)                                                                                                     |
-| `retry-request`                                      | `4.2.1`        | Stephen Sawchuk                | [https://github.com/stephenplusplus/retry-request](https://github.com/stephenplusplus/retry-request)                                                                                                 |
+| `retry-request`                                      | `4.2.2`        | Stephen Sawchuk                | [https://github.com/stephenplusplus/retry-request](https://github.com/stephenplusplus/retry-request)                                                                                                 |
 | `retry`                                              | `0.12.0`       | Tim Koschützki                 | [https://github.com/tim-kos/node-retry](https://github.com/tim-kos/node-retry)                                                                                                                       |
 | `retry`                                              | `0.13.1`       | Tim Koschützki                 | [https://github.com/tim-kos/node-retry](https://github.com/tim-kos/node-retry)                                                                                                                       |
 | `reusify`                                            | `1.0.4`        | Matteo Collina                 | [https://github.com/mcollina/reusify](https://github.com/mcollina/reusify)                                                                                                                           |
@@ -880,7 +880,6 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `wrap-ansi`                                          | `6.2.0`        | Sindre Sorhus                  | [https://github.com/chalk/wrap-ansi](https://github.com/chalk/wrap-ansi)                                                                                                                             |
 | `wrap-ansi`                                          | `7.0.0`        | Sindre Sorhus                  | [https://github.com/chalk/wrap-ansi](https://github.com/chalk/wrap-ansi)                                                                                                                             |
 | `ws`                                                 | `7.4.5`        | Einar Otto Stangvik            | [https://github.com/websockets/ws](https://github.com/websockets/ws)                                                                                                                                 |
-| `ws`                                                 | `7.5.2`        | Einar Otto Stangvik            | [https://github.com/websockets/ws](https://github.com/websockets/ws)                                                                                                                                 |
 | `xdg-basedir`                                        | `4.0.0`        | Sindre Sorhus                  | [https://github.com/sindresorhus/xdg-basedir](https://github.com/sindresorhus/xdg-basedir)                                                                                                           |
 | `yargs`                                              | `15.4.1`       |                                | [https://github.com/yargs/yargs](https://github.com/yargs/yargs)                                                                                                                                     |
 | `yargs`                                              | `16.2.0`       |                                | [https://github.com/yargs/yargs](https://github.com/yargs/yargs)                                                                                                                                     |
