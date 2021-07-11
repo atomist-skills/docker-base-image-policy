@@ -11,7 +11,7 @@ This page details all runtime dependencies of `@atomist/docker-base-image-policy
 | License                         | Count |
 | ------------------------------- | ----- |
 | [0BSD](#0bsd)                   | 5     |
-| [Apache-2.0](#apache-20)        | 40    |
+| [Apache-2.0](#apache-20)        | 39    |
 | [BSD-2-Clause](#bsd-2-clause)   | 10    |
 | [BSD-3-Clause](#bsd-3-clause)   | 27    |
 | [CC-BY-3.0](#cc-by-30)          | 1     |
@@ -81,7 +81,6 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | `rxjs`                                | `6.6.7`           | Ben Lesh              | [https://github.com/reactivex/rxjs](https://github.com/reactivex/rxjs)                                                                 |
 | `spdx-correct`                        | `3.1.1`           | Kyle E. Mitchell      | [https://github.com/jslicense/spdx-correct.js](https://github.com/jslicense/spdx-correct.js)                                           |
 | `teeny-request`                       | `7.1.1`           | fhinkel               | [https://github.com/googleapis/teeny-request](https://github.com/googleapis/teeny-request)                                             |
-| `typescript`                          | `4.3.5`           | Microsoft Corp.       | [https://github.com/Microsoft/TypeScript](https://github.com/Microsoft/TypeScript)                                                     |
 | `validate-npm-package-license`        | `3.0.4`           | Kyle E. Mitchell      | [https://github.com/kemitchell/validate-npm-package-license.js](https://github.com/kemitchell/validate-npm-package-license.js)         |
 | `yaml-ast-parser`                     | `0.0.43`          |                       | [https://github.com/mulesoft-labs/yaml-ast-parser](https://github.com/mulesoft-labs/yaml-ast-parser)                                   |
 
