@@ -92,7 +92,8 @@
     :docker.registry/type
     :docker.registry/secret
     :docker.registry/username
-    :docker.registry/server-url])
+    :docker.registry/server-url
+    :docker.registry.gcr/service-account])
  :in $ $before-db % ?ctx
  :where
  (or-join [?from-line ?digest ?ctx]

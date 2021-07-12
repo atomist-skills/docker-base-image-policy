@@ -24,7 +24,6 @@ import {
 	project,
 	repository,
 	status,
-	subscription,
 	truncate,
 } from "@atomist/skill";
 import * as fs from "fs-extra";
@@ -32,7 +31,7 @@ import * as _ from "lodash";
 
 import { changelog } from "../changelog";
 import { Configuration } from "../configuration";
-import { CommitAndDockerfile } from "../types";
+import { CommitAndDockerfile, ExtendedDockerRegistry } from "../types";
 import { addStartLineNo, replaceFroms } from "../util";
 
 const Footer = `<!-- atomist:hide -->\nPinning \`FROM\` lines to digests makes your builds repeatable. Atomist will raise new pull requests whenever the tag moves, so that you know when the base image has been updated. You can follow a new tag at any time. Just replace the digest with the new tag you want to follow. Atomist, will switch to following this new tag.\n<!-- atomist:show -->`;
@@ -40,7 +39,7 @@ const Footer = `<!-- atomist:hide -->\nPinning \`FROM\` lines to digests makes y
 export const handler: MappingEventHandler<
 	CommitAndDockerfile[],
 	CommitAndDockerfile & {
-		registry: subscription.datalog.DockerRegistry;
+		registry: ExtendedDockerRegistry;
 		image: CommitAndDockerfile["image"][0];
 		manifestList: CommitAndDockerfile["manifestList"][0];
 	},

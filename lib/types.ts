@@ -16,6 +16,10 @@
 
 import { subscription } from "@atomist/skill";
 
+export type ExtendedDockerRegistry = subscription.datalog.DockerRegistry & {
+	serviceAccount: string;
+};
+
 export interface CommitAndDockerfile {
 	commit: subscription.datalog.Commit;
 	file: {
@@ -60,7 +64,7 @@ export interface CommitAndDockerfile {
 			};
 		}>;
 	};
-	registry: subscription.datalog.DockerRegistry[];
+	registry: ExtendedDockerRegistry[];
 	image: Array<
 		Pick<
 			subscription.datalog.DockerImage,

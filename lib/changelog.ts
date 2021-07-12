@@ -15,7 +15,6 @@
  */
 
 import {
-	after,
 	childProcess,
 	EventContext,
 	github,
@@ -28,9 +27,8 @@ import {
 } from "@atomist/skill";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
-import * as os from "os";
-import * as path from "path";
 
+import { auth } from "./auth";
 import { Configuration } from "./configuration";
 import { diffFiles } from "./file";
 import { CommitAndDockerfile } from "./types";
@@ -64,9 +62,7 @@ async function getLibraryFileCommit(
 	return undefined;
 }
 
-export const changelog = after(_changelog, removeCredentials);
-
-async function _changelog(
+export async function changelog(
 	ctx: EventContext<any, Configuration>,
 	p: project.Project,
 	fromLine: CommitAndDockerfile["file"]["lines"][0],
@@ -181,7 +177,7 @@ async function _changelog(
 
 	file = file || (await getLibraryFileCommit(p, repository));
 
-	await prepareCredentials(registries, repository);
+	await auth(ctx, registries);
 
 	const env = {
 		...process.env,
@@ -390,59 +386,6 @@ async function _changelog(
 		vulAdditions,
 		vulRemovals,
 	});
-}
-
-async function prepareCredentials(
-	registries: CommitAndDockerfile["registry"],
-	repository: CommitAndDockerfile["file"]["lines"][0]["repository"],
-): Promise<void> {
-	if (registries.length === 0) {
-		return;
-	}
-	if (
-		repository.host === "hub.docker.com" &&
-		!repository.name.includes("/")
-	) {
-		return;
-	}
-	const dockerConfig = {
-		auths: {},
-	} as any;
-
-	for (const registry of registries) {
-		const creds = {
-			login:
-				registry.type === subscription.datalog.DockerRegistryType.Gcr
-					? "_json_key"
-					: registry.username,
-			secret: registry.secret,
-		};
-
-		if (registry.serverUrl?.startsWith("registry.hub.docker.com")) {
-			dockerConfig.auths["https://index.docker.io/v1/"] = {
-				auth: Buffer.from(creds?.login + ":" + creds?.secret)?.toString(
-					"base64",
-				),
-			};
-		} else if (registry.serverUrl) {
-			const url = registry.serverUrl.split("/");
-			dockerConfig.auths[url[0]] = {
-				auth: Buffer.from(creds?.login + ":" + creds?.secret)?.toString(
-					"base64",
-				),
-			};
-		}
-	}
-
-	await fs.ensureDir(path.join(os.homedir(), ".docker"));
-	await fs.writeJson(
-		path.join(os.homedir(), ".docker", "config.json"),
-		dockerConfig,
-	);
-}
-
-async function removeCredentials(): Promise<void> {
-	await fs.remove(path.join(os.homedir(), ".docker", "config.json"));
 }
 
 async function prepareHistoryDiff(
