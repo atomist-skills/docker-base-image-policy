@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.45...HEAD)
 
+### Fixed
+
+*   Serialize config-change pinning subscription. [72e837b](https://github.com/atomist-skills/docker-base-image-policy/commit/72e837baf0201348c6dba6360e8975cfa3930d8a)
+
 ## [0.1.45](https://github.com/atomist-skills/docker-base-image-policy/compare/0.1.44...0.1.45) - 2021-07-13
 
 ### Added
